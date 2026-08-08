@@ -1,0 +1,1 @@
+"""PeopleOps Assistant application package."""

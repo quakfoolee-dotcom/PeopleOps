@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checks": {
+    "policy_count_12": true,
+    "runtime_file_count_12": true,
+    "runtime_formats_at_least_2": true,
+    "all_policy_ids_unique": true,
+    "all_section_ids_unique": true,
+    "estimated_pages_within_30_120": true,
+    "review_pdf_pages_within_30_120": true,
+    "all_review_pdfs_exist": true,
+    "all_runtime_sources_exist": true,
+    "all_master_sources_exist": true,
+    "all_cross_references_resolve": true
+  },
+  "warnings": []
+}
