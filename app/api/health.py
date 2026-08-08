@@ -25,14 +25,14 @@ async def health() -> HealthResponse:
                 detail=corpus["detail"],
             ),
             "rag_index": ComponentStatus(
-                status="planned", detail="Indexing begins in the retrieval milestone."
+                status="planned", detail="Ingestion and retrieval are planned for Phase 5."
             ),
             "mcp": ComponentStatus(
                 status="planned",
-                detail="Tool contracts exist; live transport is the next milestone.",
+                detail="Tool contracts exist; live discovery and invocation begin in Phase 4.",
             ),
             "mock_database": ComponentStatus(
-                status="planned", detail="Synthetic structured records are not seeded yet."
+                status="planned", detail="Synthetic structured records are planned for Phase 3."
             ),
             "llm_provider": ComponentStatus(
                 status="not_configured",

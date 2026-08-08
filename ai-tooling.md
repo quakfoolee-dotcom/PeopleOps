@@ -2,7 +2,7 @@
 
 ## Tools used
 
-OpenAI Codex was used during Milestone 1 to:
+OpenAI Codex was used during Phases 1 and 2 to:
 
 - review the assignment requirements and Score 5 delivery plan;
 - inspect the GitHub repository and local policy-corpus package;
@@ -11,6 +11,9 @@ OpenAI Codex was used during Milestone 1 to:
 - draft automated tests, CI configuration, and project documentation;
 - check product naming consistency and validate policy PDF artifacts;
 - run local validation and prepare the Git commit.
+- translate the approved ten-phase plan into GitHub milestones and acceptance issues;
+- draft and validate strict API, citation, operational-trace, pending-action, and evaluation contracts;
+- create the initial 25-case gold evaluation suite from the reviewed synthetic policy corpus.
 
 ## Human responsibility and review
 

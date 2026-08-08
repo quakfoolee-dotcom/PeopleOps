@@ -35,7 +35,7 @@ MCP client -> MCP server
 
 ## Foundation boundaries
 
-- `app/api`: HTTP endpoints and response schemas.
+- `app/api`: HTTP endpoints plus strict request, citation, trace, action-preview, and response contracts.
 - `app/core`: environment-driven configuration.
 - `app/rag`: corpus validation now; ingestion and retrieval next.
 - `app/agent`: future bounded state machine. It must not access data stores directly.
@@ -43,7 +43,8 @@ MCP client -> MCP server
 - `peopleops_mcp`: tool contracts now; live server transport next.
 - `policy_corpus`: authoritative runtime sources and human-review artifacts.
 - `mock_data`: future deterministic synthetic structured records.
-- `evaluation`: future gold cases, metrics, latency, and ablation results.
+- `app/evaluation`: gold-suite schemas, loading, and semantic validation.
+- `evaluation`: 25 gold cases and generated JSON Schemas now; metrics, latency, and ablation results in Phase 10.
 - `ui`: React application built into static production assets.
 
 ## Safety principles

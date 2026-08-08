@@ -1,0 +1,246 @@
+{
+  "$defs": {
+    "Citation": {
+      "additionalProperties": false,
+      "properties": {
+        "policy_id": {
+          "pattern": "^POL-[A-Z]{3}-\\d{3}$",
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "section_id": {
+          "pattern": "^[A-Z]{3}-\\d+(?:\\.\\d+)?$",
+          "title": "Section Id",
+          "type": "string"
+        },
+        "snippet": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Snippet",
+          "type": "string"
+        },
+        "source_format": {
+          "enum": [
+            "markdown",
+            "pdf"
+          ],
+          "title": "Source Format",
+          "type": "string"
+        },
+        "source_path": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Source Path",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_id",
+        "section_id",
+        "title",
+        "snippet",
+        "version",
+        "source_format",
+        "source_path"
+      ],
+      "title": "Citation",
+      "type": "object"
+    },
+    "PendingActionPreview": {
+      "additionalProperties": false,
+      "properties": {
+        "action_type": {
+          "const": "create_mock_hr_ticket",
+          "title": "Action Type",
+          "type": "string"
+        },
+        "confirmation_required": {
+          "const": true,
+          "default": true,
+          "title": "Confirmation Required",
+          "type": "boolean"
+        },
+        "sanitized_arguments": {
+          "additionalProperties": true,
+          "title": "Sanitized Arguments",
+          "type": "object"
+        },
+        "summary": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_type",
+        "summary",
+        "sanitized_arguments"
+      ],
+      "title": "PendingActionPreview",
+      "type": "object"
+    },
+    "ToolCallStatus": {
+      "enum": [
+        "succeeded",
+        "failed",
+        "timed_out",
+        "denied"
+      ],
+      "title": "ToolCallStatus",
+      "type": "string"
+    },
+    "ToolTraceEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Code"
+        },
+        "result_summary": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Result Summary",
+          "type": "string"
+        },
+        "sanitized_arguments": {
+          "additionalProperties": true,
+          "title": "Sanitized Arguments",
+          "type": "object"
+        },
+        "sequence": {
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "status": {
+          "$ref": "#/$defs/ToolCallStatus"
+        },
+        "tool_name": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Tool Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sequence",
+        "tool_name",
+        "status",
+        "result_summary",
+        "duration_ms"
+      ],
+      "title": "ToolTraceEntry",
+      "type": "object"
+    },
+    "WorkflowOutcome": {
+      "enum": [
+        "answered",
+        "conditional",
+        "draft_only",
+        "clarification_required",
+        "escalation_required",
+        "refused",
+        "confirmation_required"
+      ],
+      "title": "WorkflowOutcome",
+      "type": "string"
+    },
+    "WorkflowStatus": {
+      "enum": [
+        "completed",
+        "needs_clarification",
+        "escalated",
+        "out_of_scope",
+        "awaiting_confirmation",
+        "error"
+      ],
+      "title": "WorkflowStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "answer": {
+      "maxLength": 12000,
+      "minLength": 1,
+      "title": "Answer",
+      "type": "string"
+    },
+    "as_of_date": {
+      "format": "date",
+      "title": "As Of Date",
+      "type": "string"
+    },
+    "citations": {
+      "items": {
+        "$ref": "#/$defs/Citation"
+      },
+      "title": "Citations",
+      "type": "array"
+    },
+    "outcome": {
+      "$ref": "#/$defs/WorkflowOutcome"
+    },
+    "pending_action": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PendingActionPreview"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/WorkflowStatus"
+    },
+    "tool_trace": {
+      "items": {
+        "$ref": "#/$defs/ToolTraceEntry"
+      },
+      "title": "Tool Trace",
+      "type": "array"
+    }
+  },
+  "required": [
+    "request_id",
+    "as_of_date",
+    "status",
+    "outcome",
+    "answer"
+  ],
+  "title": "ChatResponse",
+  "type": "object"
+}

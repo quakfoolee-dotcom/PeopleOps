@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "as_of_date": {
+      "default": "2026-08-17",
+      "format": "date",
+      "title": "As Of Date",
+      "type": "string"
+    },
+    "confirmation_token": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "minLength": 16,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confirmation Token"
+    },
+    "employee_id": {
+      "anyOf": [
+        {
+          "pattern": "^E-\\d{4}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Employee Id"
+    },
+    "message": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "message"
+  ],
+  "title": "ChatRequest",
+  "type": "object"
+}

@@ -46,7 +46,7 @@ export default function App() {
           <span className="brand-mark" aria-hidden="true">P</span>
           <span>PeopleOps Assistant</span>
         </div>
-        <span className="milestone-pill">Foundation · v0.1.0</span>
+        <span className="milestone-pill">Phase 2 · v0.1.0</span>
       </nav>
 
       <section className="hero">
@@ -66,7 +66,7 @@ export default function App() {
           <p className="card-kicker">Built for evidence</p>
           <ol>
             <li><strong>12</strong><span>synthetic policies</span></li>
-            <li><strong>2</strong><span>source formats</span></li>
+            <li><strong>25</strong><span>gold evaluation cases</span></li>
             <li><strong>8</strong><span>MCP tool contracts</span></li>
           </ol>
           <p className="card-note">No real employee data. No irreversible actions.</p>
@@ -80,7 +80,7 @@ export default function App() {
             <h2 id="readiness-title">Honest status, component by component</h2>
           </div>
           <span className={`health-chip ${health?.status ?? "checking"}`}>
-            {healthError ? "Backend offline" : health?.status === "ok" ? "Foundation healthy" : "Checking"}
+            {healthError ? "Backend offline" : health?.status === "ok" ? "Service healthy" : "Checking"}
           </span>
         </div>
 
@@ -99,7 +99,7 @@ export default function App() {
           ) : (
             <article className="status-card status-loading">
               <h3>{healthError ? "Health data unavailable" : "Loading readiness"}</h3>
-              <p>{healthError ? "Start the FastAPI service to see live status." : "Connecting to the foundation API."}</p>
+              <p>{healthError ? "Start the FastAPI service to see live status." : "Connecting to the service API."}</p>
             </article>
           )}
         </div>

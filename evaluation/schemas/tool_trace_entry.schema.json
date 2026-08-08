@@ -1,0 +1,68 @@
+{
+  "$defs": {
+    "ToolCallStatus": {
+      "enum": [
+        "succeeded",
+        "failed",
+        "timed_out",
+        "denied"
+      ],
+      "title": "ToolCallStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "duration_ms": {
+      "minimum": 0,
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "maxLength": 100,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Code"
+    },
+    "result_summary": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Result Summary",
+      "type": "string"
+    },
+    "sanitized_arguments": {
+      "additionalProperties": true,
+      "title": "Sanitized Arguments",
+      "type": "object"
+    },
+    "sequence": {
+      "minimum": 1,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "status": {
+      "$ref": "#/$defs/ToolCallStatus"
+    },
+    "tool_name": {
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "title": "Tool Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "sequence",
+    "tool_name",
+    "status",
+    "result_summary",
+    "duration_ms"
+  ],
+  "title": "ToolTraceEntry",
+  "type": "object"
+}

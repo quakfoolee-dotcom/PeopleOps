@@ -1,8 +1,11 @@
+from datetime import date
 from functools import lru_cache
 from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from app.core.constants import SYNTHETIC_AS_OF_DATE
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -18,6 +21,7 @@ class Settings(BaseSettings):
     llm_model: str = "not-configured"
     max_tool_calls: int = Field(default=8, ge=1, le=20)
     tool_timeout_seconds: int = Field(default=20, ge=1, le=120)
+    synthetic_as_of_date: date = SYNTHETIC_AS_OF_DATE
 
     model_config = SettingsConfigDict(
         env_file=".env",

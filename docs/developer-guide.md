@@ -15,6 +15,7 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -e ".[dev]"
 python -m ruff check .
+python scripts/export_contract_schemas.py --check
 python -m pytest --cov=app --cov=peopleops_mcp --cov-report=term-missing
 uvicorn app.main:app --reload
 ```
@@ -46,6 +47,21 @@ When changing a policy:
 ## Configuration
 
 Copy `.env.example` to `.env`. Provider keys are intentionally absent from the example. Future provider-specific keys must be read from the environment and must never be returned by `/health`.
+
+`SYNTHETIC_AS_OF_DATE` defaults to `2026-08-17`. Keep that value fixed for ordinary automated tests and gold-suite runs. A deliberate date change requires updating the gold suite, generated schemas where applicable, tests, and evaluation documentation together.
+
+## Evaluation contracts
+
+The runtime Pydantic contracts live in `app/api/contracts.py`; gold-case models and semantic validation live in `app/evaluation`. The committed suite is `evaluation/gold_cases.json`.
+
+After intentionally changing a contract, regenerate and verify the JSON Schemas:
+
+```powershell
+python scripts/export_contract_schemas.py
+python scripts/export_contract_schemas.py --check
+```
+
+See `docs/data-contracts.md` before modifying schemas or gold expectations.
 
 ### Local container builds behind HTTPS inspection
 

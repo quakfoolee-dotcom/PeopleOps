@@ -1,0 +1,221 @@
+{
+  "$defs": {
+    "EvaluationCategory": {
+      "enum": [
+        "straightforward_policy",
+        "multi_document_policy",
+        "employee_tool_workflow",
+        "ambiguous_clarification",
+        "out_of_scope_safety"
+      ],
+      "title": "EvaluationCategory",
+      "type": "string"
+    },
+    "GoldEvaluationCase": {
+      "additionalProperties": false,
+      "properties": {
+        "answer_constraints": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Answer Constraints",
+          "type": "array"
+        },
+        "case_id": {
+          "pattern": "^EVAL-[A-Z]+-\\d{3}$",
+          "title": "Case Id",
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/EvaluationCategory"
+        },
+        "employee_id": {
+          "anyOf": [
+            {
+              "pattern": "^E-\\d{4}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Employee Id"
+        },
+        "expected_facts": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Expected Facts",
+          "type": "array"
+        },
+        "expected_outcome": {
+          "$ref": "#/$defs/WorkflowOutcome"
+        },
+        "expected_policy_sections": {
+          "items": {
+            "$ref": "#/$defs/PolicySectionTarget"
+          },
+          "title": "Expected Policy Sections",
+          "type": "array"
+        },
+        "prompt": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "safety_behavior": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Safety Behavior",
+          "type": "array"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "tools": {
+          "$ref": "#/$defs/ToolExpectations"
+        }
+      },
+      "required": [
+        "case_id",
+        "title",
+        "category",
+        "prompt",
+        "expected_facts",
+        "expected_policy_sections",
+        "tools",
+        "expected_outcome",
+        "answer_constraints",
+        "safety_behavior"
+      ],
+      "title": "GoldEvaluationCase",
+      "type": "object"
+    },
+    "PolicySectionTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "policy_id": {
+          "pattern": "^POL-[A-Z]{3}-\\d{3}$",
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "section_id": {
+          "pattern": "^[A-Z]{3}-\\d+(?:\\.\\d+)?$",
+          "title": "Section Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_id",
+        "section_id"
+      ],
+      "title": "PolicySectionTarget",
+      "type": "object"
+    },
+    "ToolExpectations": {
+      "additionalProperties": false,
+      "properties": {
+        "after_confirmation": {
+          "items": {
+            "type": "string"
+          },
+          "title": "After Confirmation",
+          "type": "array"
+        },
+        "forbidden": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Forbidden",
+          "type": "array"
+        },
+        "required": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required",
+          "type": "array"
+        }
+      },
+      "title": "ToolExpectations",
+      "type": "object"
+    },
+    "WorkflowOutcome": {
+      "enum": [
+        "answered",
+        "conditional",
+        "draft_only",
+        "clarification_required",
+        "escalation_required",
+        "refused",
+        "confirmation_required"
+      ],
+      "title": "WorkflowOutcome",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "as_of_date": {
+      "format": "date",
+      "title": "As Of Date",
+      "type": "string"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/GoldEvaluationCase"
+      },
+      "maxItems": 25,
+      "minItems": 25,
+      "title": "Cases",
+      "type": "array"
+    },
+    "name": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "organization": {
+      "const": "Northstar Technologies Inc.",
+      "title": "Organization",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic_only": {
+      "const": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "name",
+    "organization",
+    "synthetic_only",
+    "as_of_date",
+    "cases"
+  ],
+  "title": "GoldEvaluationSuite",
+  "type": "object"
+}

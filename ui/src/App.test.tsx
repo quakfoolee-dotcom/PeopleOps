@@ -8,11 +8,11 @@ const healthPayload = {
   components: {
     application: { status: "ready", detail: "FastAPI is serving requests." },
     policy_corpus: { status: "ready", detail: "12 synthetic policies validated." },
-    mcp: { status: "planned", detail: "Live transport is the next milestone." },
+    mcp: { status: "planned", detail: "Live transport is planned for Phase 4." },
   },
 };
 
-describe("PeopleOps Assistant foundation", () => {
+describe("PeopleOps Assistant Phase 2 shell", () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it("shows the product identity and honest milestone state", async () => {
@@ -24,8 +24,9 @@ describe("PeopleOps Assistant foundation", () => {
     render(<App />);
 
     expect(screen.getAllByText("PeopleOps Assistant").length).toBeGreaterThan(0);
-    expect(screen.getByText(/Foundation · v0.1.0/i)).toBeInTheDocument();
-    expect(await screen.findByText("Foundation healthy")).toBeInTheDocument();
+    expect(screen.getByText(/Phase 2 · v0.1.0/i)).toBeInTheDocument();
+    expect(await screen.findByText("Service healthy")).toBeInTheDocument();
+    expect(screen.getByText("gold evaluation cases")).toBeInTheDocument();
     expect(screen.getByText("Three reproducible HR workflows")).toBeInTheDocument();
   });
 });

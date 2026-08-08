@@ -4,9 +4,9 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 > This repository contains synthetic educational data. It is not a production HR system and does not provide legal advice.
 
-## Milestone 1 status
+## Execution status
 
-The project foundation currently provides:
+Phases 1 and 2 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
 
 - a FastAPI application with `/health` and generated API documentation;
 - a React and Vite application shell;
@@ -15,9 +15,13 @@ The project foundation currently provides:
 - backend, frontend, corpus, and tool-contract tests;
 - a multi-stage Docker build;
 - GitHub Actions checks for Python, web, and container builds;
-- architecture, developer, use-case, traceability, AI-tooling, and deployment documentation.
+- architecture, developer, use-case, traceability, AI-tooling, and deployment documentation;
+- ten GitHub phase milestones with acceptance-criteria issues;
+- a strict runtime request, citation, tool-trace, response, and pending-action contract;
+- a fixed synthetic as-of date of 2026-08-17;
+- 25 schema-valid gold evaluation cases and committed JSON Schemas.
 
-Policy Q&A, live MCP transport, structured employee tools, and agent workflows are intentionally marked as planned. They will be implemented in subsequent milestones and are not simulated by the foundation.
+Policy Q&A, live MCP transport, structured employee tools, and agent workflows are intentionally marked as planned. Phase 3 completes synthetic operational data before the Phase 4 vertical slice.
 
 ## Architecture
 
@@ -105,6 +109,8 @@ The production image builds the React application and serves it from FastAPI.
 - [Developer guide](docs/developer-guide.md)
 - [Architecture](docs/architecture.md)
 - [Requirements traceability](docs/requirements-traceability.md)
+- [Authoritative execution plan](docs/execution-plan.md)
+- [Data contracts and evaluation guide](docs/data-contracts.md)
 - [Design and evaluation](design-and-evaluation.md)
 - [AI tooling disclosure](ai-tooling.md)
 - [Deployment status](deployed.md)

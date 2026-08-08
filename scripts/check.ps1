@@ -2,15 +2,33 @@ $ErrorActionPreference = "Stop"
 
 $python = if (Test-Path ".venv\Scripts\python.exe") { ".venv\Scripts\python.exe" } else { "python" }
 
-& $python -m ruff check .
-& $python -m pytest --cov=app --cov=peopleops_mcp --cov-report=term-missing --cov-fail-under=85
+function Invoke-NativeCommand {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FilePath,
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
+
+    & $FilePath @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "Command failed with exit code ${LASTEXITCODE}: $FilePath $($Arguments -join ' ')"
+    }
+}
+
+Invoke-NativeCommand -FilePath $python -Arguments @("-m", "ruff", "check", ".")
+Invoke-NativeCommand -FilePath $python -Arguments @("scripts/export_contract_schemas.py", "--check")
+Invoke-NativeCommand -FilePath $python -Arguments @(
+    "-m", "pytest",
+    "--cov=app", "--cov=peopleops_mcp", "--cov-report=term-missing", "--cov-fail-under=85"
+)
 
 Push-Location ui
 try {
     $env:NODE_USE_SYSTEM_CA = "1"
-    npm ci
-    npm run test
-    npm run build
+    Invoke-NativeCommand -FilePath "npm" -Arguments @("ci")
+    Invoke-NativeCommand -FilePath "npm" -Arguments @("run", "test")
+    Invoke-NativeCommand -FilePath "npm" -Arguments @("run", "build")
 }
 finally {
     Pop-Location
@@ -27,5 +45,5 @@ if (Get-Command docker -ErrorAction SilentlyContinue) {
             "."
         )
     }
-    & docker @dockerArguments
+    Invoke-NativeCommand -FilePath "docker" -Arguments $dockerArguments
 }
