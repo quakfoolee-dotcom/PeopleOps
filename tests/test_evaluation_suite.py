@@ -15,7 +15,7 @@ def test_gold_suite_meets_phase_two_exit_criterion() -> None:
     suite = load_gold_suite()
 
     assert suite.synthetic_only is True
-    assert suite.as_of_date == date(2026, 8, 17)
+    assert suite.as_of_date == date(2026, 9, 1)
     assert len(suite.cases) == 25
     assert Counter(case.category for case in suite.cases) == Counter(EXPECTED_CATEGORY_COUNTS)
     assert validate_gold_suite(suite) == []
@@ -47,7 +47,7 @@ def test_multi_document_and_employee_cases_have_required_context() -> None:
 
 def test_semantic_validator_reports_contract_drift() -> None:
     suite = load_gold_suite().model_copy(deep=True)
-    suite.as_of_date = date(2026, 8, 18)
+    suite.as_of_date = date(2026, 9, 2)
     suite.cases[0].category = EvaluationCategory.MULTI_DOCUMENT_POLICY
     suite.cases[0].expected_policy_sections = [
         PolicySectionTarget(policy_id="POL-PTO-001", section_id="PTO-999")

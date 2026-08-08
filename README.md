@@ -6,7 +6,7 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 ## Execution status
 
-Phases 1 and 2 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
+Phases 1 through 3 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
 
 - a FastAPI application with `/health` and generated API documentation;
 - a React and Vite application shell;
@@ -18,10 +18,12 @@ Phases 1 and 2 of the [authoritative execution plan](docs/execution-plan.md) are
 - architecture, developer, use-case, traceability, AI-tooling, and deployment documentation;
 - ten GitHub phase milestones with acceptance-criteria issues;
 - a strict runtime request, citation, tool-trace, response, and pending-action contract;
-- a fixed synthetic as-of date of 2026-08-17;
-- 25 schema-valid gold evaluation cases and committed JSON Schemas.
+- a fixed synthetic as-of date of 2026-09-01, aligned with the policy corpus;
+- 25 schema-valid gold evaluation cases and committed JSON Schemas;
+- deterministic employee, manager, location, PTO, benefits, and historical ticket fixtures;
+- strict mock-data schemas, checksums, semantic validation, and a reproducible SQLite build.
 
-Policy Q&A, live MCP transport, structured employee tools, and agent workflows are intentionally marked as planned. Phase 3 completes synthetic operational data before the Phase 4 vertical slice.
+Policy Q&A, live MCP transport, structured employee tools, and agent workflows are intentionally marked as planned. Phase 4 is the next action: a thin API-to-MCP vertical slice using the validated Phase 3 evidence.
 
 ## Architecture
 
@@ -43,6 +45,11 @@ FastAPI (/health; /chat planned)
                    |
                    v
               12 synthetic policies
+
+        +--> Mock-data validator / SQLite builder (ready)
+                   |
+                   v
+              30 synthetic employees
 ```
 
 See [docs/architecture.md](docs/architecture.md) for component boundaries and [docs/requirements-traceability.md](docs/requirements-traceability.md) for rubric coverage.
@@ -90,7 +97,7 @@ Open `http://127.0.0.1:5173`. Vite proxies `/health` to the backend during devel
 .\scripts\check.ps1
 ```
 
-The script runs Python linting and tests, web tests and production build, and a Docker build when Docker is available.
+The script runs schema drift and Phase 3 asset validation, Python linting and tests, web tests and production build, and a Docker build when Docker is available.
 
 Individual commands are documented in [docs/developer-guide.md](docs/developer-guide.md).
 
@@ -115,3 +122,4 @@ The production image builds the React application and serves it from FastAPI.
 - [AI tooling disclosure](ai-tooling.md)
 - [Deployment status](deployed.md)
 - [Policy corpus guide](policy_corpus/README.md)
+- [Synthetic data guide](mock_data/README.md)

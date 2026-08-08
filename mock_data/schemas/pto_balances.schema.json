@@ -1,0 +1,78 @@
+{
+  "$defs": {
+    "PTOBalance": {
+      "additionalProperties": false,
+      "properties": {
+        "as_of_date": {
+          "format": "date",
+          "title": "As Of Date",
+          "type": "string"
+        },
+        "available_hours": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,2}0*$",
+              "type": "string"
+            }
+          ],
+          "title": "Available Hours"
+        },
+        "eligible": {
+          "title": "Eligible",
+          "type": "boolean"
+        },
+        "employee_id": {
+          "pattern": "^E-\\d{4}$",
+          "title": "Employee Id",
+          "type": "string"
+        },
+        "pending_hours": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,2}0*$",
+              "type": "string"
+            }
+          ],
+          "title": "Pending Hours"
+        },
+        "scheduled_hours_per_day": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 12.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,2}0*$",
+              "type": "string"
+            }
+          ],
+          "title": "Scheduled Hours Per Day"
+        }
+      },
+      "required": [
+        "employee_id",
+        "as_of_date",
+        "eligible",
+        "available_hours",
+        "pending_hours",
+        "scheduled_hours_per_day"
+      ],
+      "title": "PTOBalance",
+      "type": "object"
+    }
+  },
+  "items": {
+    "$ref": "#/$defs/PTOBalance"
+  },
+  "title": "PTOBalanceDataset",
+  "type": "array"
+}

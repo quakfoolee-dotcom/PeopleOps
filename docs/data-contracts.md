@@ -4,7 +4,7 @@ Phase 2 freezes the interfaces and expected behavior that later runtime phases m
 
 ## Fixed synthetic date
 
-All deterministic examples and automated evaluations use **2026-08-17**. The default is defined in `app/core/constants.py` and can be configured with `SYNTHETIC_AS_OF_DATE`. Evaluation runs must record the suite date and must not silently substitute the wall-clock date.
+All deterministic examples and automated evaluations use **2026-09-01**, the corpus effective date. The default is defined in `app/core/constants.py` and can be configured with `SYNTHETIC_AS_OF_DATE`. Evaluation runs must record the suite date and must not silently substitute the wall-clock date.
 
 ## Runtime API contracts
 
@@ -31,6 +31,14 @@ Verify that committed schemas match the Pydantic source:
 ```
 
 CI performs the drift check.
+
+## Synthetic operational-data contracts
+
+Phase 3 adds strict contracts for locations, employees, manager relationships, PTO balances and transactions, benefits, historical mock tickets, and the seed manifest. Their committed JSON Schemas are under `mock_data/schemas`.
+
+The manifest requires `synthetic_only=true`, the fixed snapshot date, expected files, record counts, and SHA-256 checksums. Semantic validation then enforces employee and location references, an acyclic manager hierarchy, one balance and benefits record per employee, no future-dated records, and the stable employee IDs required by the gold suite.
+
+Run `python scripts/validate_phase3_assets.py` to validate both the policy corpus and structured snapshot and to prove the data can be loaded into a foreign-key-clean SQLite database.
 
 ## Gold evaluation suite
 

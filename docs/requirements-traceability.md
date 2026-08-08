@@ -22,7 +22,7 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Two multi-step workflows | Remote-work and PTO use cases; expense backup | Planned: Phase 7 |
 | Operational tool trace | Strict sanitized trace schema ready; runtime population planned | Foundation: Phase 4 |
 | Confirmation before write-like actions | `create_mock_hr_ticket` contract and test | Foundation |
-| Synthetic structured data | `mock_data` boundary and rules | Planned: Phase 3 |
+| Synthetic structured data | 30 employees, 6 locations, manager, PTO, benefits, and ticket seeds; strict schemas, checksums, semantic validation, SQLite build | Ready |
 | `/chat` endpoint and UI workflow | UI shell and architecture | Planned: Phases 4 and 8 |
 | Automated startup test | FastAPI TestClient health and root tests | Ready |
 | MCP discovery/call test | Contract test now | Planned: Phase 4 transport test |

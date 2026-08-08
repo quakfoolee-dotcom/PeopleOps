@@ -6,6 +6,8 @@
     "runtime_formats_at_least_2": true,
     "all_policy_ids_unique": true,
     "all_section_ids_unique": true,
+    "all_applicability_metadata_present": true,
+    "all_effective_dates_match_snapshot": true,
     "estimated_pages_within_30_120": true,
     "review_pdf_pages_within_30_120": true,
     "all_review_pdfs_exist": true,

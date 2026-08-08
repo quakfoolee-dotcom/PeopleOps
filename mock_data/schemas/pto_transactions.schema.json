@@ -1,0 +1,70 @@
+{
+  "$defs": {
+    "PTOTransaction": {
+      "additionalProperties": false,
+      "properties": {
+        "employee_id": {
+          "pattern": "^E-\\d{4}$",
+          "title": "Employee Id",
+          "type": "string"
+        },
+        "hours_delta": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,2}0*$",
+              "type": "string"
+            }
+          ],
+          "title": "Hours Delta"
+        },
+        "note": {
+          "maxLength": 240,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "transaction_date": {
+          "format": "date",
+          "title": "Transaction Date",
+          "type": "string"
+        },
+        "transaction_id": {
+          "pattern": "^PTO-TXN-\\d{4}$",
+          "title": "Transaction Id",
+          "type": "string"
+        },
+        "transaction_type": {
+          "$ref": "#/$defs/PTOTransactionType"
+        }
+      },
+      "required": [
+        "transaction_id",
+        "employee_id",
+        "transaction_date",
+        "transaction_type",
+        "hours_delta",
+        "note"
+      ],
+      "title": "PTOTransaction",
+      "type": "object"
+    },
+    "PTOTransactionType": {
+      "enum": [
+        "accrual",
+        "usage",
+        "adjustment",
+        "carryover"
+      ],
+      "title": "PTOTransactionType",
+      "type": "string"
+    }
+  },
+  "items": {
+    "$ref": "#/$defs/PTOTransaction"
+  },
+  "title": "PTOTransactionDataset",
+  "type": "array"
+}

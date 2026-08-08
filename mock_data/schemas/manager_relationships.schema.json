@@ -1,0 +1,36 @@
+{
+  "$defs": {
+    "ManagerRelationship": {
+      "additionalProperties": false,
+      "properties": {
+        "effective_date": {
+          "format": "date",
+          "title": "Effective Date",
+          "type": "string"
+        },
+        "employee_id": {
+          "pattern": "^E-\\d{4}$",
+          "title": "Employee Id",
+          "type": "string"
+        },
+        "manager_id": {
+          "pattern": "^E-\\d{4}$",
+          "title": "Manager Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "employee_id",
+        "manager_id",
+        "effective_date"
+      ],
+      "title": "ManagerRelationship",
+      "type": "object"
+    }
+  },
+  "items": {
+    "$ref": "#/$defs/ManagerRelationship"
+  },
+  "title": "ManagerRelationshipDataset",
+  "type": "array"
+}

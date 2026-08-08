@@ -1,0 +1,70 @@
+{
+  "$defs": {
+    "DataFileDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "file_name": {
+          "pattern": "^[a-z_]+\\.json$",
+          "title": "File Name",
+          "type": "string"
+        },
+        "record_count": {
+          "minimum": 0,
+          "title": "Record Count",
+          "type": "integer"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_name",
+        "record_count",
+        "sha256"
+      ],
+      "title": "DataFileDescriptor",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "as_of_date": {
+      "format": "date",
+      "title": "As Of Date",
+      "type": "string"
+    },
+    "files": {
+      "additionalProperties": {
+        "$ref": "#/$defs/DataFileDescriptor"
+      },
+      "title": "Files",
+      "type": "object"
+    },
+    "organization": {
+      "const": "Northstar Technologies Inc.",
+      "title": "Organization",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic_only": {
+      "const": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "organization",
+    "synthetic_only",
+    "as_of_date",
+    "files"
+  ],
+  "title": "MockDataManifest",
+  "type": "object"
+}

@@ -2,7 +2,7 @@
   "additionalProperties": false,
   "properties": {
     "as_of_date": {
-      "default": "2026-08-17",
+      "default": "2026-09-01",
       "format": "date",
       "title": "As Of Date",
       "type": "string"

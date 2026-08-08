@@ -3,7 +3,7 @@
   "name": "PeopleOps Assistant Gold Evaluation Suite",
   "organization": "Northstar Technologies Inc.",
   "synthetic_only": true,
-  "as_of_date": "2026-08-17",
+  "as_of_date": "2026-09-01",
   "cases": [
     {
       "case_id": "EVAL-POL-001",
@@ -313,7 +313,7 @@
       "case_id": "EVAL-TOOL-002",
       "title": "Employee PTO guidance and manager-message draft",
       "category": "employee_tool_workflow",
-      "prompt": "I am employee E-1021. Can I take PTO from August 24 through August 26, 2026? Check my balance and draft a message to my manager.",
+      "prompt": "I am employee E-1021. Can I take PTO from September 21 through September 23, 2026? Check my balance and draft a message to my manager.",
       "employee_id": "E-1021",
       "expected_facts": [
         "The requested interval contains three scheduled weekdays relative to the fixed as-of date.",

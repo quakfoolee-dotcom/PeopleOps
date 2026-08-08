@@ -1,0 +1,125 @@
+{
+  "$defs": {
+    "Employee": {
+      "additionalProperties": false,
+      "properties": {
+        "department": {
+          "maxLength": 100,
+          "minLength": 2,
+          "title": "Department",
+          "type": "string"
+        },
+        "employee_id": {
+          "pattern": "^E-\\d{4}$",
+          "title": "Employee Id",
+          "type": "string"
+        },
+        "employment_type": {
+          "$ref": "#/$defs/EmploymentType"
+        },
+        "hire_date": {
+          "format": "date",
+          "title": "Hire Date",
+          "type": "string"
+        },
+        "home_office_id": {
+          "pattern": "^LOC-[A-Z]{3}$",
+          "title": "Home Office Id",
+          "type": "string"
+        },
+        "manager_id": {
+          "anyOf": [
+            {
+              "pattern": "^E-\\d{4}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manager Id"
+        },
+        "remote_work_classification": {
+          "$ref": "#/$defs/RemoteWorkClassification"
+        },
+        "role": {
+          "maxLength": 120,
+          "minLength": 2,
+          "title": "Role",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/EmployeeStatus"
+        },
+        "synthetic_name": {
+          "maxLength": 120,
+          "minLength": 3,
+          "title": "Synthetic Name",
+          "type": "string"
+        },
+        "weekly_hours": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 40.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,2}0*$",
+              "type": "string"
+            }
+          ],
+          "title": "Weekly Hours"
+        }
+      },
+      "required": [
+        "employee_id",
+        "synthetic_name",
+        "employment_type",
+        "role",
+        "department",
+        "home_office_id",
+        "hire_date",
+        "remote_work_classification",
+        "status",
+        "weekly_hours"
+      ],
+      "title": "Employee",
+      "type": "object"
+    },
+    "EmployeeStatus": {
+      "enum": [
+        "active",
+        "leave",
+        "inactive"
+      ],
+      "title": "EmployeeStatus",
+      "type": "string"
+    },
+    "EmploymentType": {
+      "enum": [
+        "RFT",
+        "RPT",
+        "TEMP",
+        "CONTRACTOR"
+      ],
+      "title": "EmploymentType",
+      "type": "string"
+    },
+    "RemoteWorkClassification": {
+      "enum": [
+        "office",
+        "hybrid",
+        "remote"
+      ],
+      "title": "RemoteWorkClassification",
+      "type": "string"
+    }
+  },
+  "items": {
+    "$ref": "#/$defs/Employee"
+  },
+  "title": "EmployeeDataset",
+  "type": "array"
+}

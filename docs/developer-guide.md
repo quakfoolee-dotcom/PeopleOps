@@ -16,6 +16,7 @@ python -m venv .venv
 python -m pip install -e ".[dev]"
 python -m ruff check .
 python scripts/export_contract_schemas.py --check
+python scripts/validate_phase3_assets.py
 python -m pytest --cov=app --cov=peopleops_mcp --cov-report=term-missing
 uvicorn app.main:app --reload
 ```
@@ -44,11 +45,27 @@ When changing a policy:
 4. Re-run corpus validation and retrieval tests.
 5. Preserve stable policy and section identifiers unless a documented migration is required.
 
+## Synthetic operational data
+
+The committed source of truth is `mock_data/seed`; generated database files are disposable and ignored. Validate the full policy-and-data package with:
+
+```powershell
+python scripts/validate_phase3_assets.py
+```
+
+Build a local SQLite copy when needed for development:
+
+```powershell
+python scripts/validate_phase3_assets.py --database mock_data/generated/peopleops.db
+```
+
+The build is accepted only after strict schema, checksum, cross-record, date, manager-hierarchy, and SQLite foreign-key validation succeeds. See `mock_data/README.md` for the fixture contract and safe change procedure.
+
 ## Configuration
 
 Copy `.env.example` to `.env`. Provider keys are intentionally absent from the example. Future provider-specific keys must be read from the environment and must never be returned by `/health`.
 
-`SYNTHETIC_AS_OF_DATE` defaults to `2026-08-17`. Keep that value fixed for ordinary automated tests and gold-suite runs. A deliberate date change requires updating the gold suite, generated schemas where applicable, tests, and evaluation documentation together.
+`SYNTHETIC_AS_OF_DATE` defaults to `2026-09-01`, matching the policy corpus effective date. Keep that value fixed for ordinary automated tests and gold-suite runs. A deliberate date change requires updating the gold suite, mock-data snapshot, generated schemas where applicable, tests, and evaluation documentation together.
 
 ## Evaluation contracts
 

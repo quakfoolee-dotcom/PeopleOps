@@ -21,6 +21,10 @@ def test_health_reports_foundation_and_corpus() -> None:
     assert payload["version"] == "0.1.0"
     assert payload["components"]["application"]["status"] == "ready"
     assert payload["components"]["policy_corpus"]["status"] == "ready"
+    assert payload["components"]["mock_database"]["status"] == "ready"
+    assert "30 deterministic synthetic employee records" in payload["components"][
+        "mock_database"
+    ]["detail"]
     assert payload["components"]["mcp"]["status"] == "planned"
 
 

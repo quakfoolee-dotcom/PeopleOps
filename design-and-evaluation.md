@@ -23,7 +23,7 @@ The project uses 25 pre-implementation gold cases:
 | Ambiguous requests requiring clarification | 4 |
 | Out-of-scope, escalation, and safety | 3 |
 
-Each case identifies expected facts, policy sections, required, forbidden, and post-confirmation tools, expected workflow outcome, answer constraints, and action-safety behavior. The fixed synthetic as-of date is **2026-08-17**. `evaluation/gold_cases.json` is validated against Pydantic contracts, corpus section headings, MCP tool names, and the required category distribution.
+Each case identifies expected facts, policy sections, required, forbidden, and post-confirmation tools, expected workflow outcome, answer constraints, and action-safety behavior. The fixed synthetic as-of date is **2026-09-01**, matching the policy corpus effective date. `evaluation/gold_cases.json` is validated against Pydantic contracts, corpus section headings, MCP tool names, and the required category distribution.
 
 ## Metrics
 
@@ -40,4 +40,4 @@ The retrieval ablation will compare dense-only retrieval at `k=5`, hybrid retrie
 
 ## Current evidence
 
-Phases 1 and 2 validate startup, health reporting, the policy corpus, product naming, MCP tool contracts, the web shell, container construction, runtime data contracts, schema drift checks, and the 25-case gold suite. They do not claim RAG, MCP transport, agent workflow, or answer-quality results before those components exist.
+Phases 1 through 3 validate startup, health reporting, the 12-policy/45-page corpus, product naming, MCP tool contracts, the web shell, container construction, runtime data contracts, schema drift checks, the 25-case gold suite, and the deterministic 30-employee operational snapshot. Phase 3 additionally proves checksum integrity, cross-record consistency, an acyclic manager hierarchy, date alignment, synthetic-only enforcement, and a foreign-key-clean SQLite build. These phases do not claim RAG, MCP transport, agent workflow, or answer-quality results before those components exist.

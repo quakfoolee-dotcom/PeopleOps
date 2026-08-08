@@ -2,7 +2,7 @@
 
 ## Tools used
 
-OpenAI Codex was used during Phases 1 and 2 to:
+OpenAI Codex was used during Phases 1 through 3 to:
 
 - review the assignment requirements and Score 5 delivery plan;
 - inspect the GitHub repository and local policy-corpus package;
@@ -14,6 +14,9 @@ OpenAI Codex was used during Phases 1 and 2 to:
 - translate the approved ten-phase plan into GitHub milestones and acceptance issues;
 - draft and validate strict API, citation, operational-trace, pending-action, and evaluation contracts;
 - create the initial 25-case gold evaluation suite from the reviewed synthetic policy corpus.
+- define strict synthetic employee, manager, location, PTO, benefits, ticket, and manifest contracts;
+- generate deterministic fixtures, integrity checks, JSON Schemas, and a reproducible SQLite materialization path;
+- identify and correct the mismatch between the original evaluation snapshot date and the policy corpus effective date.
 
 ## Human responsibility and review
 

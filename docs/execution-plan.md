@@ -6,7 +6,7 @@ This ten-phase plan controls implementation order. A phase is complete only when
 |---|---|---|---|---|
 | 1. Foundation | Repository structure, dependencies, configuration, Docker, traceability, and GitHub planning | `/health` runs locally; backend imports and frontend builds in CI; all phases have GitHub milestones and acceptance issues | Establish reproducibility and map requirements to code, tests, documentation, and demo evidence. | Ready |
 | 2. Evaluation and data contracts | Twenty-five gold cases, API/citation/trace schemas, and fixed synthetic date | Every case declares facts, policy sections, tools, outcome, and safety behavior and passes schema/semantic validation | Define success before implementation to prevent subjective evaluation and missing scenarios. | Ready |
-| 3. Policy corpus and mock data | Coherent policies plus employee, PTO, benefits, manager, location, and ticket data | Corpus and synthetic-data validation pass | Retrieval and workflows depend on consistent evidence and deterministic structured data. | In progress: corpus ready; structured data next |
+| 3. Policy corpus and mock data | Coherent policies plus employee, PTO, benefits, manager, location, and ticket data | Corpus and synthetic-data validation pass | Retrieval and workflows depend on consistent evidence and deterministic structured data. | Ready |
 | 4. Thin vertical slice | API to orchestrator to discovered MCP tools to cited response and trace; deploy immediately | MCP discovery/invocation test and hosted `/health` pass | Validate the highest-risk architectural boundary before implementing the full tool suite. | Planned |
 | 5. RAG implementation | Format-aware ingestion, hybrid retrieval, evidence and citation validation | Known and multi-document queries retrieve correct evidence; fabricated citations fail | Hybrid retrieval covers semantic language and exact policy terminology. | Planned |
 | 6. MCP tool suite | Implement all eight planned tools through MCP | All tools are discoverable, schema-valid, traced, timeout-controlled, and tested | Enforce genuine MCP integration rather than direct data or retrieval access. | Planned |
@@ -32,4 +32,4 @@ This ten-phase plan controls implementation order. A phase is complete only when
 
 ## Next action
 
-Phase 3 will add deterministic synthetic employee, manager, location, PTO, benefits, and ticket fixtures. The records must satisfy the facts assumed by the gold employee-workflow cases and pass referential-integrity and synthetic-only validation before the Phase 4 vertical slice begins.
+Phase 4 will implement one bounded request through FastAPI, the orchestrator, MCP discovery, one policy tool, and one employee-data tool. The slice must return citations and an operational trace, prove that MCP—not direct data access—performed both calls, and expose a deployable health endpoint before the wider tool suite is built.

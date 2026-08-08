@@ -1,0 +1,99 @@
+{
+  "$defs": {
+    "BenefitsEligibility": {
+      "enum": [
+        "eligible",
+        "ineligible"
+      ],
+      "title": "BenefitsEligibility",
+      "type": "string"
+    },
+    "BenefitsEnrollment": {
+      "enum": [
+        "enrolled",
+        "waived",
+        "pending",
+        "not_eligible"
+      ],
+      "title": "BenefitsEnrollment",
+      "type": "string"
+    },
+    "BenefitsRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "as_of_date": {
+          "format": "date",
+          "title": "As Of Date",
+          "type": "string"
+        },
+        "coverage_tier": {
+          "anyOf": [
+            {
+              "enum": [
+                "employee",
+                "employee_plus_one",
+                "family"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coverage Tier"
+        },
+        "effective_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effective Date"
+        },
+        "eligibility_status": {
+          "$ref": "#/$defs/BenefitsEligibility"
+        },
+        "employee_id": {
+          "pattern": "^E-\\d{4}$",
+          "title": "Employee Id",
+          "type": "string"
+        },
+        "enrollment_status": {
+          "$ref": "#/$defs/BenefitsEnrollment"
+        },
+        "plan_code": {
+          "anyOf": [
+            {
+              "pattern": "^PLAN-[A-Z0-9-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plan Code"
+        }
+      },
+      "required": [
+        "employee_id",
+        "as_of_date",
+        "eligibility_status",
+        "enrollment_status"
+      ],
+      "title": "BenefitsRecord",
+      "type": "object"
+    }
+  },
+  "items": {
+    "$ref": "#/$defs/BenefitsRecord"
+  },
+  "title": "BenefitsDataset",
+  "type": "array"
+}

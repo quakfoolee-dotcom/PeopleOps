@@ -1,0 +1,69 @@
+{
+  "$defs": {
+    "Location": {
+      "additionalProperties": false,
+      "properties": {
+        "city": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "country_code": {
+          "enum": [
+            "CA",
+            "US"
+          ],
+          "title": "Country Code",
+          "type": "string"
+        },
+        "currency": {
+          "enum": [
+            "CAD",
+            "USD"
+          ],
+          "title": "Currency",
+          "type": "string"
+        },
+        "location_id": {
+          "pattern": "^LOC-[A-Z]{3}$",
+          "title": "Location Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "province_or_state": {
+          "maxLength": 100,
+          "minLength": 2,
+          "title": "Province Or State",
+          "type": "string"
+        },
+        "timezone": {
+          "pattern": "^America/[A-Za-z_]+$",
+          "title": "Timezone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location_id",
+        "name",
+        "city",
+        "province_or_state",
+        "country_code",
+        "timezone",
+        "currency"
+      ],
+      "title": "Location",
+      "type": "object"
+    }
+  },
+  "items": {
+    "$ref": "#/$defs/Location"
+  },
+  "title": "LocationDataset",
+  "type": "array"
+}

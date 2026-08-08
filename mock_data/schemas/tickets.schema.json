@@ -1,0 +1,90 @@
+{
+  "$defs": {
+    "MockHRTicket": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_employee_id": {
+          "pattern": "^E-\\d{4}$",
+          "title": "Affected Employee Id",
+          "type": "string"
+        },
+        "category": {
+          "maxLength": 80,
+          "minLength": 2,
+          "title": "Category",
+          "type": "string"
+        },
+        "confirmation_reference": {
+          "pattern": "^CONF-\\d{4}$",
+          "title": "Confirmation Reference",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "priority": {
+          "$ref": "#/$defs/TicketPriority"
+        },
+        "routing_team": {
+          "maxLength": 100,
+          "minLength": 2,
+          "title": "Routing Team",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/TicketStatus"
+        },
+        "summary": {
+          "maxLength": 500,
+          "minLength": 5,
+          "title": "Summary",
+          "type": "string"
+        },
+        "ticket_id": {
+          "pattern": "^TKT-\\d{4}$",
+          "title": "Ticket Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticket_id",
+        "category",
+        "priority",
+        "summary",
+        "affected_employee_id",
+        "routing_team",
+        "status",
+        "created_at",
+        "confirmation_reference"
+      ],
+      "title": "MockHRTicket",
+      "type": "object"
+    },
+    "TicketPriority": {
+      "enum": [
+        "low",
+        "normal",
+        "high",
+        "urgent"
+      ],
+      "title": "TicketPriority",
+      "type": "string"
+    },
+    "TicketStatus": {
+      "enum": [
+        "open",
+        "in_progress",
+        "closed"
+      ],
+      "title": "TicketStatus",
+      "type": "string"
+    }
+  },
+  "items": {
+    "$ref": "#/$defs/MockHRTicket"
+  },
+  "title": "TicketDataset",
+  "type": "array"
+}

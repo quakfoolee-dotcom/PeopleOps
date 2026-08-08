@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "organization": "Northstar Technologies Inc.",
+  "synthetic_only": true,
+  "as_of_date": "2026-09-01",
+  "files": {
+    "locations": {"file_name":"locations.json","record_count":6,"sha256":"ff410a49af73d5c2b2f0340fba5a01adf312595124cc947cf5715f65e4e1682f"},
+    "employees": {"file_name":"employees.json","record_count":30,"sha256":"81228881d424d547c696348cd41b94e0fb30945c172db13784a5db4c77a9b89c"},
+    "manager_relationships": {"file_name":"manager_relationships.json","record_count":29,"sha256":"259fde5bc0fe96b416f53137fdda3cbec5e1659d1cec36d7140b8df427c8d167"},
+    "pto_balances": {"file_name":"pto_balances.json","record_count":30,"sha256":"f6abc49bb0419b6fc8a234ff066bfc91b62c3869989eab56007d8d8e475fb770"},
+    "pto_transactions": {"file_name":"pto_transactions.json","record_count":15,"sha256":"2c1a99ffefa06e2182b6b7e0eed08741c9a08d10927a1cffcd670408b58dc900"},
+    "benefits": {"file_name":"benefits.json","record_count":30,"sha256":"51ca6850bc5917bfb831e22646802d85f9d607b4c1f697a09cbcf096f6d49d2c"},
+    "tickets": {"file_name":"tickets.json","record_count":6,"sha256":"fe427af5cfe3f15da8ca31894f730f3f8f9b2a6b4b167f4a789022412043ca08"}
+  }
+}

@@ -90,7 +90,7 @@ def test_pending_action_and_response_require_confirmation_together() -> None:
     )
     response = ChatResponse(
         request_id=request_id,
-        as_of_date=date(2026, 8, 17),
+        as_of_date=date(2026, 9, 1),
         status=WorkflowStatus.AWAITING_CONFIRMATION,
         outcome=WorkflowOutcome.CONFIRMATION_REQUIRED,
         answer="Review this preview and explicitly confirm before creation.",
@@ -102,7 +102,7 @@ def test_pending_action_and_response_require_confirmation_together() -> None:
     with pytest.raises(ValidationError, match="pending_action"):
         ChatResponse(
             request_id=request_id,
-            as_of_date=date(2026, 8, 17),
+            as_of_date=date(2026, 9, 1),
             status=WorkflowStatus.AWAITING_CONFIRMATION,
             outcome=WorkflowOutcome.CONFIRMATION_REQUIRED,
             answer="Missing preview.",
@@ -111,7 +111,7 @@ def test_pending_action_and_response_require_confirmation_together() -> None:
     with pytest.raises(ValidationError, match="confirmation_required"):
         ChatResponse(
             request_id=request_id,
-            as_of_date=date(2026, 8, 17),
+            as_of_date=date(2026, 9, 1),
             status=WorkflowStatus.AWAITING_CONFIRMATION,
             outcome=WorkflowOutcome.ANSWERED,
             answer="Wrong outcome.",

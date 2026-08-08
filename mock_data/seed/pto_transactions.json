@@ -1,0 +1,17 @@
+[
+  {"transaction_id":"PTO-TXN-0001","employee_id":"E-1003","transaction_date":"2026-01-01","transaction_type":"carryover","hours_delta":"40.00","note":"Synthetic 2025 carryover."},
+  {"transaction_id":"PTO-TXN-0002","employee_id":"E-1007","transaction_date":"2026-07-31","transaction_type":"accrual","hours_delta":"10.00","note":"Synthetic monthly accrual."},
+  {"transaction_id":"PTO-TXN-0003","employee_id":"E-1007","transaction_date":"2026-06-19","transaction_type":"usage","hours_delta":"-8.00","note":"Synthetic approved PTO day."},
+  {"transaction_id":"PTO-TXN-0004","employee_id":"E-1011","transaction_date":"2026-07-31","transaction_type":"accrual","hours_delta":"10.00","note":"Synthetic monthly accrual."},
+  {"transaction_id":"PTO-TXN-0005","employee_id":"E-1014","transaction_date":"2026-07-31","transaction_type":"accrual","hours_delta":"10.00","note":"Synthetic monthly accrual."},
+  {"transaction_id":"PTO-TXN-0006","employee_id":"E-1014","transaction_date":"2026-05-22","transaction_type":"usage","hours_delta":"-8.00","note":"Synthetic approved PTO day."},
+  {"transaction_id":"PTO-TXN-0007","employee_id":"E-1021","transaction_date":"2026-01-01","transaction_type":"carryover","hours_delta":"32.00","note":"Synthetic 2025 carryover."},
+  {"transaction_id":"PTO-TXN-0008","employee_id":"E-1021","transaction_date":"2026-07-31","transaction_type":"accrual","hours_delta":"10.00","note":"Synthetic monthly accrual."},
+  {"transaction_id":"PTO-TXN-0009","employee_id":"E-1021","transaction_date":"2026-07-03","transaction_type":"usage","hours_delta":"-8.00","note":"Synthetic approved PTO day."},
+  {"transaction_id":"PTO-TXN-0010","employee_id":"E-1022","transaction_date":"2026-07-31","transaction_type":"accrual","hours_delta":"7.50","note":"Synthetic part-time monthly accrual."},
+  {"transaction_id":"PTO-TXN-0011","employee_id":"E-1023","transaction_date":"2026-07-31","transaction_type":"accrual","hours_delta":"10.00","note":"Synthetic monthly accrual before leave."},
+  {"transaction_id":"PTO-TXN-0012","employee_id":"E-1024","transaction_date":"2026-08-10","transaction_type":"adjustment","hours_delta":"8.00","note":"Synthetic opening balance for new employee."},
+  {"transaction_id":"PTO-TXN-0013","employee_id":"E-1026","transaction_date":"2026-07-31","transaction_type":"accrual","hours_delta":"10.00","note":"Synthetic monthly accrual."},
+  {"transaction_id":"PTO-TXN-0014","employee_id":"E-1028","transaction_date":"2026-07-31","transaction_type":"accrual","hours_delta":"10.00","note":"Synthetic monthly accrual."},
+  {"transaction_id":"PTO-TXN-0015","employee_id":"E-1029","transaction_date":"2026-07-31","transaction_type":"accrual","hours_delta":"8.75","note":"Synthetic part-time monthly accrual."}
+]

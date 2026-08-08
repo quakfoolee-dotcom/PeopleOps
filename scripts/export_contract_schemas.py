@@ -3,14 +3,34 @@ import json
 
 from app.api.contracts import ChatRequest, ChatResponse, ToolTraceEntry
 from app.core.config import PROJECT_ROOT
+from app.data.contracts import (
+    BenefitsDataset,
+    EmployeeDataset,
+    LocationDataset,
+    ManagerRelationshipDataset,
+    MockDataManifest,
+    PTOBalanceDataset,
+    PTOTransactionDataset,
+    TicketDataset,
+)
 from app.evaluation.contracts import GoldEvaluationSuite
 
-SCHEMA_DIRECTORY = PROJECT_ROOT / "evaluation" / "schemas"
+EVALUATION_SCHEMA_DIRECTORY = PROJECT_ROOT / "evaluation" / "schemas"
+MOCK_DATA_SCHEMA_DIRECTORY = PROJECT_ROOT / "mock_data" / "schemas"
 SCHEMA_MODELS = {
-    "chat_request.schema.json": ChatRequest,
-    "chat_response.schema.json": ChatResponse,
-    "gold_evaluation_suite.schema.json": GoldEvaluationSuite,
-    "tool_trace_entry.schema.json": ToolTraceEntry,
+    EVALUATION_SCHEMA_DIRECTORY / "chat_request.schema.json": ChatRequest,
+    EVALUATION_SCHEMA_DIRECTORY / "chat_response.schema.json": ChatResponse,
+    EVALUATION_SCHEMA_DIRECTORY / "gold_evaluation_suite.schema.json": GoldEvaluationSuite,
+    EVALUATION_SCHEMA_DIRECTORY / "tool_trace_entry.schema.json": ToolTraceEntry,
+    MOCK_DATA_SCHEMA_DIRECTORY / "manifest.schema.json": MockDataManifest,
+    MOCK_DATA_SCHEMA_DIRECTORY / "locations.schema.json": LocationDataset,
+    MOCK_DATA_SCHEMA_DIRECTORY / "employees.schema.json": EmployeeDataset,
+    MOCK_DATA_SCHEMA_DIRECTORY
+    / "manager_relationships.schema.json": ManagerRelationshipDataset,
+    MOCK_DATA_SCHEMA_DIRECTORY / "pto_balances.schema.json": PTOBalanceDataset,
+    MOCK_DATA_SCHEMA_DIRECTORY / "pto_transactions.schema.json": PTOTransactionDataset,
+    MOCK_DATA_SCHEMA_DIRECTORY / "benefits.schema.json": BenefitsDataset,
+    MOCK_DATA_SCHEMA_DIRECTORY / "tickets.schema.json": TicketDataset,
 }
 
 
@@ -29,14 +49,14 @@ def main() -> int:
 
     mismatches: list[str] = []
     if not arguments.check:
-        SCHEMA_DIRECTORY.mkdir(parents=True, exist_ok=True)
+        EVALUATION_SCHEMA_DIRECTORY.mkdir(parents=True, exist_ok=True)
+        MOCK_DATA_SCHEMA_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
-    for filename, model in SCHEMA_MODELS.items():
-        schema_path = SCHEMA_DIRECTORY / filename
+    for schema_path, model in SCHEMA_MODELS.items():
         rendered = render_schema(model)
         if arguments.check:
             if not schema_path.is_file() or schema_path.read_text(encoding="utf-8") != rendered:
-                mismatches.append(filename)
+                mismatches.append(str(schema_path.relative_to(PROJECT_ROOT)))
         else:
             schema_path.write_text(rendered, encoding="utf-8")
 

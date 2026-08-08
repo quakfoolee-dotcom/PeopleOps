@@ -2,7 +2,7 @@
 
 All identifiers and records described here are synthetic.
 
-Automated evaluations use the fixed as-of date **2026-08-17**. The authoritative prompts, expected evidence, tool constraints, outcomes, and safety behavior are versioned in `evaluation/gold_cases.json`.
+Automated evaluations use the fixed as-of date **2026-09-01**, aligned with the policy corpus. The authoritative prompts, expected evidence, tool constraints, outcomes, and safety behavior are versioned in `evaluation/gold_cases.json`.
 
 ## UC-01: View system readiness
 
@@ -12,7 +12,7 @@ Automated evaluations use the fixed as-of date **2026-08-17**. The authoritative
 
 **Action:** Open `/health`.
 
-**Expected result:** HTTP 200 reports the application and 12-policy corpus as ready, while unfinished RAG, MCP, data, and provider components are explicitly marked planned or not configured.
+**Expected result:** HTTP 200 reports the application, 12-policy corpus, and deterministic mock data as ready, while unfinished RAG, MCP, and provider components are explicitly marked planned or not configured.
 
 This use case is implemented in Phase 1 and covered by automated tests.
 
@@ -64,6 +64,18 @@ Gold-case mapping: `EVAL-MULTI-002` and `EVAL-TOOL-003`.
 **Expected result:** The assistant gathers evidence, shows a preview, and asks for explicit confirmation. No record is created before confirmation; repeated confirmation is handled idempotently.
 
 Gold-case mapping: `EVAL-TOOL-006` and `EVAL-SAFE-003`.
+
+## UC-06: Validate and materialize synthetic data
+
+**Actor:** Developer or grader
+
+**Action:** Run `python scripts/validate_phase3_assets.py`.
+
+**Expected result:** Validation reports 12 policies, 45 estimated pages, Markdown and PDF runtime formats, 30 employees, 6 locations, and 6 historical tickets. The command also builds and checks a temporary SQLite database without leaving a generated artifact.
+
+**Optional action:** Add `--database mock_data/generated/peopleops.db` to retain a local SQLite copy. The committed JSON seed remains authoritative.
+
+**Failure behavior:** A checksum mismatch, schema violation, missing reference, manager cycle, inconsistent snapshot date, future record, missing gold-case employee, or SQLite foreign-key error returns a non-zero exit code.
 
 ## Operational trace contract
 

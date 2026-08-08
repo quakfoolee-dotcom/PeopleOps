@@ -1,0 +1,8 @@
+[
+  {"location_id":"LOC-YVR","name":"Vancouver Office","city":"Vancouver","province_or_state":"British Columbia","country_code":"CA","timezone":"America/Vancouver","currency":"CAD"},
+  {"location_id":"LOC-YYZ","name":"Toronto Office","city":"Toronto","province_or_state":"Ontario","country_code":"CA","timezone":"America/Toronto","currency":"CAD"},
+  {"location_id":"LOC-YUL","name":"Montreal Office","city":"Montreal","province_or_state":"Quebec","country_code":"CA","timezone":"America/Toronto","currency":"CAD"},
+  {"location_id":"LOC-SFO","name":"San Francisco Office","city":"San Francisco","province_or_state":"California","country_code":"US","timezone":"America/Los_Angeles","currency":"USD"},
+  {"location_id":"LOC-NYC","name":"New York Office","city":"New York","province_or_state":"New York","country_code":"US","timezone":"America/New_York","currency":"USD"},
+  {"location_id":"LOC-SEA","name":"Seattle Office","city":"Seattle","province_or_state":"Washington","country_code":"US","timezone":"America/Los_Angeles","currency":"USD"}
+]

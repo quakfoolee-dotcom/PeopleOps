@@ -17,3 +17,7 @@ ui/dist/
 .DS_Store
 Thumbs.db
 tmp/
+mock_data/generated/
+*.sqlite
+*.sqlite3
+*.db
