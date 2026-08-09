@@ -2,11 +2,10 @@
 
 ## Current status
 
-PeopleOps Assistant is live on a free Render web service managed by the repository's Blueprint.
-The Phase 8.2 structured-result deployment of commit `68c24ed` passed Render's `/health` check on
-2026-08-08 Pacific time (2026-08-09 UTC). Public browser and API smoke tests proved the
-evidence-first workspace, structured workflow decisions, the real MCP-backed email-draft action,
-all four reproducible tasks, and the confirmation-gated synthetic ticket experience.
+PeopleOps Assistant version `0.7.0` is live on a free Render web service managed by the repository's
+Blueprint. The Phase 9 release of exact commit `885b7f242c21635a97e2c64be704c1d16fc34943`
+passed the pre-deployment release gate, Render health check, exact-commit deployment status, and
+automated post-deployment public smoke on 2026-08-08 Pacific time (2026-08-09 UTC).
 
 ## Hosted endpoints
 
@@ -23,42 +22,30 @@ ephemeral filesystem is safe for this phase. Phase 10 will measure cold and warm
 
 ## Verified production evidence
 
-- root returned HTTP 200 and rendered the application shell;
-- `/health` returned `status=ok`, `version=0.6.0`, `environment=production`, and MCP
-  `status=ready` with eight discoverable tools serving the Phase 8 product interface;
-- the hosted readability check measured citation body text at 13 px and tool names and trace
-  results at 12 px, with no horizontal page overflow; citation previews now normalize Markdown
-  table separators and provide an expandable full cited snippet;
-- the hosted browser rendered all four demo tasks, selected-employee context, citation and tool
-  inspectors, request/trace identifiers, and live component health without console errors;
-- the production RAG component reported `phase5-hybrid-v2` ready with 12 policies, 169 sections,
-  and 169 chunks;
-- remote-work eligibility returned `status=completed`, `outcome=conditional`, four validated
-  citations, eight traced MCP calls, and a non-empty trace ID for E-1007;
-- the hosted result card separately rendered `Conditionally eligible`, 42 calendar/30 business
-  days, `International exceptional`, seven required approvals, exact-date clarification, and five
-  evidence-derived next steps;
-- **Draft PeopleOps email** reran the bounded remote-work workflow and finished with
-  `outcome=draft_only`, nine traced MCP operations ending in `draft_hr_email`, and explicit
-  `sent=false` and `persisted=false` evidence;
-- PTO guidance returned `status=completed`, `outcome=draft_only`, two validated citations, and
-  eight traced MCP calls for E-1021;
-- expense compliance returned `status=completed`, `outcome=conditional`, three validated
-  citations, and seven traced MCP calls for E-1014;
-- the hosted confirmation dialog showed the exact sanitized preview with no create call; cancel
-  closed the dialog while preserving a blocked pending action;
-- the API confirmation sequence created a synthetic ticket only after explicit confirmation;
-  replay returned the same ticket, and the signed token was neither rendered nor traced;
-- the committed Phase 7 evaluation passed repeated primary workflows, expense compliance,
-  clarification, unavailable-service, evidence-conflict, confirmation, idempotency, token-redaction,
-  and seed-immutability cases;
-- six frontend tests covered the workspace, structured decisions, the real draft action, cited
-  evidence, confirmation-bound creation, and cancel-without-create; 75 backend tests passed at
-  90.48% coverage;
-- [GitHub CI run 31297341809](https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31297341809)
-  passed frontend, backend, and production-container jobs;
-- GitHub deployment `5815920698` and Render deploy `dep-d9s185mq1p3s73fd69tg` reported success for
-  exact commit `68c24ed58af99988fe521e0c7d4f45090bb9d9cc`.
+- [GitHub CI run 31298687350](https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31298687350)
+  passed backend, frontend, production-container startup/workflow smoke, evidence upload, and the
+  explicit release gate;
+- all 82 backend tests passed at 90.49% coverage; six frontend tests and the strict TypeScript/Vite
+  production build passed, including five consecutive local runs of the formerly timing-sensitive
+  confirmation-focus test;
+- GitHub deployment `5816151462` reported success for exact commit
+  `885b7f242c21635a97e2c64be704c1d16fc34943` in environment
+  `main - peopleops-assistant-demo`;
+- [hosted smoke run 31298780994](https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31298780994)
+  checked out that exact commit, passed the public release contract, and retained artifact
+  `hosted-smoke-31298780994` for 30 days;
+- `/health` returned `status=ok`, `version=0.7.0`, `environment=production`, full release SHA
+  `885b7f242c21635a97e2c64be704c1d16fc34943`, and ready application, corpus, RAG, MCP, and mock-data
+  components;
+- hosted health/wake, root, and chat timings were 273 ms, 264 ms, and 2,082 ms respectively;
+- the read-only E-1007 Germany workflow returned a conditional outcome with exact sections `INT-5`,
+  `INT-13`, `RWK-5`, and `SEC-8`, plus eight MCP operations and non-empty request/trace IDs;
+- dependency configuration validation passed; all seven policy-reconciliation jobs succeeded, and
+  incompatible bundled major/runtime-line update PRs were automatically closed;
+- a separate Windows native health request independently returned the expected version, full release
+  SHA, and component state. The Python duplicate smoke was blocked before HTTP by the managed
+  network's non-standard inspection CA, while the clean GitHub-hosted path passed with normal TLS
+  verification.
 
 ## Release procedure
 
