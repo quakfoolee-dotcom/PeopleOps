@@ -22,19 +22,20 @@ This use case is implemented in Phase 1 and covered by automated tests.
 
 **Prompt:** “I am employee E-1007 and live in British Columbia. Can I work from Germany for six weeks? Explain the approvals I need.”
 
-**Current bounded sequence:**
+**Implemented Phase 7 sequence:**
 
 1. Validate and look up the synthetic employee.
 2. Discover and validate the complete eight-tool suite through the official MCP client.
 3. Invoke `lookup_employee_profile` and `search_policy_documents` through MCP.
 4. Retrieve and validate exact international-work, remote-work, and security sections through the
    hybrid RAG-backed policy tool.
-5. Produce conditional next steps with citations and a sanitized operational trace.
+5. Run the deterministic compliance screen and produce conditional next steps with citations and a
+   sanitized operational trace.
 
 **Acceptance:** Real MCP calls appear in the operational trace; citations support each material
 policy statement; unavailable tools or missing evidence never result in invented employee facts.
-Draft and compliance tools are implemented in Phase 6; sequencing them in this `/chat` workflow
-remains Phase 7 work.
+Missing identifiers or trip details clarify before tool use; unavailable tools, insufficient
+evidence, or policy conflicts fail closed or escalate.
 
 This workflow was implemented in Phase 4 and upgraded to hybrid retrieval in Phase 5. MCP,
 orchestrator, API, RAG, and UI tests cover it.
@@ -45,7 +46,7 @@ Gold-case mapping: `EVAL-MULTI-001` and `EVAL-TOOL-001`.
 
 **Prompt:** “I am employee E-1021. Can I take three PTO days next week? Check my balance and draft a message to my manager.”
 
-**Phase 7 workflow over implemented Phase 6 tools:**
+**Implemented Phase 7 workflow:**
 
 1. Clarify dates when “next week” is ambiguous relative to the fixed test date.
 2. Look up the synthetic employee and PTO balance through MCP.
@@ -61,10 +62,10 @@ Gold-case mapping: `EVAL-TOOL-002`; relative-date clarification is covered by `E
 
 **Prompt:** “Can employee E-1014 be reimbursed for a CAD 900 home-office chair?”
 
-**Phase 7 workflow over implemented Phase 6 tools:** Retrieve the employee role and location,
+**Implemented Phase 7 workflow:** Retrieve the employee role and location,
 equipment and expense policies, applicable allowance, and approval rules; return a cited compliant,
-conditional, or unsupported result. The profile, exact-section, search, and compliance tools already
-pass independent Phase 6 integration tests.
+conditional, or unsupported result. The ordinary CAD 500 cap and CAD 400 employee-paid remainder
+for the E-1014/CAD 900 example are calculated by the compliance tool, not invented by the agent.
 
 Gold-case mapping: `EVAL-MULTI-002` and `EVAL-TOOL-003`.
 
@@ -74,9 +75,9 @@ Gold-case mapping: `EVAL-MULTI-002` and `EVAL-TOOL-003`.
 
 **Expected result:** The assistant gathers evidence, shows a preview, and asks for explicit
 confirmation. No record is created before confirmation; repeated confirmation is handled
-idempotently. Phase 6 implements and safety-tests the preview, signed confirmation, exact action
-binding, expiry, redaction, and process-local create tool. Phase 7 adds agent sequencing and Phase 8
-adds the confirmation interface.
+idempotently. Phase 7 sequences policy evidence, preview, the explicit-confirmation API, and the MCP
+create tool while preserving exact action binding, expiry, redaction, and process-local mutation.
+Phase 8 adds the confirmation card to the product interface.
 
 Gold-case mapping: `EVAL-TOOL-006` and `EVAL-SAFE-003`.
 

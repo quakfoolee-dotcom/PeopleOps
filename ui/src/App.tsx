@@ -52,12 +52,12 @@ const workflows = [
   {
     label: "PTO request guidance",
     description: "Check balance and notice rules, then prepare a clearly labelled manager-request draft.",
-    state: "Planned workflow",
+    state: "Live bounded workflow",
   },
   {
     label: "Expense compliance",
     description: "Assess a home-office purchase against role, allowance, approval, and receipt requirements.",
-    state: "Planned workflow",
+    state: "Live bounded workflow",
   },
 ];
 
@@ -111,7 +111,7 @@ export default function App() {
           <span className="brand-mark" aria-hidden="true">P</span>
           <span>PeopleOps Assistant</span>
         </div>
-        <span className="milestone-pill">Phase 6 · v0.3.0</span>
+        <span className="milestone-pill">Phase 7 · v0.4.0</span>
       </nav>
 
       <section className="hero">
@@ -133,7 +133,7 @@ export default function App() {
           <ol>
             <li><strong>12</strong><span>synthetic policies</span></li>
             <li><strong>25</strong><span>gold evaluation cases</span></li>
-            <li><strong>2</strong><span>live MCP tools</span></li>
+            <li><strong>8</strong><span>live MCP tools</span></li>
           </ol>
           <p className="card-note">No real employee data. No irreversible actions.</p>
         </aside>
@@ -142,7 +142,7 @@ export default function App() {
       <section id="live-demo" className="section-block demo-section" aria-labelledby="demo-title">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Thin vertical slice</p>
+            <p className="eyebrow">Bounded workflows</p>
             <h2 id="demo-title">Trace a request from question to evidence</h2>
           </div>
           <span className="live-label">Live</span>
@@ -158,6 +158,9 @@ export default function App() {
                 onChange={(event) => setEmployeeId(event.target.value)}
               >
                 <option value="E-1007">E-1007 · Alex Morgan · Vancouver</option>
+                <option value="E-1021">E-1021 · Logan Murphy · Toronto</option>
+                <option value="E-1014">E-1014 · Parker Adams · Vancouver</option>
+                <option value="E-1011">E-1011 · Drew Campbell · Toronto</option>
                 <option value="E-9999">E-9999 · Unknown employee test</option>
               </select>
             </div>
@@ -171,7 +174,7 @@ export default function App() {
               />
             </div>
             <p className="form-note">
-              The current workflow is intentionally bounded; all eight Phase 6 MCP tools are now available.
+              Remote-work, PTO, and expense requests run through bounded Phase 7 MCP workflows.
             </p>
             <button className="submit-action" disabled={submitting || !message.trim()} type="submit">
               {submitting ? "Tracing request…" : "Run cited workflow"}
@@ -298,7 +301,7 @@ export default function App() {
             <p className="eyebrow">Demonstration roadmap</p>
             <h2 id="workflow-title">Three reproducible HR workflows</h2>
           </div>
-          <span className="planned-label">1 live · 2 planned</span>
+          <span className="planned-label">3 live · confirmation UI planned for Phase 8</span>
         </div>
         <div className="workflow-grid">
           {workflows.map((workflow, index) => (

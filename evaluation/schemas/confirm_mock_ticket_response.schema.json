@@ -1,0 +1,28 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "confirmation_id": {
+      "pattern": "^PREVIEW-[A-F0-9]{16}$",
+      "title": "Confirmation Id",
+      "type": "string"
+    },
+    "confirmation_token": {
+      "maxLength": 500,
+      "minLength": 32,
+      "title": "Confirmation Token",
+      "type": "string"
+    },
+    "synthetic_only": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "confirmation_id",
+    "confirmation_token"
+  ],
+  "title": "ConfirmMockTicketResponse",
+  "type": "object"
+}

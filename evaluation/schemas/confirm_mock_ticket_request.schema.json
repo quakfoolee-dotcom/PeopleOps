@@ -1,0 +1,21 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "confirmation_id": {
+      "pattern": "^PREVIEW-[A-F0-9]{16}$",
+      "title": "Confirmation Id",
+      "type": "string"
+    },
+    "user_confirmed": {
+      "const": true,
+      "title": "User Confirmed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "confirmation_id",
+    "user_confirmed"
+  ],
+  "title": "ConfirmMockTicketRequest",
+  "type": "object"
+}

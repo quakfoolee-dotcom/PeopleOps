@@ -85,6 +85,6 @@ being insufficient for a final approval or eligibility decision.
 
 ## Phase boundary
 
-The existing `/chat` route remains intentionally bounded to the E-1007 Germany workflow. Phase 6
-adds the complete eight-tool MCP suite; Phase 7 consumes this retriever in the broader typed
+At the Phase 5 boundary, `/chat` remained intentionally bounded to the E-1007 Germany workflow.
+Phase 6 added the complete eight-tool MCP suite; Phase 7 now consumes this retriever in the typed
 workflows; Phase 8 implements the approved evidence-first `/chat` workspace.

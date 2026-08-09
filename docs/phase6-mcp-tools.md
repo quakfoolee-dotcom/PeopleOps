@@ -92,6 +92,6 @@ unchanged. The recorded per-tool durations are warm local observations, not host
 
 ## Phase boundary
 
-Phase 6 completes the tool layer. Phase 7 will select and sequence these tools in typed workflows,
+Phase 6 completed the tool layer. Phase 7 now selects and sequences these tools in typed workflows,
 including clarification, retry, evidence, citation, escalation, and user-confirmation states. Phase
 8 will expose those flows through the approved evidence-first interface.

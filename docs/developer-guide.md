@@ -18,6 +18,8 @@ python -m ruff check .
 python scripts/export_contract_schemas.py --check
 python scripts/validate_phase3_assets.py
 python scripts/build_rag_index.py --check
+python scripts/evaluate_mcp_tools.py
+python scripts/evaluate_workflows.py
 python -m pytest --cov=app --cov=peopleops_mcp --cov-report=term-missing
 uvicorn app.main:app --reload
 ```
@@ -129,9 +131,23 @@ Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/chat `
     -ContentType application/json -Body $body
 ```
 
-Verify a conditional outcome; citations including `INT-5`, `INT-13`, `RWK-5`, and `SEC-8`; enriched
-chunk metadata; and the three-step MCP trace. See `docs/phase5-rag.md` for retrieval behavior and
-`docs/phase4-thin-slice.md` for the original workflow boundary.
+Verify a conditional outcome; exact citations `INT-5`, `INT-13`, `RWK-5`, and `SEC-8`; enriched
+chunk metadata; and the eight-entry trace from discovery through compliance.
+
+## Phase 7 workflow verification
+
+Run the focused workflows, safety gates, and machine-readable evaluation:
+
+```powershell
+python -m pytest tests/test_phase7_workflows.py tests/test_phase7_safety.py `
+  tests/test_phase7_evaluation.py
+python scripts/evaluate_workflows.py
+```
+
+The suite repeats both primary workflows, verifies the expense backup, preserves PTO and ticket
+fixtures, exercises the confirmation API, proves idempotency and token redaction, and tests missing
+IDs, relative dates, unavailable tools, retry, insufficient evidence, and policy conflicts. See
+`docs/phase7-workflows.md` for request bodies and the manual confirmation sequence.
 
 ## Evaluation contracts
 

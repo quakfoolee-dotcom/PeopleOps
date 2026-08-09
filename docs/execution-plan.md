@@ -10,7 +10,7 @@ This ten-phase plan controls implementation order. A phase is complete only when
 | 4. Thin vertical slice | API to orchestrator to discovered MCP tools to cited response and trace; deploy immediately | MCP discovery/invocation test and hosted `/health` pass | Validate the highest-risk architectural boundary before implementing the full tool suite. | Ready |
 | 5. RAG implementation | Format-aware ingestion, hybrid retrieval, evidence and citation validation | Known and multi-document queries retrieve correct evidence; fabricated citations fail | Hybrid retrieval covers semantic language and exact policy terminology. | Ready |
 | 6. MCP tool suite | Implement all eight planned tools through MCP | All tools are discoverable, schema-valid, traced, timeout-controlled, and tested | Enforce genuine MCP integration rather than direct data or retrieval access. | Ready |
-| 7. Agent workflows and safety | Bounded remote-work, PTO, and expense workflows with safety gates | Primary workflows and failure/safety cases pass repeatedly | Typed bounded workflows provide testable and safer behavior. | Planned |
+| 7. Agent workflows and safety | Bounded remote-work, PTO, and expense workflows with safety gates | Primary workflows and failure/safety cases pass repeatedly | Typed bounded workflows provide testable and safer behavior. | Ready |
 | 8. Product interface | Chat, demo tasks, citations, traces, status, and confirmation experience | Grader can reproduce both workflows and inspect evidence | Expose operational evidence without exposing hidden chain-of-thought. | Foundation shell ready; functionality planned |
 | 9. CI/CD and deployment | Complete checks, deterministic CI substitutes, and gated hosting | Hosted application and health smoke tests pass after required checks | Deploy from the vertical slice onward and gate releases on verification. | CI/Docker and initial gated hosting ready; full Phase 9 hardening planned |
 | 10. Evaluation and submission | Gold-suite run, ablations, metrics, documents, access, and demo | Every Score-5 gate passes | Evaluation and demo evidence are graded deliverables. | Planned |
@@ -32,6 +32,6 @@ This ten-phase plan controls implementation order. A phase is complete only when
 
 ## Next action
 
-Begin Phase 7 agent workflow and safety implementation. Build bounded typed remote-work, PTO, and
-expense workflows over the complete Phase 6 MCP suite, including clarification, escalation, retry,
-evidence, citation, and explicit-confirmation states.
+Begin Phase 8 product-interface implementation using the approved evidence-first wireframe. Add
+preset demo tasks, employee context, citation/snippet inspection, complete MCP trace, request and
+service status, and the interactive pending-action confirmation card.

@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.api.actions import router as actions_router
 from app.api.chat import router as chat_router
 from app.api.health import router as health_router
 from app.core.config import get_settings
@@ -35,6 +36,7 @@ def create_app() -> FastAPI:
     )
     application.include_router(health_router)
     application.include_router(chat_router)
+    application.include_router(actions_router)
 
     assets_directory = UI_DIST / "assets"
     if assets_directory.is_dir():
@@ -48,7 +50,7 @@ def create_app() -> FastAPI:
         return {
             "name": settings.app_name,
             "version": settings.app_version,
-            "status": "phase-6-ready",
+            "status": "phase-7-ready",
             "health": "/health",
             "chat": "/chat",
             "mcp": "/mcp",

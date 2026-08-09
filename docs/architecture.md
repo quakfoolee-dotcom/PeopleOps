@@ -11,11 +11,14 @@ React/Vite UI
 FastAPI application
     |-- /health
     |-- /chat
+    |-- /actions/mock-tickets/confirm
     `-- /mcp (Streamable HTTP)
     |
     v
-Bounded international-work orchestrator
-    |-- fixed workflow and evidence gate
+Bounded typed workflow orchestrator
+    |-- remote-work, PTO, expense, and mock-ticket state machines
+    |-- classification, evidence, conflict, and confirmation gates
+    |-- eight logical calls maximum; one bounded retry
     |-- typed response and citations
     `-- sanitized operational trace
     |
@@ -40,31 +43,33 @@ Official MCP client -> MCP server
 - `app/core`: environment-driven configuration.
 - `app/rag`: authoritative Markdown/PDF ingestion, enriched chunks, local embeddings, BM25-style
   keyword scoring, hybrid ranking, query decomposition, evidence checks, and citation validation.
-- `app/agent`: bounded international-work orchestration. It does not access data stores or RAG directly.
+- `app/agent`: typed workflow classification, state transitions, tool selection, and safety gates. It
+  does not access data stores, RAG, tool implementations, or the action store directly.
+- `app/services`: confirmation coordinator outside the agent data-access boundary; creation still
+  occurs only through the MCP tool.
 - `app/mcp_client`: official MCP client session plus shared timeout, sanitization, summary, and
   operational-trace boundary.
 - `peopleops_mcp`: all eight implemented schemas, tools, Streamable HTTP server, and the isolated
   confirmation/action store.
 - `policy_corpus`: authoritative runtime sources and human-review artifacts.
-- `mock_data`: future deterministic synthetic structured records.
+- `mock_data`: deterministic synthetic structured records and validation fixtures.
 - `app/evaluation`: gold-suite schemas, loading, and semantic validation.
-- `evaluation`: 25 gold cases, generated JSON Schemas, and Phase 5 retrieval ablation artifacts;
-  full workflow metrics remain Phase 10.
+- `evaluation`: 25 gold cases, generated JSON Schemas, retrieval/tool artifacts, and the Phase 7
+  workflow/safety evaluation; full gold-suite metrics remain Phase 10.
 - `ui`: React application built into static production assets.
 
-## Current bounded request sequence
+## Phase 7 bounded request sequence
 
 1. `/chat` validates the strict request contract and fixed synthetic date.
-2. The orchestrator rejects unsupported prompts before accessing tools.
+2. Typed classification rejects unsupported or incomplete prompts before accessing tools.
 3. The official MCP client discovers the server's current tool list.
-4. The orchestrator verifies that the complete eight-tool Phase 6 suite is available.
+4. The orchestrator verifies the selected workflow's required tools and applies the call budget.
 5. `lookup_employee_profile` reads the validated synthetic snapshot.
-6. `search_policy_documents` loads the persisted hybrid index, decomposes the query, applies hybrid
-   ranking and evidence coverage, validates citations, and returns enriched evidence.
-7. The orchestrator produces a typed conditional answer, citations, and sanitized timing trace.
-
-The workflow remains bounded while Phase 7 adds the wider state machine. The remaining tools are
-already independently exercised through the same official client and traced executor.
+6. Workflow-specific structured tools read PTO data or deterministic compliance calculations.
+7. Hybrid search must report sufficient, conflict-free evidence, then each required section is
+   fetched exactly and converted to an allow-listed citation.
+8. The state machine returns conditional guidance, a non-persistent draft, a clarification, an
+   escalation, or a confirmation preview. A confirmed mock create is idempotent.
 
 ## Phase 6 tool and action boundary
 
@@ -72,7 +77,7 @@ All policy and structured-data access occurs inside `peopleops_mcp`. The agent i
 schemas, the server's required tool-name set, and the client executor. An architectural test scans
 the agent imports and rejects direct store, RAG, tool-implementation, or action-store access.
 
-The ticket action uses two non-tool state transitions before MCP invocation: prepare a preview, then
+The ticket action uses two non-data state transitions before MCP invocation: prepare a preview, then
 record explicit user confirmation and mint signed proof. The MCP create tool validates the proof,
 expiry, exact preview fingerprint, and idempotency key. Its only mutation is a process-local synthetic
 record; source fixtures and external HR systems are never changed.
@@ -85,3 +90,5 @@ record; source fixtures and external HR systems are never changed.
 4. Mock actions require signed, expiring, exact-preview user confirmation and idempotency.
 5. Operational traces show tool names, arguments, outcomes, and evidence without hidden chain-of-thought.
 6. All people and records remain synthetic.
+7. Relative dates, conflicting IDs, unknown destinations, and incomplete amounts are never silently
+   resolved.

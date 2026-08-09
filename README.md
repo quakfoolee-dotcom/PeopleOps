@@ -6,7 +6,7 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 ## Execution status
 
-Phases 1 through 6 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
+Phases 1 through 7 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
 
 - a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
 - a React and Vite demonstration interface with citations and an MCP trace;
@@ -24,6 +24,10 @@ Phases 1 through 6 of the [authoritative execution plan](docs/execution-plan.md)
 - strict mock-data schemas, checksums, semantic validation, and a reproducible SQLite build;
 - a bounded orchestrator that discovers the complete eight-tool suite and invokes tools only through
   the official MCP client;
+- typed, bounded international remote-work, PTO, and expense state machines with an eight-call
+  logical budget and one retry per MCP operation;
+- clarification, structured-data, evidence-sufficiency, policy-conflict, exact-citation,
+  escalation, draft, and confirmation gates;
 - exact policy-section, employee-profile, PTO, benefits, deterministic compliance, draft-email,
   and confirmation-gated mock-ticket capabilities alongside hybrid policy search;
 - one shared timeout-controlled MCP executor with sanitized result traces for every tool;
@@ -35,12 +39,13 @@ Phases 1 through 6 of the [authoritative execution plan](docs/execution-plan.md)
   deduplication, evidence coverage/conflict checks, and exact citation allow-listing;
 - a retrieval ablation over 24 policy-evidence cases and 48 expected sections, with hybrid `k=8`
   selected at 100% gold evidence recall in the recorded Phase 5 run;
-- a cited E-1007 international remote-work demonstration with multi-document security evidence and
-  fail-closed behavior;
+- repeatable cited remote-work and PTO primary workflows, a cited expense backup, and a complete
+  preview/confirm/idempotent mock-ticket API sequence;
 - a live Render deployment whose Blueprint waits for passing GitHub checks.
 
-Broader agent workflows, the final product workspace, and provider-backed generation remain
-deliberately deferred to later phases. See the [Phase 6 MCP guide](docs/phase6-mcp-tools.md),
+The final product workspace and provider-backed generation remain deliberately deferred to later
+phases. See the [Phase 7 workflow guide](docs/phase7-workflows.md),
+[Phase 6 MCP guide](docs/phase6-mcp-tools.md),
 [Phase 5 RAG guide](docs/phase5-rag.md), and
 [Phase 4 workflow guide](docs/phase4-thin-slice.md) for the exact boundary.
 
@@ -50,8 +55,8 @@ deliberately deferred to later phases. See the [Phase 6 MCP guide](docs/phase6-m
 - Health: <https://peopleops-assistant-demo.onrender.com/health>
 - API documentation: <https://peopleops-assistant-demo.onrender.com/docs>
 
-The free service can require a cold start after inactivity. Wait for it to wake, then use the E-1007
-Germany preset to reproduce the cited Phase 4 workflow.
+The free service can require a cold start after inactivity. Wait for it to wake, then use the
+E-1007 Germany preset or submit the documented PTO and expense prompts.
 
 ## Architecture
 
@@ -61,7 +66,7 @@ Browser (React/Vite demonstration)
         v
 FastAPI (/health, /chat, /mcp)
         |
-        +--> Bounded orchestrator
+        +--> Bounded typed workflow state machines
         |          |
         |          v
         |     Official MCP client discovery
@@ -125,8 +130,10 @@ npm run dev
 
 Open `http://127.0.0.1:5173`. Vite proxies `/health` and `/chat` to the backend during development.
 
-The page includes a preset E-1007 Germany request. Select **Run cited workflow** to see the
-conditional answer, multi-policy citations, request ID, and MCP discovery/call trace.
+The page includes a preset E-1007 Germany request and employee selectors for the PTO, expense, and
+ticket examples. Select **Run cited workflow** to see the result, exact policy citations, request ID,
+and complete MCP discovery/call trace. The interactive confirmation card remains Phase 8 work; the
+confirmation API sequence is documented in the Phase 7 guide.
 
 ## Automated validation
 
@@ -153,6 +160,7 @@ The production image builds the React application and serves it from FastAPI.
 - [Phase 4 thin vertical slice](docs/phase4-thin-slice.md)
 - [Phase 5 hybrid RAG](docs/phase5-rag.md)
 - [Phase 6 MCP tool suite](docs/phase6-mcp-tools.md)
+- [Phase 7 bounded workflows](docs/phase7-workflows.md)
 - [Score-5 UI design decision](docs/ui-design-decision.md)
 - [Developer guide](docs/developer-guide.md)
 - [Architecture](docs/architecture.md)

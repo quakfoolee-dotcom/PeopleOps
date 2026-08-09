@@ -45,6 +45,25 @@ class MCPToolExecutor:
     def __init__(self, timeout_seconds: float) -> None:
         self.timeout_seconds = float(timeout_seconds)
 
+    async def discover_with_retry(
+        self,
+        client: Client,
+        trace: list[ToolTraceEntry],
+        *,
+        max_attempts: int = 2,
+    ) -> set[str]:
+        """Retry discovery once after a controlled transient failure."""
+        if max_attempts < 1 or max_attempts > 2:
+            raise ValueError("bounded discovery supports one or two attempts")
+        for attempt in range(1, max_attempts + 1):
+            try:
+                return await self.discover(client, trace)
+            except Exception:
+                if attempt == max_attempts:
+                    raise
+                await asyncio.sleep(0)
+        raise RuntimeError("unreachable discovery retry state")
+
     async def discover(
         self,
         client: Client,
@@ -156,6 +175,27 @@ class MCPToolExecutor:
                 )
             )
             raise
+
+    async def call_with_retry(
+        self,
+        client: Client,
+        trace: list[ToolTraceEntry],
+        tool_name: str,
+        arguments: dict[str, Any],
+        *,
+        max_attempts: int = 2,
+    ) -> dict[str, Any]:
+        """Run at most two idempotent attempts and preserve each attempt in the trace."""
+        if max_attempts < 1 or max_attempts > 2:
+            raise ValueError("bounded tool execution supports one or two attempts")
+        for attempt in range(1, max_attempts + 1):
+            try:
+                return await self.call(client, trace, tool_name, arguments)
+            except Exception:
+                if attempt == max_attempts:
+                    raise
+                await asyncio.sleep(0)
+        raise RuntimeError("unreachable tool retry state")
 
     @staticmethod
     def _result_summary(tool_name: str, payload: dict[str, Any]) -> str:

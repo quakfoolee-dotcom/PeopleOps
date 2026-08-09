@@ -1,7 +1,13 @@
 import argparse
 import json
 
-from app.api.contracts import ChatRequest, ChatResponse, ToolTraceEntry
+from app.api.contracts import (
+    ChatRequest,
+    ChatResponse,
+    ConfirmMockTicketRequest,
+    ConfirmMockTicketResponse,
+    ToolTraceEntry,
+)
 from app.core.config import PROJECT_ROOT
 from app.data.contracts import (
     BenefitsDataset,
@@ -20,6 +26,10 @@ MOCK_DATA_SCHEMA_DIRECTORY = PROJECT_ROOT / "mock_data" / "schemas"
 SCHEMA_MODELS = {
     EVALUATION_SCHEMA_DIRECTORY / "chat_request.schema.json": ChatRequest,
     EVALUATION_SCHEMA_DIRECTORY / "chat_response.schema.json": ChatResponse,
+    EVALUATION_SCHEMA_DIRECTORY
+    / "confirm_mock_ticket_request.schema.json": ConfirmMockTicketRequest,
+    EVALUATION_SCHEMA_DIRECTORY
+    / "confirm_mock_ticket_response.schema.json": ConfirmMockTicketResponse,
     EVALUATION_SCHEMA_DIRECTORY / "gold_evaluation_suite.schema.json": GoldEvaluationSuite,
     EVALUATION_SCHEMA_DIRECTORY / "tool_trace_entry.schema.json": ToolTraceEntry,
     MOCK_DATA_SCHEMA_DIRECTORY / "manifest.schema.json": MockDataManifest,

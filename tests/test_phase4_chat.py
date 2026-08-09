@@ -25,7 +25,7 @@ def test_orchestrator_completes_cited_mcp_workflow_with_operational_trace() -> N
 
     assert response.status == "completed"
     assert response.outcome == "conditional"
-    assert "not automatically approved" in response.answer
+    assert "not approval" in response.answer
     assert "30 business days" in response.answer
     assert {
         "INT-5",
@@ -38,6 +38,11 @@ def test_orchestrator_completes_cited_mcp_workflow_with_operational_trace() -> N
         "mcp_discover_tools",
         "lookup_employee_profile",
         "search_policy_documents",
+        "get_policy_section",
+        "get_policy_section",
+        "get_policy_section",
+        "get_policy_section",
+        "check_policy_compliance",
     ]
     assert all(entry.status == "succeeded" for entry in response.tool_trace)
     assert response.tool_trace[1].sanitized_arguments == {"employee_id": "E-1007"}
@@ -64,8 +69,8 @@ def test_chat_api_returns_contract_validated_response_from_mcp_workflow() -> Non
     payload = response.json()
     assert payload["status"] == "completed"
     assert payload["outcome"] == "conditional"
-    assert len(payload["citations"]) == 8
-    assert [entry["sequence"] for entry in payload["tool_trace"]] == [1, 2, 3]
+    assert len(payload["citations"]) == 4
+    assert [entry["sequence"] for entry in payload["tool_trace"]] == list(range(1, 9))
     assert all("token" not in entry["sanitized_arguments"] for entry in payload["tool_trace"])
 
 
@@ -127,7 +132,7 @@ def test_orchestrator_clarifies_unknown_employee_without_policy_lookup() -> None
     ]
 
 
-def test_orchestrator_rejects_missing_id_unsupported_workflow_and_wrong_date() -> None:
+def test_orchestrator_clarifies_incomplete_pto_and_supports_other_remote_duration() -> None:
     orchestrator = PeopleOpsOrchestrator(MCPGateway(target=mcp_server, timeout_seconds=2))
 
     missing_id = asyncio.run(orchestrator.run(ChatRequest(message=DEMO_MESSAGE)))
@@ -155,13 +160,9 @@ def test_orchestrator_rejects_missing_id_unsupported_workflow_and_wrong_date() -
     )
 
     assert missing_id.status == "needs_clarification"
-    assert unsupported.status == "out_of_scope"
-    assert different_trip.status == "out_of_scope"
+    assert unsupported.status == "needs_clarification"
+    assert different_trip.status == "completed"
+    assert different_trip.outcome == "conditional"
     assert wrong_date.status == "needs_clarification"
-    assert (
-        missing_id.tool_trace
-        == unsupported.tool_trace
-        == different_trip.tool_trace
-        == wrong_date.tool_trace
-        == []
-    )
+    assert missing_id.tool_trace == unsupported.tool_trace == wrong_date.tool_trace == []
+    assert different_trip.tool_trace

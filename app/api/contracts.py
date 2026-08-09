@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from enum import StrEnum
 from typing import Any, Literal
 from uuid import UUID, uuid4
@@ -29,6 +29,29 @@ class WorkflowOutcome(StrEnum):
     ESCALATION_REQUIRED = "escalation_required"
     REFUSED = "refused"
     CONFIRMATION_REQUIRED = "confirmation_required"
+
+
+class WorkflowKind(StrEnum):
+    REMOTE_WORK = "remote_work"
+    PTO = "pto"
+    EXPENSE = "expense"
+    MOCK_TICKET = "mock_ticket"
+    UNSUPPORTED = "unsupported"
+
+
+class WorkflowStage(StrEnum):
+    CLASSIFY = "classify"
+    CLARIFY = "clarify"
+    DISCOVER = "discover"
+    PROFILE = "profile"
+    RETRIEVE = "retrieve"
+    EVIDENCE = "evidence"
+    COMPLIANCE = "compliance"
+    DRAFT = "draft"
+    CONFIRMATION = "confirmation"
+    ACTION = "action"
+    ESCALATE = "escalate"
+    RESPOND = "respond"
 
 
 class ToolCallStatus(StrEnum):
@@ -109,6 +132,11 @@ class ToolTraceEntry(ContractModel):
 
 class PendingActionPreview(ContractModel):
     action_type: Literal["create_mock_hr_ticket"]
+    confirmation_id: str | None = Field(
+        default=None,
+        pattern=r"^PREVIEW-[A-F0-9]{16}$",
+    )
+    expires_at: datetime | None = None
     summary: str = Field(min_length=1, max_length=1000)
     sanitized_arguments: dict[str, Any]
     confirmation_required: Literal[True] = True
@@ -135,6 +163,8 @@ class ChatResponse(ContractModel):
     status: WorkflowStatus
     outcome: WorkflowOutcome
     answer: str = Field(min_length=1, max_length=12000)
+    workflow: WorkflowKind = WorkflowKind.UNSUPPORTED
+    workflow_state: WorkflowStage = WorkflowStage.RESPOND
     citations: list[Citation] = Field(default_factory=list)
     tool_trace: list[ToolTraceEntry] = Field(default_factory=list)
     pending_action: PendingActionPreview | None = None
@@ -149,3 +179,14 @@ class ChatResponse(ContractModel):
         if waiting and self.outcome is not WorkflowOutcome.CONFIRMATION_REQUIRED:
             raise ValueError("awaiting confirmation requires confirmation_required outcome")
         return self
+
+
+class ConfirmMockTicketRequest(ContractModel):
+    confirmation_id: str = Field(pattern=r"^PREVIEW-[A-F0-9]{16}$")
+    user_confirmed: Literal[True]
+
+
+class ConfirmMockTicketResponse(ContractModel):
+    confirmation_id: str = Field(pattern=r"^PREVIEW-[A-F0-9]{16}$")
+    confirmation_token: str = Field(min_length=32, max_length=500)
+    synthetic_only: Literal[True] = True

@@ -48,13 +48,21 @@ returned the same mock ticket for an idempotent repeat, omitted the confirmation
 and verified the committed ticket seed was unchanged. These are tool-layer results, not full
 workflow-selection metrics.
 
+The Phase 7 focused workflow evaluation repeats the remote-work and PTO primary workflows three
+times each, exercises the expense backup, and records exact citations and bounded tool paths. It
+also proves no-tool clarification for missing identity and ambiguous dates, fail-closed unavailable
+service behavior, policy-conflict escalation, preview-before-create confirmation, idempotency,
+token redaction, and unchanged fixtures.
+
 ## Current evidence
 
-Phases 1 through 6 validate startup and health reporting; the 12-policy/45-page corpus; deterministic
+Phases 1 through 7 validate startup and health reporting; the 12-policy/45-page corpus; deterministic
 structured data; API and evaluation contracts; live MCP discovery and calls; the bounded deployed
 workflow; direct Markdown and PDF ingestion; a persisted 169-section hybrid index; evidence
 sufficiency and conflict behavior; citation allow-listing; and 100% retrieval evidence recall for
 the selected Phase 5 configuration. Phase 6 additionally proves eight schema-valid tools, shared
 timeouts and sanitized traces, read-only structured-data operations, deterministic compliance,
-draft-only email behavior, and confirmation-gated idempotent mock actions. Broader agent workflows,
-provider generation, and final product evaluation are not yet complete.
+draft-only email behavior, confirmation-gated idempotent mock actions, and typed remote-work, PTO,
+expense, and ticket workflows with clarification, retry, evidence, conflict, citation, escalation,
+and confirmation gates. The final product workspace, provider generation, and complete gold-suite
+evaluation are not yet complete.

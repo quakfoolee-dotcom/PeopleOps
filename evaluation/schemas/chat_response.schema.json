@@ -98,11 +98,37 @@
           "title": "Action Type",
           "type": "string"
         },
+        "confirmation_id": {
+          "anyOf": [
+            {
+              "pattern": "^PREVIEW-[A-F0-9]{16}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmation Id"
+        },
         "confirmation_required": {
           "const": true,
           "default": true,
           "title": "Confirmation Required",
           "type": "boolean"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At"
         },
         "sanitized_arguments": {
           "additionalProperties": true,
@@ -190,6 +216,17 @@
       "title": "ToolTraceEntry",
       "type": "object"
     },
+    "WorkflowKind": {
+      "enum": [
+        "remote_work",
+        "pto",
+        "expense",
+        "mock_ticket",
+        "unsupported"
+      ],
+      "title": "WorkflowKind",
+      "type": "string"
+    },
     "WorkflowOutcome": {
       "enum": [
         "answered",
@@ -201,6 +238,24 @@
         "confirmation_required"
       ],
       "title": "WorkflowOutcome",
+      "type": "string"
+    },
+    "WorkflowStage": {
+      "enum": [
+        "classify",
+        "clarify",
+        "discover",
+        "profile",
+        "retrieve",
+        "evidence",
+        "compliance",
+        "draft",
+        "confirmation",
+        "action",
+        "escalate",
+        "respond"
+      ],
+      "title": "WorkflowStage",
       "type": "string"
     },
     "WorkflowStatus": {
@@ -264,6 +319,14 @@
       },
       "title": "Tool Trace",
       "type": "array"
+    },
+    "workflow": {
+      "$ref": "#/$defs/WorkflowKind",
+      "default": "unsupported"
+    },
+    "workflow_state": {
+      "$ref": "#/$defs/WorkflowStage",
+      "default": "respond"
     }
   },
   "required": [

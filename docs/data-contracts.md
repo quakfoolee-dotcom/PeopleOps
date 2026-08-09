@@ -17,8 +17,12 @@ All deterministic examples and automated evaluations use **2026-09-01**, the cor
   snippet; policy version and effective date; source format/path; optional PDF page; and retrieval
   score.
 - `ToolTraceEntry`: ordered tool name, sanitized arguments, status, bounded result summary, duration, and error code where required.
-- `PendingActionPreview`: a confirmation-gated preview for synthetic ticket creation.
-- `ChatResponse`: final status and outcome, answer, citations, tool trace, and optional pending action.
+- `PendingActionPreview`: a confirmation-gated preview with confirmation ID and expiry for synthetic
+  ticket creation.
+- `ChatResponse`: selected workflow, terminal workflow state, final status and outcome, answer,
+  citations, tool trace, and optional pending action.
+- `ConfirmMockTicketRequest` and `ConfirmMockTicketResponse`: explicit-true confirmation and the
+  signed proof returned to the unchanged follow-up request.
 
 The response contract enforces that a pending action exists exactly when the workflow is awaiting confirmation. Trace and preview arguments reject nested keys commonly used for credentials. Operational traces contain evidence and tool activity, never hidden chain-of-thought.
 

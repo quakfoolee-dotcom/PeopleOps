@@ -54,7 +54,7 @@ mcp_server = MCPServer(
         "Typed tools over synthetic PeopleOps policy and employee data, including one "
         "confirmation-gated in-memory mock action."
     ),
-    version="0.3.0",
+    version="0.4.0",
 )
 
 

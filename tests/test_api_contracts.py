@@ -8,6 +8,7 @@ from app.api.contracts import (
     ChatRequest,
     ChatResponse,
     Citation,
+    ConfirmMockTicketRequest,
     PendingActionPreview,
     ToolCallStatus,
     ToolTraceEntry,
@@ -130,4 +131,18 @@ def test_action_preview_rejects_sensitive_keys() -> None:
             action_type="create_mock_hr_ticket",
             summary="Unsafe preview.",
             sanitized_arguments={"authorization": "must-not-appear"},
+        )
+
+
+def test_confirmation_request_requires_an_explicit_true_decision() -> None:
+    request = ConfirmMockTicketRequest(
+        confirmation_id="PREVIEW-ABCDEF0123456789",
+        user_confirmed=True,
+    )
+
+    assert request.user_confirmed is True
+    with pytest.raises(ValidationError):
+        ConfirmMockTicketRequest(
+            confirmation_id="PREVIEW-ABCDEF0123456789",
+            user_confirmed=False,  # type: ignore[arg-type]
         )

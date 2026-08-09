@@ -21,6 +21,7 @@ Invoke-NativeCommand -FilePath $python -Arguments @("scripts/export_contract_sch
 Invoke-NativeCommand -FilePath $python -Arguments @("scripts/validate_phase3_assets.py")
 Invoke-NativeCommand -FilePath $python -Arguments @("scripts/build_rag_index.py", "--check")
 Invoke-NativeCommand -FilePath $python -Arguments @("scripts/evaluate_mcp_tools.py")
+Invoke-NativeCommand -FilePath $python -Arguments @("scripts/evaluate_workflows.py")
 Invoke-NativeCommand -FilePath $python -Arguments @(
     "-m", "pytest",
     "--cov=app", "--cov=peopleops_mcp", "--cov-report=term-missing", "--cov-fail-under=85"

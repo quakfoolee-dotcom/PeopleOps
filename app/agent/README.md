@@ -1,7 +1,8 @@
 # Agent package
 
-The current bounded international-work workflow uses the official MCP client and requires discovery
-of the complete eight-tool suite. Phase 7 expands it into typed remote-work, PTO, and expense state
-machines. Agent code must not import data stores, RAG, tool implementations, or the action store;
-the Phase 6 architecture test enforces that boundary. Workflows expose sanitized operational traces,
-not hidden chain-of-thought.
+Phase 7 implements typed remote-work, PTO, expense, and mock-ticket state machines over the official
+MCP client. Classification and clarification occur before tool access; each selected workflow has a
+fixed transition allow-list, an eight-call logical budget, and one retry per discovery or invocation.
+Agent code must not import data stores, RAG, tool implementations, or the action store; the
+architecture test enforces that boundary. Workflows expose sanitized operational traces, not hidden
+chain-of-thought.
