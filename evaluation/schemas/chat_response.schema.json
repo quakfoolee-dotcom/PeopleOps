@@ -90,6 +90,73 @@
       "title": "Citation",
       "type": "object"
     },
+    "DecisionSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "category_label": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Label"
+        },
+        "clarification_needed": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Clarification Needed",
+          "type": "array"
+        },
+        "duration_label": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration Label"
+        },
+        "next_steps": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Next Steps",
+          "type": "array"
+        },
+        "required_approvals": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 12,
+          "title": "Required Approvals",
+          "type": "array"
+        },
+        "status_label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Status Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status_label"
+      ],
+      "title": "DecisionSummary",
+      "type": "object"
+    },
     "PendingActionPreview": {
       "additionalProperties": false,
       "properties": {
@@ -290,6 +357,17 @@
       },
       "title": "Citations",
       "type": "array"
+    },
+    "decision_summary": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DecisionSummary"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "outcome": {
       "$ref": "#/$defs/WorkflowOutcome"

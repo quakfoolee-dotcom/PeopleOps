@@ -11,7 +11,7 @@ is a React/Vite application served by FastAPI in production and uses only the pu
 | Header | Product identity, synthetic-data warning, selected employee | Local presentation data aligned to the committed synthetic seed |
 | Demo-task rail | One-click remote-work, PTO, expense, and ticket scenarios | Versioned Phase 7 workflow prompts |
 | System health | Current component status, application version, environment | Live `/health` response |
-| Conversation | User request, bounded outcome, answer, counts, request ID, trace ID | Live `/chat` response |
+| Conversation | User request, structured decision, answer, next steps, counts, request ID, trace ID | Live `/chat` response |
 | Employee context | Role, department, manager, location, employment, PTO snapshot | Presentation subset of committed synthetic records |
 | Citation inspector | Policy/section IDs, snippets, versions, effective dates, format, pages, chunk IDs, scores | Validated citation objects returned by `/chat` |
 | Tool-trace inspector | Ordered MCP calls, sanitized arguments, summaries, status, errors, duration | Sanitized operational trace returned by `/chat` |
@@ -26,16 +26,20 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 2. Check **System health** in the left rail. The API, corpus, RAG index, MCP, and mock database
    should report ready; the optional provider may truthfully report not configured.
 3. In **International remote work**, select **Run task**.
-4. Confirm the result is conditional and inspect four exact citations, eight MCP operations,
-   request ID, trace ID, employee context, and fixed as-of date.
-5. Run **PTO request guidance**. Confirm the result is labelled draft-only and the message is not
+4. Confirm the card separately shows conditional status, 42 calendar/30 business days,
+   `International exceptional`, required approvals, exact-date clarification, and ordered next
+   steps. Inspect four exact citations, eight MCP operations, request ID, trace ID, employee
+   context, and the labelled demo policy as-of date.
+5. Select **Draft PeopleOps email**. Confirm the bounded workflow calls `draft_hr_email` and returns
+   a visible `Draft - not sent` result without sending or persisting anything.
+6. Run **PTO request guidance**. Confirm the result is labelled draft-only and the message is not
    represented as sent.
-6. Run **Expense compliance**. Confirm the cap, employee-paid remainder, approval path, citations,
+7. Run **Expense compliance**. Confirm the cap, employee-paid remainder, approval path, citations,
    and tool trace are visible.
-7. Run **Confirmation-gated ticket**. Inspect the action preview and verify that the trace contains
+8. Run **Confirmation-gated ticket**. Inspect the action preview and verify that the trace contains
    no create call. Select **Cancel** to prove the action remains pending, then reopen it with
    **Review pending action**.
-8. Select **Confirm mock ticket**. Confirm the final response identifies the synthetic ticket and
+9. Select **Confirm mock ticket**. Confirm the final response identifies the synthetic ticket and
    the trace now contains one `create_mock_hr_ticket` call. The signed token is never rendered.
 
 ## Control behavior
@@ -46,6 +50,10 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 - **New chat** and **Ask another question** clear the current response without mutating data.
 - **Copy guidance** copies the answer plus request and trace identifiers when clipboard access is
   available.
+- **Draft PeopleOps email** is shown only for eligible remote-work guidance and runs the existing
+  MCP draft tool; the result remains explicitly unsent and non-persistent.
+- **Re-run** controls repeat the exact employee-bound request. Unsupported or decorative workflow
+  actions are not displayed.
 - Citation and trace panels use native expandable controls, including on narrow screens.
 - The confirmation dialog focuses the primary decision, supports Escape/cancel, and reuses the
   original request ID, employee, and message after confirmation.
@@ -68,9 +76,10 @@ summary disclosure controls.
 
 1. workspace identity, health, demo tasks, evidence panels, and employee context;
 2. loading a preset without invoking a workflow;
-3. cited workflow rendering with citation, trace, request ID, and trace ID;
-4. explicit confirmation followed by request-bound creation; and
-5. cancellation that leaves the write-like action blocked.
+3. structured decision, approvals, clarification, next steps, citations, trace, and identifiers;
+4. the real MCP-backed remote-work draft action;
+5. explicit confirmation followed by request-bound creation; and
+6. cancellation that leaves the write-like action blocked.
 
 Run:
 

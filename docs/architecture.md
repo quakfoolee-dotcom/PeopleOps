@@ -18,7 +18,7 @@ FastAPI application
 Bounded typed workflow orchestrator
     |-- remote-work, PTO, expense, and mock-ticket state machines
     |-- classification, evidence, conflict, and confirmation gates
-    |-- eight logical calls maximum; one bounded retry
+    |-- ten logical calls maximum; one bounded retry
     |-- typed response and citations
     `-- sanitized operational trace
     |

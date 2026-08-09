@@ -4,9 +4,12 @@ Phase 2 froze the interfaces and expected behavior. Phases 3 through 6 now imple
 data, retrieval, bounded `/chat` path, live MCP transport, and complete tool suite against those
 predefined expectations.
 
-## Fixed synthetic date
+## Demo policy as-of date
 
-All deterministic examples and automated evaluations use **2026-09-01**, the corpus effective date. The default is defined in `app/core/constants.py` and can be configured with `SYNTHETIC_AS_OF_DATE`. Evaluation runs must record the suite date and must not silently substitute the wall-clock date.
+All deterministic examples and automated evaluations use **2026-09-01**, the corpus effective date.
+The UI labels this the demo policy as-of date so it is not mistaken for today's date. The default is
+defined in `app/core/constants.py` and can be configured with `SYNTHETIC_AS_OF_DATE`. Evaluation
+runs must record the suite date and must not silently substitute the wall-clock date.
 
 ## Runtime API contracts
 
@@ -17,10 +20,13 @@ All deterministic examples and automated evaluations use **2026-09-01**, the cor
   snippet; policy version and effective date; source format/path; optional PDF page; and retrieval
   score.
 - `ToolTraceEntry`: ordered tool name, sanitized arguments, status, bounded result summary, duration, and error code where required.
+- `DecisionSummary`: UI-ready status, duration or request amount, policy category, required approvals,
+  clarification needs, and ordered next steps produced from the same typed workflow evidence as the
+  answer.
 - `PendingActionPreview`: a confirmation-gated preview with confirmation ID and expiry for synthetic
   ticket creation.
 - `ChatResponse`: selected workflow, terminal workflow state, final status and outcome, answer,
-  citations, tool trace, and optional pending action.
+  optional decision summary, citations, tool trace, and optional pending action.
 - `ConfirmMockTicketRequest` and `ConfirmMockTicketResponse`: explicit-true confirmation and the
   signed proof returned to the unchanged follow-up request.
 

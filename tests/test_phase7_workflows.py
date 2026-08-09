@@ -45,6 +45,32 @@ def test_remote_work_state_machine_is_repeatable_cited_and_bounded() -> None:
     assert "not approval" in responses[0].answer
     assert "Manager" in responses[0].answer
     assert "Legal" in responses[0].answer
+    summary = responses[0].decision_summary
+    assert summary is not None
+    assert summary.status_label == "Conditionally eligible"
+    assert summary.duration_label == "42 calendar days / 30 business days"
+    assert summary.category_label == "International exceptional"
+    assert "Manager" in summary.required_approvals
+    assert summary.clarification_needed == ["Exact travel and working dates"]
+    assert summary.next_steps
+
+
+def test_remote_work_can_prepare_a_real_unsent_peopleops_email_draft() -> None:
+    response = asyncio.run(
+        _agent().run(
+            ChatRequest(
+                message=f"{REMOTE_PROMPT} Draft a PeopleOps follow-up email for this request.",
+                employee_id="E-1007",
+            )
+        )
+    )
+
+    assert response.status == "completed"
+    assert response.outcome == "draft_only"
+    assert response.tool_trace[-1].tool_name == "draft_hr_email"
+    assert len(response.tool_trace) == 9
+    assert "Draft - not sent" in response.answer
+    assert "not sent or persisted" in response.answer
 
 
 def test_pto_state_machine_checks_balance_and_returns_unsent_draft_without_mutation() -> None:
@@ -74,6 +100,9 @@ def test_pto_state_machine_checks_balance_and_returns_unsent_draft_without_mutat
     assert "10 business days" in response.answer
     assert "Draft - not sent" in response.answer
     assert "not sent or persisted" in response.answer
+    assert response.decision_summary is not None
+    assert response.decision_summary.duration_label == "3 workdays / 24.00 hours"
+    assert response.decision_summary.next_steps
     assert seed_path.read_bytes() == seed_before
 
 
@@ -95,6 +124,12 @@ def test_expense_state_machine_calculates_cap_remainder_and_approval() -> None:
     assert "Director or designated budget owner" in response.answer
     assert "not reimbursement or approval" in response.answer
     assert "accommodation" in response.answer
+    assert response.decision_summary is not None
+    assert response.decision_summary.duration_label == "CAD 900.00"
+    assert response.decision_summary.required_approvals == [
+        "Manager",
+        "Director or designated budget owner",
+    ]
 
 
 def test_workflow_machine_rejects_invalid_transition_and_tool_budget_overrun() -> None:

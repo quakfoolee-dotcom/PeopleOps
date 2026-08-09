@@ -66,6 +66,8 @@ class RemoteWorkIntent(ContractModel):
     destination_country_code: str | None = Field(default=None, pattern=r"^[A-Z]{2}$")
     destination_name: str | None = None
     duration_business_days: int | None = Field(default=None, ge=1, le=366)
+    duration_calendar_days: int | None = Field(default=None, ge=1, le=732)
+    wants_draft: bool = False
     clarification_needed: list[str] = Field(default_factory=list)
 
 
@@ -237,6 +239,21 @@ def _duration_business_days(message: str) -> int | None:
     return amount * 5 if "week" in unit else amount
 
 
+def _duration_calendar_days(message: str) -> int | None:
+    match = re.search(
+        r"\b(\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+"
+        r"(calendar\s+days?|weeks?)\b",
+        message,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    raw_amount = match.group(1).casefold()
+    amount = int(raw_amount) if raw_amount.isdigit() else NUMBER_WORDS[raw_amount]
+    calendar_days = amount * 7 if "week" in match.group(2).casefold() else amount
+    return calendar_days if calendar_days <= 732 else None
+
+
 def _destination(message: str) -> tuple[str | None, str | None]:
     normalized = message.casefold()
     for name, result in COUNTRIES.items():
@@ -345,6 +362,8 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
             destination_country_code=country_code,
             destination_name=destination_name,
             duration_business_days=duration,
+            duration_calendar_days=_duration_calendar_days(message),
+            wants_draft=any(word in normalized for word in ("draft", "message", "email")),
             clarification_needed=list(dict.fromkeys(clarification)),
         )
 

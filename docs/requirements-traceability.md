@@ -23,7 +23,7 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Operational tool trace | Shared executor records all eight tools with sanitized arguments, status, duration, and bounded summaries | Ready |
 | Confirmation before write-like actions | Signed expiring confirmation, exact preview binding, idempotency, redaction, and safety tests | Ready |
 | Synthetic structured data | 30 employees, 6 locations, manager, PTO, benefits, and ticket seeds; strict schemas, checksums, semantic validation, SQLite build | Ready |
-| `/chat` endpoint and UI workflow | Four bounded API workflows plus evidence-first workspace, presets, employee context, citations, trace, identifiers, health, and confirmation dialog | Ready |
+| `/chat` endpoint and UI workflow | Four bounded API workflows plus typed decision summary, evidence-first workspace, real next actions, presets, employee context, citations, trace, identifiers, health, and confirmation dialog | Ready |
 | Automated startup test | FastAPI TestClient health and root tests | Ready |
 | MCP discovery/call test | `tests/test_phase4_mcp.py`, `tests/test_phase4_chat.py`, `tests/test_phase6_mcp.py` | Ready |
 | CI on push and pull request | `.github/workflows/ci.yml` | Ready |

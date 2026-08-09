@@ -149,6 +149,15 @@ class PendingActionPreview(ContractModel):
         return value
 
 
+class DecisionSummary(ContractModel):
+    status_label: str = Field(min_length=1, max_length=120)
+    duration_label: str | None = Field(default=None, max_length=120)
+    category_label: str | None = Field(default=None, max_length=120)
+    required_approvals: list[str] = Field(default_factory=list, max_length=12)
+    clarification_needed: list[str] = Field(default_factory=list, max_length=8)
+    next_steps: list[str] = Field(default_factory=list, min_length=1, max_length=8)
+
+
 class ChatRequest(ContractModel):
     request_id: UUID = Field(default_factory=uuid4)
     message: str = Field(min_length=1, max_length=4000)
@@ -168,6 +177,7 @@ class ChatResponse(ContractModel):
     workflow_state: WorkflowStage = WorkflowStage.RESPOND
     citations: list[Citation] = Field(default_factory=list)
     tool_trace: list[ToolTraceEntry] = Field(default_factory=list)
+    decision_summary: DecisionSummary | None = None
     pending_action: PendingActionPreview | None = None
 
     @model_validator(mode="after")

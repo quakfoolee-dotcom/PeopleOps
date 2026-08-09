@@ -6,7 +6,7 @@ import App from "./App";
 const healthPayload = {
   status: "ok",
   app_name: "PeopleOps Assistant",
-  version: "0.5.1",
+  version: "0.6.0",
   environment: "test",
   components: {
     application: { status: "ready", detail: "FastAPI is serving requests." },
@@ -51,6 +51,17 @@ const chatPayload = {
   workflow_state: "respond",
   citations: [citation],
   tool_trace: [traceEntry],
+  decision_summary: {
+    status_label: "Conditionally eligible",
+    duration_label: "42 calendar days / 30 business days",
+    category_label: "International exceptional",
+    required_approvals: ["Manager", "People Operations", "Security", "Legal"],
+    clarification_needed: ["Exact travel and working dates"],
+    next_steps: [
+      "Provide exact travel and working dates.",
+      "Obtain all required reviews.",
+    ],
+  },
   pending_action: null,
 };
 
@@ -65,6 +76,14 @@ const previewPayload = {
   workflow_state: "respond",
   citations: [],
   tool_trace: [traceEntry],
+  decision_summary: {
+    status_label: "Confirmation required",
+    duration_label: "Synthetic preview only",
+    category_label: "Workplace concern",
+    required_approvals: ["Explicit user confirmation"],
+    clarification_needed: [],
+    next_steps: ["Review the sanitized request preview.", "Confirm or cancel the mock action."],
+  },
   pending_action: {
     action_type: "create_mock_hr_ticket",
     confirmation_id: "PREVIEW-ABCDEF0123456789",
@@ -75,6 +94,16 @@ const previewPayload = {
   },
 };
 
+const draftPayload = {
+  ...chatPayload,
+  outcome: "draft_only",
+  answer: "Draft - not sent\nSubject: People Operations follow-up\n\nPlease review this request.",
+  tool_trace: [
+    traceEntry,
+    { ...traceEntry, sequence: 2, tool_name: "draft_hr_email", result_summary: "Created Draft - not sent." },
+  ],
+};
+
 const createdPayload = {
   ...previewPayload,
   trace_id: "19928d70-989a-4c5e-b603-9d99fa5be544",
@@ -82,6 +111,14 @@ const createdPayload = {
   outcome: "answered",
   answer: "Created synthetic ticket TKT-9001.",
   pending_action: null,
+  decision_summary: {
+    status_label: "Mock request created",
+    duration_label: "In-memory demo record",
+    category_label: "Workplace concern",
+    required_approvals: ["Explicit user confirmation recorded"],
+    clarification_needed: [],
+    next_steps: ["Review synthetic ticket TKT-9001 in the demo trace."],
+  },
   tool_trace: [
     traceEntry,
     {
@@ -112,7 +149,7 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getByRole("heading", { name: "Demo tasks" })).toBeInTheDocument();
     expect(screen.getByText("International remote work")).toBeInTheDocument();
     expect(screen.getAllByText("Alex Morgan").length).toBeGreaterThan(0);
-    expect(await screen.findByText("v0.5.1 · test · ok")).toBeInTheDocument();
+    expect(await screen.findByText("v0.6.0 · test · ok")).toBeInTheDocument();
     expect(screen.getAllByText(/Citations/i).length).toBeGreaterThan(0);
     expect(screen.getByText("Tool trace", { exact: false })).toBeInTheDocument();
   });
@@ -145,6 +182,12 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     fireEvent.click(screen.getByRole("button", { name: "Send question" }));
 
     expect(await screen.findByText(/not automatically approved/i)).toBeInTheDocument();
+    expect(screen.getByText("42 calendar days / 30 business days")).toBeInTheDocument();
+    expect(screen.getByText("International exceptional")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Required approvals" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Clarification needed" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Next steps" })).toBeInTheDocument();
+    expect(screen.getByText("Guidance complete")).toBeInTheDocument();
     expect(screen.getAllByText(/INT-5/).length).toBeGreaterThan(0);
     expect(screen.getByText("Full cited snippet")).toBeInTheDocument();
     expect(screen.getByText("mcp discover tools")).toBeInTheDocument();
@@ -155,6 +198,27 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
       "/chat",
       expect.objectContaining({ method: "POST" }),
     );
+  });
+
+  it("runs the real remote-work email-draft action through chat", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => healthPayload })
+      .mockResolvedValueOnce({ ok: true, json: async () => chatPayload })
+      .mockResolvedValueOnce({ ok: true, json: async () => draftPayload });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Send question" }));
+    const draftButton = await screen.findByRole("button", { name: "Draft PeopleOps email" });
+    fireEvent.click(draftButton);
+
+    expect(await screen.findByText("Draft prepared · not sent")).toBeInTheDocument();
+    expect(screen.getByText(/People Operations follow-up/i)).toBeInTheDocument();
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    const draftBody = JSON.parse(String(fetchMock.mock.calls[2][1]?.body));
+    expect(draftBody.employee_id).toBe("E-1007");
+    expect(draftBody.message).toMatch(/Draft a PeopleOps follow-up email/i);
   });
 
   it("requires confirmation before creating a mock ticket and reuses the request id", async () => {

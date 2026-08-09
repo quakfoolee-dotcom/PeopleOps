@@ -214,7 +214,7 @@ button.secondary-button, .response-actions button, .confirmation-actions button 
   border: 1px solid #cfd6e1;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 .chat-stream { display: grid; gap: 10px; }
@@ -262,8 +262,28 @@ button.secondary-button, .response-actions button, .confirmation-actions button 
 .outcome-clarification_required .result-card-header h2, .outcome-confirmation_required .result-card-header h2 { color: #8c5a08; }
 .outcome-escalation_required .result-card-header h2, .outcome-refused .result-card-header h2 { color: var(--danger); }
 .state-pill { padding: 6px 8px; color: #465269; background: #e9edf4; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-.answer-text { margin: 0; padding: 15px; color: #313b50; font-size: 12px; line-height: 1.65; white-space: pre-line; }
-.result-metrics { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); background: #fbfcfe; }
+.decision-summary { background: #ffffff; }
+.decision-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; border-bottom: 1px solid var(--line); }
+.decision-facts div { min-width: 0; padding: 13px 15px; border-right: 1px solid var(--line); }
+.decision-facts div:last-child { border-right: 0; }
+.decision-facts dt { color: #687489; font-size: 11px; font-weight: 750; text-transform: uppercase; }
+.decision-facts dd { margin: 5px 0 0; color: #273249; font-size: 13px; font-weight: 750; line-height: 1.4; }
+.decision-facts div:first-child dd { color: var(--success); font-size: 15px; }
+.outcome-clarification_required .decision-facts div:first-child dd, .outcome-confirmation_required .decision-facts div:first-child dd { color: #8c5a08; }
+.outcome-escalation_required .decision-facts div:first-child dd, .outcome-refused .decision-facts div:first-child dd { color: var(--danger); }
+.decision-row { padding: 13px 15px; border-bottom: 1px solid var(--line); }
+.decision-row h3, .clarification-row h3, .guidance-copy h3, .next-steps h3 { margin: 0; color: #3e4960; font-size: 11px; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; }
+.approval-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.approval-list span { padding: 5px 8px; color: #3f4b61; background: #f1f5fa; border: 1px solid #d9e1ec; border-radius: 999px; font-size: 11px; line-height: 1.35; }
+.clarification-row { display: grid; grid-template-columns: 22px 1fr; gap: 9px; padding: 11px 15px; color: #76520d; background: #fff8e7; border-bottom: 1px solid #ecd9a5; }
+.clarification-row > span { width: 20px; height: 20px; display: grid; place-items: center; color: #ffffff; background: var(--warning); border-radius: 50%; font-size: 12px; font-weight: 900; }
+.clarification-row p { margin: 5px 0 0; font-size: 12px; line-height: 1.5; }
+.guidance-copy { padding: 15px; }
+.answer-text { margin: 7px 0 0; padding: 0; color: #313b50; font-size: 13px; line-height: 1.65; white-space: pre-line; }
+.next-steps { padding: 0 15px 15px; }
+.next-steps ol { margin: 8px 0 0; padding-left: 22px; color: #313b50; font-size: 12px; line-height: 1.65; }
+.next-steps li + li { margin-top: 3px; }
+.result-metrics { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 12px; overflow: hidden; background: #fbfcfe; border: 1px solid var(--line); border-radius: 6px; }
 .result-metrics span { display: grid; gap: 3px; padding: 11px 12px; color: #667187; border-right: 1px solid var(--line); font-size: 10px; text-transform: uppercase; }
 .result-metrics span:last-child { border-right: 0; }
 .result-metrics strong { color: #273249; font-size: 13px; text-transform: none; }
@@ -274,6 +294,7 @@ button.secondary-button, .response-actions button, .confirmation-actions button 
 .source-strip strong { color: #2e3950; font-size: 12px; }
 .no-sources { padding: 8px; color: #677286; font-size: 12px; }
 .response-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.response-actions button { min-height: 36px; }
 .response-actions button.primary-button, .confirmation-actions button.primary-button { color: #ffffff; background: var(--blue); border-color: var(--blue); }
 .identifier-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--line); }
 .identifier-row div { min-width: 0; }
@@ -384,6 +405,9 @@ button.secondary-button, .response-actions button, .confirmation-actions button 
   .conversation-column { padding: 18px 14px 28px; }
   .evidence-rail { display: block; }
   .context-grid { grid-template-columns: repeat(2, 1fr); }
+  .decision-facts { grid-template-columns: 1fr; }
+  .decision-facts div { border-right: 0; border-bottom: 1px solid var(--line); }
+  .decision-facts div:last-child { border-bottom: 0; }
   .result-metrics { grid-template-columns: 1fr; }
   .result-metrics span { border-right: 0; border-bottom: 1px solid var(--line); }
   .identifier-row { grid-template-columns: 1fr; }

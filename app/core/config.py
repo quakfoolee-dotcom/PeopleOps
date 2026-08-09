@@ -12,7 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 class Settings(BaseSettings):
     app_name: str = "PeopleOps Assistant"
-    app_version: str = "0.5.1"
+    app_version: str = "0.6.0"
     app_env: str = "development"
     log_level: str = "INFO"
     policy_corpus_directory: Path = PROJECT_ROOT / "policy_corpus"
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     mcp_server_url: str = "http://127.0.0.1:8000/mcp"
     llm_provider: str = "not-configured"
     llm_model: str = "not-configured"
-    max_tool_calls: int = Field(default=8, ge=1, le=20)
+    max_tool_calls: int = Field(default=10, ge=1, le=20)
     tool_timeout_seconds: int = Field(default=20, ge=1, le=120)
     mcp_confirmation_secret: str = Field(
         default="peopleops-local-demo-confirmation-secret",

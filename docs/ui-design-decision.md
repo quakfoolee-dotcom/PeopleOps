@@ -35,8 +35,9 @@ directly.
 
 ## Phase 8 verification
 
-The interface provides four reproducible tasks, truthful `/health` state, request and trace IDs,
-employee context, exact citation metadata, the full sanitized MCP trace, responsive disclosure
-panels, and a keyboard-accessible confirmation dialog. Five frontend interaction tests cover the
-shell, task loading, grounded output, confirmed creation, and cancel-without-create behavior. See
+The interface provides four reproducible tasks, a structured compliance result, truthful `/health`
+state, request and trace IDs, employee context, exact citation metadata, the full sanitized MCP
+trace, responsive disclosure panels, and a keyboard-accessible confirmation dialog. Six frontend
+interaction tests cover the shell, task loading, structured grounded output, the MCP-backed email
+draft, confirmed creation, and cancel-without-create behavior. See
 `docs/phase8-product-interface.md` for the grader walkthrough.

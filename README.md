@@ -25,8 +25,9 @@ Phases 1 through 8 of the [authoritative execution plan](docs/execution-plan.md)
 - strict mock-data schemas, checksums, semantic validation, and a reproducible SQLite build;
 - a bounded orchestrator that discovers the complete eight-tool suite and invokes tools only through
   the official MCP client;
-- typed, bounded international remote-work, PTO, and expense state machines with an eight-call
-  logical budget and one retry per MCP operation;
+- typed, bounded international remote-work, PTO, and expense state machines with a ten-call
+  logical ceiling (normal primary flows use at most eight; the optional draft uses nine) and one
+  retry per MCP operation;
 - clarification, structured-data, evidence-sufficiency, policy-conflict, exact-citation,
   escalation, draft, and confirmation gates;
 - exact policy-section, employee-profile, PTO, benefits, deterministic compliance, draft-email,

@@ -43,6 +43,15 @@ type PendingAction = {
   confirmation_required: true;
 };
 
+type DecisionSummary = {
+  status_label: string;
+  duration_label: string | null;
+  category_label: string | null;
+  required_approvals: string[];
+  clarification_needed: string[];
+  next_steps: string[];
+};
+
 type ChatPayload = {
   request_id: string;
   trace_id: string;
@@ -54,6 +63,7 @@ type ChatPayload = {
   workflow_state: string;
   citations: Citation[];
   tool_trace: TraceEntry[];
+  decision_summary: DecisionSummary | null;
   pending_action: PendingAction | null;
 };
 
@@ -183,6 +193,24 @@ function outcomeLabel(outcome: string) {
     refused: "Request not supported",
   };
   return labels[outcome] ?? displayName(outcome);
+}
+
+function workflowStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    completed: "Guidance complete",
+    needs_clarification: "Needs details",
+    escalated: "Escalated",
+    out_of_scope: "Out of scope",
+    awaiting_confirmation: "Awaiting confirmation",
+    error: "Service unavailable",
+  };
+  return labels[status] ?? displayName(status);
+}
+
+function requestDetailLabel(workflow: string) {
+  if (workflow === "expense") return "Amount";
+  if (workflow === "mock_ticket") return "Record";
+  return "Duration";
 }
 
 function readableCitationSnippet(value: string) {
@@ -328,6 +356,19 @@ export default function App() {
     } catch {
       setCopyState("Copy unavailable");
     }
+  }
+
+  async function rerunCurrentWorkflow() {
+    if (!chat || !lastQuestion) return;
+    await runChat(lastQuestion, lastEmployeeId);
+  }
+
+  async function draftPeopleOpsEmail() {
+    if (!chat || chat.workflow !== "remote_work" || !lastQuestion) return;
+    await runChat(
+      `${lastQuestion} Draft a PeopleOps follow-up email for this request.`,
+      lastEmployeeId,
+    );
   }
 
   async function confirmPendingAction() {
@@ -499,14 +540,42 @@ export default function App() {
                     <div className="result-card-header">
                       <span className="result-icon" aria-hidden="true">✓</span>
                       <div><p>{workflowTitle(chat.workflow)}</p><h2 id="result-title">{outcomeLabel(chat.outcome)}</h2></div>
-                      <span className="state-pill">{displayName(chat.workflow_state)}</span>
+                      <span className="state-pill">{workflowStatusLabel(chat.status)}</span>
                     </div>
-                    <p className="answer-text">{chat.answer}</p>
-                    <div className="result-metrics">
-                      <span><strong>{chat.citations.length}</strong> cited sections</span>
-                      <span><strong>{chat.tool_trace.length}</strong> MCP operations</span>
-                      <span><strong>{totalTraceDuration} ms</strong> traced tool time</span>
-                    </div>
+                    {chat.decision_summary && (
+                      <div className="decision-summary">
+                        <dl className="decision-facts">
+                          <div><dt>Status</dt><dd>{chat.decision_summary.status_label}</dd></div>
+                          <div><dt>{requestDetailLabel(chat.workflow)}</dt><dd>{chat.decision_summary.duration_label ?? "Not applicable"}</dd></div>
+                          <div><dt>Category</dt><dd>{chat.decision_summary.category_label ?? "General guidance"}</dd></div>
+                        </dl>
+
+                        {chat.decision_summary.required_approvals.length > 0 && (
+                          <section className="decision-row" aria-labelledby="approvals-title">
+                            <h3 id="approvals-title">Required approvals</h3>
+                            <div className="approval-list">
+                              {chat.decision_summary.required_approvals.map((approval) => <span key={approval}>✓ {approval}</span>)}
+                            </div>
+                          </section>
+                        )}
+
+                        {chat.decision_summary.clarification_needed.length > 0 && (
+                          <section className="clarification-row" aria-labelledby="clarification-title">
+                            <span aria-hidden="true">!</span>
+                            <div><h3 id="clarification-title">Clarification needed</h3><p>{chat.decision_summary.clarification_needed.join(" · ")}</p></div>
+                          </section>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="guidance-copy"><h3>Guidance</h3><p className="answer-text">{chat.answer}</p></div>
+
+                    {chat.decision_summary?.next_steps.length ? (
+                      <section className="next-steps" aria-labelledby="next-steps-title">
+                        <h3 id="next-steps-title">Next steps</h3>
+                        <ol>{chat.decision_summary.next_steps.map((step) => <li key={step}>{step}</li>)}</ol>
+                      </section>
+                    ) : null}
                   </section>
 
                   <div className="source-strip" aria-label="Cited policy sections">
@@ -520,12 +589,24 @@ export default function App() {
 
                   <div className="response-actions">
                     <button type="button" onClick={() => void copyGuidance()}>{copyState}</button>
+                    {chat.workflow === "remote_work" && chat.outcome === "conditional" && (
+                      <button type="button" onClick={() => void draftPeopleOpsEmail()}>Draft PeopleOps email</button>
+                    )}
+                    {["remote_work", "pto", "expense"].includes(chat.workflow) && (
+                      <button type="button" onClick={() => void rerunCurrentWorkflow()}>Re-run {workflowTitle(chat.workflow).toLowerCase()}</button>
+                    )}
                     {chat.pending_action && (
                       <button className="primary-button" type="button" onClick={() => setConfirmationOpen(true)}>
                         Review pending action
                       </button>
                     )}
                     <button type="button" onClick={startNewChat}>Ask another question</button>
+                  </div>
+
+                  <div className="result-metrics" aria-label="Operational evidence summary">
+                    <span><strong>{chat.citations.length}</strong> cited sections</span>
+                    <span><strong>{chat.tool_trace.length}</strong> MCP operations</span>
+                    <span><strong>{totalTraceDuration} ms</strong> traced tool time</span>
                   </div>
 
                   <dl className="identifier-row">
@@ -553,7 +634,7 @@ export default function App() {
             </div>
             <div className="composer-meta">
               <span>Employee: <strong>{selectedEmployee.id}</strong></span>
-              <span>Fixed synthetic date: <strong>2026-09-01</strong></span>
+              <span>Demo policy as-of date: <strong>2026-09-01</strong></span>
             </div>
           </form>
           <p className="assistant-disclaimer">PeopleOps Assistant can make mistakes. Review citations and verify guidance before acting.</p>
@@ -562,7 +643,7 @@ export default function App() {
             <div className="context-heading"><div><p className="section-kicker">Selected employee</p><h2 id="context-title">Context</h2></div><span>{selectedEmployee.id}</span></div>
             <div className="context-grid">
               <article><span aria-hidden="true">○</span><div><small>Employee</small><strong>{selectedEmployee.name}</strong><p>{selectedEmployee.role}<br />{selectedEmployee.department}</p></div></article>
-              <article><span aria-hidden="true">□</span><div><small>PTO balance</small><strong>{selectedEmployee.ptoDays} days</strong><p>Available as of 2026-09-01</p></div></article>
+              <article><span aria-hidden="true">□</span><div><small>PTO balance</small><strong>{selectedEmployee.ptoDays} days</strong><p>Available on demo policy date</p></div></article>
               <article><span aria-hidden="true">◇</span><div><small>Manager</small><strong>{selectedEmployee.manager}</strong><p>Current reporting line</p></div></article>
               <article><span aria-hidden="true">⌖</span><div><small>Home office</small><strong>{selectedEmployee.location}</strong><p>Registered location</p></div></article>
               <article><span aria-hidden="true">▣</span><div><small>Employment</small><strong>{selectedEmployee.employment}</strong><p>Active synthetic record</p></div></article>

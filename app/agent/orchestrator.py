@@ -19,6 +19,7 @@ from app.api.contracts import (
     ChatRequest,
     ChatResponse,
     Citation,
+    DecisionSummary,
     PendingActionPreview,
     ToolCallStatus,
     ToolTraceEntry,
@@ -126,6 +127,10 @@ def _elapsed_ms(started: float) -> int:
 
 def _money(value: Decimal | None) -> str:
     return f"{value:.2f}" if value is not None else "unknown"
+
+
+def _label(value: str) -> str:
+    return value.replace("_", " ").capitalize()
 
 
 class PeopleOpsOrchestrator:
@@ -384,6 +389,12 @@ class PeopleOpsOrchestrator:
             },
         )
         compliance = ComplianceCheckResult.model_validate(compliance_payload)
+        duration_label = f"{intent.duration_business_days} business days"
+        if intent.duration_calendar_days is not None:
+            duration_label = (
+                f"{intent.duration_calendar_days} calendar days / "
+                f"{intent.duration_business_days} business days"
+            )
         if compliance.status == "needs_clarification":
             machine.transition(WorkflowStage.CLARIFY)
             return self._finish(
@@ -398,6 +409,17 @@ class PeopleOpsOrchestrator:
                 ),
                 citations=citations,
                 tool_trace=trace,
+                decision_summary=DecisionSummary(
+                    status_label="Clarification needed",
+                    duration_label=duration_label,
+                    category_label=_label(compliance.category),
+                    required_approvals=compliance.required_approvals,
+                    clarification_needed=compliance.clarification_needed,
+                    next_steps=[
+                        "Provide the missing request details.",
+                        "Run the eligibility check again after the details are complete.",
+                    ],
+                ),
             )
 
         employee = profile.profile
@@ -411,6 +433,7 @@ class PeopleOpsOrchestrator:
                 "immigration determination."
             )
             outcome = WorkflowOutcome.ANSWERED
+            status_label = "Not eligible"
         else:
             answer = (
                 "Conditionally eligible - this is not approval to work from the destination. "
@@ -422,6 +445,36 @@ class PeopleOpsOrchestrator:
                 f"{conditions} Provide exact travel and working dates before final review."
             )
             outcome = WorkflowOutcome.CONDITIONAL
+            status_label = "Conditionally eligible"
+
+        if intent.wants_draft:
+            machine.transition(WorkflowStage.DRAFT)
+            draft_payload = await self._call(
+                client,
+                trace,
+                machine,
+                "draft_hr_email",
+                {
+                    "draft_type": "peopleops_follow_up",
+                    "employee_id": intent.employee_id,
+                    "context": (
+                        f"Please review the proposed {duration_label} remote-work request for "
+                        f"{intent.destination_name} and advise on the required approvals."
+                    ),
+                },
+            )
+            draft = HREmailDraftResult.model_validate(draft_payload)
+            answer += (
+                f"\n\n{draft.label}\nSubject: {draft.subject}\n\n{draft.body}\n\n"
+                "The draft was not sent or persisted."
+            )
+            outcome = WorkflowOutcome.DRAFT_ONLY
+
+        next_steps = [
+            "Provide exact travel and working dates.",
+            f"Obtain required reviews: {approvals}.",
+            *compliance.conditions,
+        ][:8]
         return self._finish(
             request,
             machine,
@@ -430,6 +483,14 @@ class PeopleOpsOrchestrator:
             answer=answer,
             citations=citations,
             tool_trace=trace,
+            decision_summary=DecisionSummary(
+                status_label=status_label,
+                duration_label=duration_label,
+                category_label=_label(compliance.category),
+                required_approvals=compliance.required_approvals,
+                clarification_needed=["Exact travel and working dates"],
+                next_steps=next_steps,
+            ),
         )
 
     async def _run_pto(
@@ -475,6 +536,9 @@ class PeopleOpsOrchestrator:
             },
         )
         compliance = ComplianceCheckResult.model_validate(compliance_payload)
+        duration_label = (
+            f"{balance.requested_workdays} workdays / {_money(balance.requested_hours)} hours"
+        )
         if compliance.status == "needs_clarification":
             machine.transition(WorkflowStage.CLARIFY)
             return self._finish(
@@ -485,6 +549,17 @@ class PeopleOpsOrchestrator:
                 answer="The PTO compliance screen requires exact start and end dates.",
                 citations=citations,
                 tool_trace=trace,
+                decision_summary=DecisionSummary(
+                    status_label="Clarification needed",
+                    duration_label=duration_label,
+                    category_label=_label(compliance.category),
+                    required_approvals=compliance.required_approvals,
+                    clarification_needed=compliance.clarification_needed,
+                    next_steps=[
+                        "Provide exact PTO start and end dates.",
+                        "Run the PTO guidance again before submitting a request.",
+                    ],
+                ),
             )
 
         employee = profile.profile
@@ -529,6 +604,22 @@ class PeopleOpsOrchestrator:
             answer=answer,
             citations=citations,
             tool_trace=trace,
+            decision_summary=DecisionSummary(
+                status_label=(
+                    "Balance sufficient"
+                    if balance.sufficient_balance
+                    else "Insufficient balance"
+                ),
+                duration_label=duration_label,
+                category_label=_label(compliance.category),
+                required_approvals=compliance.required_approvals,
+                clarification_needed=compliance.clarification_needed,
+                next_steps=[
+                    "Submit the request in the approved HR system.",
+                    "Coordinate coverage and scheduling with the manager.",
+                    f"Allow the normal {notice}-business-day notice period.",
+                ],
+            ),
         )
 
     async def _run_expense(
@@ -567,6 +658,7 @@ class PeopleOpsOrchestrator:
                 "equipment screen. No reimbursement or preapproval was created."
             )
             outcome = WorkflowOutcome.ANSWERED
+            status_label = "Not eligible"
         else:
             answer = (
                 f"Conditionally eligible - this is not reimbursement or approval. For the "
@@ -578,6 +670,7 @@ class PeopleOpsOrchestrator:
                 "purchase. An approved accommodation is a separate exception and was not inferred."
             )
             outcome = WorkflowOutcome.CONDITIONAL
+            status_label = "Conditionally eligible"
         return self._finish(
             request,
             machine,
@@ -586,6 +679,21 @@ class PeopleOpsOrchestrator:
             answer=answer,
             citations=citations,
             tool_trace=trace,
+            decision_summary=DecisionSummary(
+                status_label=status_label,
+                duration_label=f"{intent.currency} {_money(intent.amount)}",
+                category_label=_label(compliance.category),
+                required_approvals=compliance.required_approvals,
+                clarification_needed=compliance.clarification_needed,
+                next_steps=[
+                    "Obtain written preapproval before purchase.",
+                    (
+                        f"Apply the ordinary {intent.currency} "
+                        f"{_money(calculation.ordinary_reimbursement_cap)} cap."
+                    ),
+                    "Route accommodation exceptions through the separate review process.",
+                ],
+            ),
         )
 
     async def _run_ticket(
@@ -657,6 +765,17 @@ class PeopleOpsOrchestrator:
                 ),
                 citations=citations,
                 tool_trace=trace,
+                decision_summary=DecisionSummary(
+                    status_label="Confirmation required",
+                    duration_label="Synthetic preview only",
+                    category_label=_label(intent.category),
+                    required_approvals=["Explicit user confirmation"],
+                    next_steps=[
+                        "Review the sanitized request preview.",
+                        "Confirm or cancel the mock action.",
+                        "Treat the report as an allegation, not a finding.",
+                    ],
+                ),
                 pending_action=pending,
             )
 
@@ -682,6 +801,16 @@ class PeopleOpsOrchestrator:
             ),
             citations=citations,
             tool_trace=trace,
+            decision_summary=DecisionSummary(
+                status_label="Mock request created",
+                duration_label="In-memory demo record",
+                category_label=_label(intent.category),
+                required_approvals=["Explicit user confirmation recorded"],
+                next_steps=[
+                    f"Review synthetic ticket {action.ticket.ticket_id} in the demo trace.",
+                    "Use the production People Operations process for a real report.",
+                ],
+            ),
         )
 
     async def _call(
@@ -769,6 +898,7 @@ class PeopleOpsOrchestrator:
         answer: str,
         citations: list[Citation] | None = None,
         tool_trace: list[ToolTraceEntry] | None = None,
+        decision_summary: DecisionSummary | None = None,
         pending_action: PendingActionPreview | None = None,
     ) -> ChatResponse:
         if machine.stage is not WorkflowStage.RESPOND:
@@ -781,6 +911,7 @@ class PeopleOpsOrchestrator:
             answer=answer,
             citations=citations,
             tool_trace=tool_trace,
+            decision_summary=decision_summary,
             pending_action=pending_action,
         )
 
@@ -794,6 +925,7 @@ class PeopleOpsOrchestrator:
         answer: str,
         citations: list[Citation] | None = None,
         tool_trace: list[ToolTraceEntry] | None = None,
+        decision_summary: DecisionSummary | None = None,
         pending_action: PendingActionPreview | None = None,
     ) -> ChatResponse:
         return ChatResponse(
@@ -806,5 +938,6 @@ class PeopleOpsOrchestrator:
             workflow_state=machine.stage,
             citations=citations or [],
             tool_trace=tool_trace or [],
+            decision_summary=decision_summary,
             pending_action=pending_action,
         )

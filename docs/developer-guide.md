@@ -151,7 +151,7 @@ IDs, relative dates, unavailable tools, retry, insufficient evidence, and policy
 
 ## Phase 8 product-interface verification
 
-Run the five component and interaction tests plus the strict TypeScript production build:
+Run the six component and interaction tests plus the strict TypeScript production build:
 
 ```powershell
 Set-Location ui
@@ -159,8 +159,9 @@ npm run test
 npm run build
 ```
 
-The suite covers task loading, employee context, live health rendering, citations, sanitized MCP
-trace, request/trace identifiers, confirmation focus and creation, and cancellation without action.
+The suite covers task loading, employee context, live health rendering, structured decision facts,
+approvals, clarification, next steps, the MCP-backed draft action, citations, sanitized MCP trace,
+request/trace identifiers, confirmation focus and creation, and cancellation without action.
 For manual verification, follow `docs/phase8-product-interface.md` at desktop and mobile widths.
 
 ## Evaluation contracts

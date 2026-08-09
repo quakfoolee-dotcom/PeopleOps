@@ -2,7 +2,9 @@
 
 All identifiers and records described here are synthetic.
 
-Automated evaluations use the fixed as-of date **2026-09-01**, aligned with the policy corpus. The authoritative prompts, expected evidence, tool constraints, outcomes, and safety behavior are versioned in `evaluation/gold_cases.json`.
+Automated evaluations use the **demo policy as-of date 2026-09-01**, aligned with the policy corpus.
+The authoritative prompts, expected evidence, tool constraints, outcomes, and safety behavior are
+versioned in `evaluation/gold_cases.json`.
 
 ## UC-01: View system readiness
 

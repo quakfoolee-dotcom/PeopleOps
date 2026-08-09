@@ -23,9 +23,10 @@ sanitized operational trace.
 
 The allowed states are `classify`, `clarify`, `discover`, `profile`, `retrieve`, `evidence`,
 `compliance`, `draft`, `confirmation`, `action`, `escalate`, and `respond`. A transition allow-list
-rejects invalid jumps. Each workflow has a maximum of eight logical tool calls, and discovery or a
-tool call receives at most two total attempts. Every failed and successful attempt remains visible
-in the operational trace.
+rejects invalid jumps. Each workflow has a maximum of ten logical tool calls; normal primary flows
+use no more than eight operations and the optional remote-work draft uses nine. Discovery or a tool
+call receives at most two total attempts. Every failed and successful attempt remains visible in
+the operational trace.
 
 Classification and input validation happen before MCP access. A missing or conflicting employee
 ID, relative PTO date, missing destination/duration, or incomplete expense amount/currency returns
