@@ -2,10 +2,16 @@
 
 ## Current status
 
-PeopleOps Assistant version `0.7.0` is live on a free Render web service managed by the repository's
-Blueprint. The Phase 9 release of exact commit `885b7f242c21635a97e2c64be704c1d16fc34943`
-passed the pre-deployment release gate, Render health check, exact-commit deployment status, and
-automated post-deployment public smoke on 2026-08-08 Pacific time (2026-08-09 UTC).
+PeopleOps Assistant version `0.8.0` is live on a free Render web service managed by the repository's
+Blueprint. The LLM-provider implementation source commit
+`ef7148bae4c30cd33a944bd8b7d9689e041df447` passed the pre-deployment release gate, Render health
+check, exact-commit deployment status, and automated post-deployment public smoke on 2026-08-09
+Pacific time. `/health.release_sha` remains the authoritative identity for the currently served
+documentation or application revision.
+
+The provider boundary is deployed, but production intentionally remains in verified deterministic
+mode until the owner adds `OPENROUTER_API_KEY` and `LLM_PROVIDER=openrouter` in Render. Health reports
+this state as `llm_provider.status=not_configured`; no secret is stored in the repository.
 
 ## Hosted endpoints
 
@@ -22,30 +28,28 @@ ephemeral filesystem is safe for this phase. Phase 10 will measure cold and warm
 
 ## Verified production evidence
 
-- [GitHub CI run 31298687350](https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31298687350)
-  passed backend, frontend, production-container startup/workflow smoke, evidence upload, and the
-  explicit release gate;
-- all 82 backend tests passed at 90.49% coverage; six frontend tests and the strict TypeScript/Vite
-  production build passed, including five consecutive local runs of the formerly timing-sensitive
-  confirmation-focus test;
-- GitHub deployment `5816151462` reported success for exact commit
-  `885b7f242c21635a97e2c64be704c1d16fc34943` in environment
-  `main - peopleops-assistant-demo`;
-- [hosted smoke run 31298780994](https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31298780994)
-  checked out that exact commit, passed the public release contract, and retained artifact
-  `hosted-smoke-31298780994` for 30 days;
-- `/health` returned `status=ok`, `version=0.7.0`, `environment=production`, full release SHA
-  `885b7f242c21635a97e2c64be704c1d16fc34943`, and ready application, corpus, RAG, MCP, and mock-data
-  components;
-- hosted health/wake, root, and chat timings were 273 ms, 264 ms, and 2,082 ms respectively;
+- [GitHub CI run 31300869320](https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31300869320)
+  passed backend, frontend, provider-boundary, production-container startup/workflow smoke, evidence
+  upload, and the explicit release gate;
+- all 92 backend tests passed at 89.74% coverage; six frontend tests and the strict TypeScript/Vite
+  production build passed;
+- [hosted smoke run 31300897702](https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31300897702)
+  checked the exact release, passed the public release contract, and retained its JSON evidence for
+  30 days;
+- for the implementation source release, `/health` returned `status=ok`, `version=0.8.0`,
+  `environment=production`, full release SHA
+  `ef7148bae4c30cd33a944bd8b7d9689e041df447`, and ready application, corpus, RAG, MCP, and mock-data
+  components, plus the truthful `not_configured` provider state;
 - the read-only E-1007 Germany workflow returned a conditional outcome with exact sections `INT-5`,
-  `INT-13`, `RWK-5`, and `SEC-8`, plus eight MCP operations and non-empty request/trace IDs;
-- dependency configuration validation passed; all seven policy-reconciliation jobs succeeded, and
-  incompatible bundled major/runtime-line update PRs were automatically closed;
-- a separate Windows native health request independently returned the expected version, full release
-  SHA, and component state. The Python duplicate smoke was blocked before HTTP by the managed
-  network's non-standard inspection CA, while the clean GitHub-hosted path passed with normal TLS
-  verification.
+  `INT-13`, `RWK-5`, and `SEC-8`, plus eight MCP operations, non-empty request/trace IDs, and
+  `generation.mode=deterministic` while the production secret is absent;
+- local browser QA exercised the configured deterministic provider adapter and displayed its model,
+  separated AI summary, unchanged verified result, four citations, and eight-operation MCP trace with
+  no console errors;
+- a separate Windows native production contract check independently returned the expected version,
+  full release SHA, component state, citations, and trace. The Python duplicate smoke was blocked
+  before HTTP by the managed network's non-standard inspection CA, while the clean GitHub-hosted path
+  passed with normal TLS verification.
 
 ## Release procedure
 
