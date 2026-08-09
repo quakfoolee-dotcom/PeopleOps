@@ -56,6 +56,18 @@ Expected outcome:
 The same flow is available in the web interface. Open the application, keep the E-1007 preset,
 and select **Run cited workflow**.
 
+## Hosted evidence
+
+Phase 4 is deployed at <https://peopleops-assistant-demo.onrender.com>. On 2026-08-08, production
+smoke tests verified:
+
+- the root returned HTTP 200 and rendered the demonstration interface;
+- <https://peopleops-assistant-demo.onrender.com/health> returned production `status=ok` with MCP
+  ready;
+- the browser preset and direct `/chat` request completed with the four expected citations and
+  three expected trace operations;
+- GitHub CI run 31285649773 passed before Render deployed commit `8582fa3`.
+
 ## Failure and boundary use cases
 
 | Case | Expected behavior |

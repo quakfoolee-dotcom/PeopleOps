@@ -7,12 +7,12 @@ This ten-phase plan controls implementation order. A phase is complete only when
 | 1. Foundation | Repository structure, dependencies, configuration, Docker, traceability, and GitHub planning | `/health` runs locally; backend imports and frontend builds in CI; all phases have GitHub milestones and acceptance issues | Establish reproducibility and map requirements to code, tests, documentation, and demo evidence. | Ready |
 | 2. Evaluation and data contracts | Twenty-five gold cases, API/citation/trace schemas, and fixed synthetic date | Every case declares facts, policy sections, tools, outcome, and safety behavior and passes schema/semantic validation | Define success before implementation to prevent subjective evaluation and missing scenarios. | Ready |
 | 3. Policy corpus and mock data | Coherent policies plus employee, PTO, benefits, manager, location, and ticket data | Corpus and synthetic-data validation pass | Retrieval and workflows depend on consistent evidence and deterministic structured data. | Ready |
-| 4. Thin vertical slice | API to orchestrator to discovered MCP tools to cited response and trace; deploy immediately | MCP discovery/invocation test and hosted `/health` pass | Validate the highest-risk architectural boundary before implementing the full tool suite. | Implementation and deployment package ready; hosted verification pending |
+| 4. Thin vertical slice | API to orchestrator to discovered MCP tools to cited response and trace; deploy immediately | MCP discovery/invocation test and hosted `/health` pass | Validate the highest-risk architectural boundary before implementing the full tool suite. | Ready |
 | 5. RAG implementation | Format-aware ingestion, hybrid retrieval, evidence and citation validation | Known and multi-document queries retrieve correct evidence; fabricated citations fail | Hybrid retrieval covers semantic language and exact policy terminology. | Planned |
 | 6. MCP tool suite | Implement all eight planned tools through MCP | All tools are discoverable, schema-valid, traced, timeout-controlled, and tested | Enforce genuine MCP integration rather than direct data or retrieval access. | Planned |
 | 7. Agent workflows and safety | Bounded remote-work, PTO, and expense workflows with safety gates | Primary workflows and failure/safety cases pass repeatedly | Typed bounded workflows provide testable and safer behavior. | Planned |
 | 8. Product interface | Chat, demo tasks, citations, traces, status, and confirmation experience | Grader can reproduce both workflows and inspect evidence | Expose operational evidence without exposing hidden chain-of-thought. | Foundation shell ready; functionality planned |
-| 9. CI/CD and deployment | Complete checks, deterministic CI substitutes, and gated hosting | Hosted application and health smoke tests pass after required checks | Deploy from the vertical slice onward and gate releases on verification. | CI/Docker baseline ready; hosting planned |
+| 9. CI/CD and deployment | Complete checks, deterministic CI substitutes, and gated hosting | Hosted application and health smoke tests pass after required checks | Deploy from the vertical slice onward and gate releases on verification. | CI/Docker and initial gated hosting ready; full Phase 9 hardening planned |
 | 10. Evaluation and submission | Gold-suite run, ablations, metrics, documents, access, and demo | Every Score-5 gate passes | Evaluation and demo evidence are graded deliverables. | Planned |
 
 ## GitHub planning map
@@ -32,6 +32,6 @@ This ten-phase plan controls implementation order. A phase is complete only when
 
 ## Next action
 
-Connect the repository's Render Blueprint to a hosting account, wait for GitHub checks and the first
-deploy, then record and smoke-test the public `/health` URL. That final hosted verification closes
-Phase 4. Phase 5 begins only after that gate passes.
+Begin Phase 5 RAG implementation: format-aware ingestion, heading-aware chunks, metadata enrichment,
+hybrid retrieval, evidence sufficiency, and citation validation. Preserve the working Phase 4 MCP
+boundary while replacing its deterministic policy route with the tested retrieval service.

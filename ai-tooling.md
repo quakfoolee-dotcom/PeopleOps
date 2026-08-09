@@ -20,7 +20,8 @@ OpenAI Codex was used during Phases 1 through 4 to:
 - implement and test the official MCP Streamable HTTP server, client discovery, and two read-only tools;
 - implement the bounded `/chat` workflow, fail-closed behavior, citations, and sanitized trace;
 - build and visually verify the interactive Phase 4 demonstration interface;
-- prepare the Render Blueprint, operating guide, and deployment smoke-test procedure.
+- prepare the Render Blueprint, operating guide, and deployment smoke-test procedure;
+- guide the owner-controlled Render authorization and verify the hosted UI, health, and chat flow.
 
 ## Human responsibility and review
 

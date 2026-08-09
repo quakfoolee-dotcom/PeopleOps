@@ -27,12 +27,12 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Automated startup test | FastAPI TestClient health and root tests | Ready |
 | MCP discovery/call test | `tests/test_phase4_mcp.py`, `tests/test_phase4_chat.py` | Ready |
 | CI on push and pull request | `.github/workflows/ci.yml` | Ready |
-| Deployment gated on passing tests | Container depends on backend/frontend jobs; deployment job deferred | Foundation |
+| Deployment gated on passing tests | CI container depends on backend/frontend jobs; Render uses `autoDeployTrigger: checksPass` | Ready: initial service |
 | Evaluation set of 20-30 cases | 25 machine-readable cases with exact 7/5/6/4/3 distribution | Ready |
 | Evaluation expectations defined before implementation | Facts, policy sections, tools, outcomes, constraints, and safety per case | Ready |
 | Evaluation and API JSON Schemas | `evaluation/schemas`, drift-export script, CI check | Ready |
 | Required metrics and ablation | `design-and-evaluation.md` | Planned: Phase 10 |
-| README and design documentation | Repository documentation | Ready through Phase 2 |
+| README and design documentation | Repository documentation | Ready through Phase 4 |
 | AI tooling disclosure | `ai-tooling.md` | Ready and maintained continuously |
-| Deployment URL and cold-start notes | `render.yaml`, `deployed.md`; hosted URL pending account connection | Deployment-ready; external publish pending |
+| Deployment URL and cold-start notes | `render.yaml`, `deployed.md`, verified public root and `/health` | Ready |
 | Recorded demo | Demo acceptance criteria in use cases | Planned: Phase 10 |

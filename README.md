@@ -6,7 +6,7 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 ## Execution status
 
-Phases 1 through 3 and the implementation portion of Phase 4 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
+Phases 1 through 4 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
 
 - a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
 - a React and Vite demonstration interface with citations and an MCP trace;
@@ -21,12 +21,21 @@ Phases 1 through 3 and the implementation portion of Phase 4 of the [authoritati
 - a fixed synthetic as-of date of 2026-09-01, aligned with the policy corpus;
 - 25 schema-valid gold evaluation cases and committed JSON Schemas;
 - deterministic employee, manager, location, PTO, benefits, and historical ticket fixtures;
-- strict mock-data schemas, checksums, semantic validation, and a reproducible SQLite build.
+- strict mock-data schemas, checksums, semantic validation, and a reproducible SQLite build;
 - a bounded orchestrator that discovers and invokes two read-only tools through the official MCP client;
 - a cited E-1007 international remote-work demonstration with fail-closed behavior;
-- a Render Blueprint whose deploy trigger waits for passing GitHub checks.
+- a live Render deployment whose Blueprint waits for passing GitHub checks.
 
 Hybrid RAG, the other six MCP tools, broader workflows, confirmation-gated writes, and provider-backed generation remain deliberately deferred to later phases. See [the Phase 4 guide](docs/phase4-thin-slice.md) for the exact boundary.
+
+## Live demonstration
+
+- Application: <https://peopleops-assistant-demo.onrender.com>
+- Health: <https://peopleops-assistant-demo.onrender.com/health>
+- API documentation: <https://peopleops-assistant-demo.onrender.com/docs>
+
+The free service can require a cold start after inactivity. Wait for it to wake, then use the E-1007
+Germany preset to reproduce the cited Phase 4 workflow.
 
 ## Architecture
 
