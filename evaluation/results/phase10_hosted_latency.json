@@ -1,0 +1,41 @@
+{
+  "phase": 10,
+  "release_sha": "ad65bee837fc5a28cad940a1b2d48e1cef72b231",
+  "version": "1.0.0",
+  "environment": "production",
+  "base_url": "https://peopleops-assistant-demo.onrender.com",
+  "ci_run": "https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31328913632",
+  "samples": [
+    {
+      "classification": "deployment-triggered",
+      "checked_at": "2026-08-09T18:28:27.096136+00:00",
+      "workflow_run": "https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31329027152",
+      "health_ms": 155,
+      "root_ms": 85,
+      "chat_ms": 115357,
+      "provider_attempt_count": 3,
+      "accepted_provider_attempt": 3,
+      "accepted_provider_duration_ms": 38976,
+      "provider": "openrouter",
+      "requested_model": "openrouter/free",
+      "resolved_model": "google/gemma-4-26b-a4b-it:free",
+      "passed": true
+    },
+    {
+      "classification": "warm",
+      "checked_at": "2026-08-09T18:35:48.820880+00:00",
+      "workflow_run": "https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31329415784",
+      "health_ms": 393,
+      "root_ms": 147,
+      "chat_ms": 16979,
+      "provider_attempt_count": 1,
+      "accepted_provider_attempt": 1,
+      "accepted_provider_duration_ms": 16979,
+      "provider": "openrouter",
+      "requested_model": "openrouter/free",
+      "resolved_model": "google/gemma-4-26b-a4b-it:free",
+      "passed": true
+    }
+  ],
+  "interpretation": "Render reports deployment success only after platform health checks, so the deployment-triggered sample is not labelled as a spun-down cold start. The committed gold evaluation separately records first-process local cold latency and 20 warm samples. The hosted samples expose free-provider retry and warm-path variability without treating them as an SLA."
+}

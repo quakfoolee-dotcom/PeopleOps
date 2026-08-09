@@ -29,3 +29,7 @@ groundedness, 100% citation accuracy and coverage, 100% tool selection, 96% work
 100% clarification/escalation accuracy, 100% action safety, and 100% primary-demo completion. Both
 primary workflows also pass ten consecutive warm runs. See `docs/phase10-evaluation-submission.md`
 for methodology and the single missing-ID error-analysis case.
+
+`results/phase10_hosted_latency.json` separately records the exact-release production smoke and an
+immediate warm recheck, including health/root/chat timing, provider-attempt count, resolved model,
+and retained GitHub Actions evidence links.

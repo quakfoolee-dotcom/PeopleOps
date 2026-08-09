@@ -24,11 +24,24 @@ results. The committed local measurement recorded a 1,045 ms first-process prima
 across 20 warm gold cases, 226 ms p50 and 363 ms p95. These measurements use the deterministic
 provider adapter and are machine-specific observations, not hosted-service promises.
 
+Production was measured separately against exact release
+`ad65bee837fc5a28cad940a1b2d48e1cef72b231`. The deployment-triggered hosted smoke passed after
+three provider attempts: health was 155 ms, root 85 ms, and the complete OpenRouter-backed workflow
+115,357 ms. The first two model attempts returned the unchanged verified fallback; the third passed
+the grounding gate. An immediate warm run passed on its first attempt: health 393 ms, root 147 ms,
+and the complete workflow 16,979 ms. Both returned all four expected citations and eight MCP
+operations. Render performs platform health checks before reporting deployment success, so the
+deployment-triggered value is not mislabelled as a true spun-down cold start. Raw run-linked values
+are committed in `evaluation/results/phase10_hosted_latency.json`; they demonstrate free-provider
+variability and are not an SLA.
+
 Machine-readable evidence:
 
 - `evaluation/results/phase10_gold_evaluation.json`: full responses, traces, citations, gates,
   metrics, methodology, latency, reliability, and error analysis;
 - `evaluation/results/phase10_gold_evaluation.csv`: one compact row per case;
+- `evaluation/results/phase10_hosted_latency.json`: exact-release deployment-triggered and warm
+  hosted measurements with GitHub run links;
 - `evaluation/results/phase5_rag_ablation.json` and `.csv`: retrieval comparison;
 - `evaluation/results/phase6_mcp_validation.json`: eight-tool discovery and action safety;
 - `evaluation/results/phase7_workflows.json`: focused workflow and failure behavior.
