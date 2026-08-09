@@ -3,10 +3,10 @@
 ## Current status
 
 PeopleOps Assistant is live on a free Render web service managed by the repository's Blueprint.
-The Phase 8.1 readability deployment of commit `2c8d4fd` passed Render's `/health` check on
+The Phase 8.2 structured-result deployment of commit `68c24ed` passed Render's `/health` check on
 2026-08-08 Pacific time (2026-08-09 UTC). Public browser and API smoke tests proved the
-evidence-first workspace, all four reproducible tasks, the confirmation-gated synthetic ticket
-experience, and the corrected citation and tool-trace typography.
+evidence-first workspace, structured workflow decisions, the real MCP-backed email-draft action,
+all four reproducible tasks, and the confirmation-gated synthetic ticket experience.
 
 ## Hosted endpoints
 
@@ -24,7 +24,7 @@ ephemeral filesystem is safe for this phase. Phase 10 will measure cold and warm
 ## Verified production evidence
 
 - root returned HTTP 200 and rendered the application shell;
-- `/health` returned `status=ok`, `version=0.5.1`, `environment=production`, and MCP
+- `/health` returned `status=ok`, `version=0.6.0`, `environment=production`, and MCP
   `status=ready` with eight discoverable tools serving the Phase 8 product interface;
 - the hosted readability check measured citation body text at 13 px and tool names and trace
   results at 12 px, with no horizontal page overflow; citation previews now normalize Markdown
@@ -35,6 +35,12 @@ ephemeral filesystem is safe for this phase. Phase 10 will measure cold and warm
   and 169 chunks;
 - remote-work eligibility returned `status=completed`, `outcome=conditional`, four validated
   citations, eight traced MCP calls, and a non-empty trace ID for E-1007;
+- the hosted result card separately rendered `Conditionally eligible`, 42 calendar/30 business
+  days, `International exceptional`, seven required approvals, exact-date clarification, and five
+  evidence-derived next steps;
+- **Draft PeopleOps email** reran the bounded remote-work workflow and finished with
+  `outcome=draft_only`, nine traced MCP operations ending in `draft_hr_email`, and explicit
+  `sent=false` and `persisted=false` evidence;
 - PTO guidance returned `status=completed`, `outcome=draft_only`, two validated citations, and
   eight traced MCP calls for E-1021;
 - expense compliance returned `status=completed`, `outcome=conditional`, three validated
@@ -46,12 +52,13 @@ ephemeral filesystem is safe for this phase. Phase 10 will measure cold and warm
 - the committed Phase 7 evaluation passed repeated primary workflows, expense compliance,
   clarification, unavailable-service, evidence-conflict, confirmation, idempotency, token-redaction,
   and seed-immutability cases;
-- five frontend tests covered the workspace, task loading, cited evidence, confirmation-bound
-  creation, and cancel-without-create; 74 backend tests passed at 90% coverage;
-- [GitHub CI run 31296254933](https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31296254933)
+- six frontend tests covered the workspace, structured decisions, the real draft action, cited
+  evidence, confirmation-bound creation, and cancel-without-create; 75 backend tests passed at
+  90.48% coverage;
+- [GitHub CI run 31297341809](https://github.com/quakfoolee-dotcom/PeopleOps/actions/runs/31297341809)
   passed frontend, backend, and production-container jobs;
-- GitHub deployment `5815737918` and Render deploy `dep-d9s0ptrbc2fs73b0ccp0` reported success for
-  exact commit `2c8d4fd759f3d20e9e60d167a3a5f805178bc315`.
+- GitHub deployment `5815920698` and Render deploy `dep-d9s185mq1p3s73fd69tg` reported success for
+  exact commit `68c24ed58af99988fe521e0c7d4f45090bb9d9cc`.
 
 ## Release procedure
 
