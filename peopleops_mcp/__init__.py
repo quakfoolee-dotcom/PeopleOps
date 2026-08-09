@@ -1,5 +1,6 @@
-"""PeopleOps MCP server contracts and future transport implementation."""
+"""PeopleOps MCP contracts and the Phase 4 read-only server."""
 
 from peopleops_mcp.contracts import REQUIRED_TOOL_CONTRACTS, ToolContract
+from peopleops_mcp.server import PHASE4_TOOL_NAMES, mcp_server
 
-__all__ = ["REQUIRED_TOOL_CONTRACTS", "ToolContract"]
+__all__ = ["PHASE4_TOOL_NAMES", "REQUIRED_TOOL_CONTRACTS", "ToolContract", "mcp_server"]

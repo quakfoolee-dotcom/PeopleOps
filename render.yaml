@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: peopleops-assistant-demo
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: main
+    autoDeployTrigger: checksPass
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: MCP_SERVER_URL
+        value: http://127.0.0.1:8000/mcp

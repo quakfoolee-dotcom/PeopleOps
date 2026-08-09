@@ -25,7 +25,8 @@ def test_health_reports_foundation_and_corpus() -> None:
     assert "30 deterministic synthetic employee records" in payload["components"][
         "mock_database"
     ]["detail"]
-    assert payload["components"]["mcp"]["status"] == "planned"
+    assert payload["components"]["mcp"]["status"] == "ready"
+    assert "2 discoverable Phase 4 tools" in payload["components"]["mcp"]["detail"]
 
 
 def test_root_exposes_service_or_built_web_interface() -> None:
@@ -36,6 +37,8 @@ def test_root_exposes_service_or_built_web_interface() -> None:
         payload = response.json()
         assert payload["name"] == "PeopleOps Assistant"
         assert payload["health"] == "/health"
+        assert payload["chat"] == "/chat"
+        assert payload["mcp"] == "/mcp"
         assert payload["docs"] == "/docs"
     else:
         assert "PeopleOps Assistant" in response.text

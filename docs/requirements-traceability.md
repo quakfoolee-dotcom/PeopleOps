@@ -18,14 +18,14 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | RAG ingestion, chunking, index, retrieval | `app/rag` boundary and canonical corpus | Planned: Phase 5 |
 | Grounded answers and citation validation | Architecture and use-case acceptance criteria | Planned: Phase 5 |
 | At least five MCP tools | Eight typed tool contracts | Foundation |
-| Actual MCP discovery and invocation | MCP client/server boundaries | Planned: Phase 4 |
+| Actual MCP discovery and invocation | Official `mcp` client, Streamable HTTP server, Phase 4 integration test | Ready: 2-tool slice |
 | Two multi-step workflows | Remote-work and PTO use cases; expense backup | Planned: Phase 7 |
-| Operational tool trace | Strict sanitized trace schema ready; runtime population planned | Foundation: Phase 4 |
+| Operational tool trace | `/chat` response and UI show discovery/call summaries, sanitized arguments, status, and duration | Ready: Phase 4 slice |
 | Confirmation before write-like actions | `create_mock_hr_ticket` contract and test | Foundation |
 | Synthetic structured data | 30 employees, 6 locations, manager, PTO, benefits, and ticket seeds; strict schemas, checksums, semantic validation, SQLite build | Ready |
-| `/chat` endpoint and UI workflow | UI shell and architecture | Planned: Phases 4 and 8 |
+| `/chat` endpoint and UI workflow | Bounded API path and E-1007 live demonstration; broader product work remains | Ready: Phase 4 slice |
 | Automated startup test | FastAPI TestClient health and root tests | Ready |
-| MCP discovery/call test | Contract test now | Planned: Phase 4 transport test |
+| MCP discovery/call test | `tests/test_phase4_mcp.py`, `tests/test_phase4_chat.py` | Ready |
 | CI on push and pull request | `.github/workflows/ci.yml` | Ready |
 | Deployment gated on passing tests | Container depends on backend/frontend jobs; deployment job deferred | Foundation |
 | Evaluation set of 20-30 cases | 25 machine-readable cases with exact 7/5/6/4/3 distribution | Ready |
@@ -34,5 +34,5 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Required metrics and ablation | `design-and-evaluation.md` | Planned: Phase 10 |
 | README and design documentation | Repository documentation | Ready through Phase 2 |
 | AI tooling disclosure | `ai-tooling.md` | Ready and maintained continuously |
-| Deployment URL and cold-start notes | `deployed.md` | Planned: Phase 4 onward |
+| Deployment URL and cold-start notes | `render.yaml`, `deployed.md`; hosted URL pending account connection | Deployment-ready; external publish pending |
 | Recorded demo | Demo acceptance criteria in use cases | Planned: Phase 10 |

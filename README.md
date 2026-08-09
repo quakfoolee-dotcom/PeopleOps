@@ -6,10 +6,10 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 ## Execution status
 
-Phases 1 through 3 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
+Phases 1 through 3 and the implementation portion of Phase 4 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
 
-- a FastAPI application with `/health` and generated API documentation;
-- a React and Vite application shell;
+- a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
+- a React and Vite demonstration interface with citations and an MCP trace;
 - a validated 12-policy corpus in Markdown and PDF formats;
 - typed configuration, policy-corpus validation, and MCP tool contracts;
 - backend, frontend, corpus, and tool-contract tests;
@@ -22,24 +22,29 @@ Phases 1 through 3 of the [authoritative execution plan](docs/execution-plan.md)
 - 25 schema-valid gold evaluation cases and committed JSON Schemas;
 - deterministic employee, manager, location, PTO, benefits, and historical ticket fixtures;
 - strict mock-data schemas, checksums, semantic validation, and a reproducible SQLite build.
+- a bounded orchestrator that discovers and invokes two read-only tools through the official MCP client;
+- a cited E-1007 international remote-work demonstration with fail-closed behavior;
+- a Render Blueprint whose deploy trigger waits for passing GitHub checks.
 
-Policy Q&A, live MCP transport, structured employee tools, and agent workflows are intentionally marked as planned. Phase 4 is the next action: a thin API-to-MCP vertical slice using the validated Phase 3 evidence.
+Hybrid RAG, the other six MCP tools, broader workflows, confirmation-gated writes, and provider-backed generation remain deliberately deferred to later phases. See [the Phase 4 guide](docs/phase4-thin-slice.md) for the exact boundary.
 
 ## Architecture
 
 ```text
-Browser (React/Vite)
+Browser (React/Vite demonstration)
         |
         v
-FastAPI (/health; /chat planned)
+FastAPI (/health, /chat, /mcp)
         |
-        +--> Agent orchestrator (planned)
+        +--> Bounded orchestrator
         |          |
         |          v
-        |     MCP client (planned transport)
+        |     Official MCP client discovery
         |          |
         |          v
-        |     PeopleOps MCP server (tool contracts defined)
+        |     PeopleOps MCP server
+        |          |-- lookup_employee_profile
+        |          `-- search_policy_documents
         |
         +--> Policy corpus validator (ready)
                    |
@@ -78,6 +83,7 @@ Open:
 - API root: `http://127.0.0.1:8000/`
 - Health: `http://127.0.0.1:8000/health`
 - API documentation: `http://127.0.0.1:8000/docs`
+- MCP endpoint: `http://127.0.0.1:8000/mcp`
 
 ### Web interface
 
@@ -89,7 +95,10 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. Vite proxies `/health` to the backend during development.
+Open `http://127.0.0.1:5173`. Vite proxies `/health` and `/chat` to the backend during development.
+
+The page includes a preset E-1007 Germany request. Select **Run cited workflow** to see the
+conditional answer, four policy citations, request ID, and MCP discovery/call trace.
 
 ## Automated validation
 
@@ -113,6 +122,7 @@ The production image builds the React application and serves it from FastAPI.
 ## Project documentation
 
 - [Use cases](docs/use-cases.md)
+- [Phase 4 thin vertical slice](docs/phase4-thin-slice.md)
 - [Developer guide](docs/developer-guide.md)
 - [Architecture](docs/architecture.md)
 - [Requirements traceability](docs/requirements-traceability.md)

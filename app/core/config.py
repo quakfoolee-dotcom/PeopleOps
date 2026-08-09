@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     app_env: str = "development"
     log_level: str = "INFO"
     policy_corpus_directory: Path = PROJECT_ROOT / "policy_corpus"
-    mcp_server_url: str = "http://127.0.0.1:8001/mcp"
+    mcp_server_url: str = "http://127.0.0.1:8000/mcp"
     llm_provider: str = "not-configured"
     llm_model: str = "not-configured"
     max_tool_calls: int = Field(default=8, ge=1, le=20)

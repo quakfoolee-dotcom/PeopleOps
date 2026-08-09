@@ -2,7 +2,7 @@
 
 ## Tools used
 
-OpenAI Codex was used during Phases 1 through 3 to:
+OpenAI Codex was used during Phases 1 through 4 to:
 
 - review the assignment requirements and Score 5 delivery plan;
 - inspect the GitHub repository and local policy-corpus package;
@@ -17,6 +17,10 @@ OpenAI Codex was used during Phases 1 through 3 to:
 - define strict synthetic employee, manager, location, PTO, benefits, ticket, and manifest contracts;
 - generate deterministic fixtures, integrity checks, JSON Schemas, and a reproducible SQLite materialization path;
 - identify and correct the mismatch between the original evaluation snapshot date and the policy corpus effective date.
+- implement and test the official MCP Streamable HTTP server, client discovery, and two read-only tools;
+- implement the bounded `/chat` workflow, fail-closed behavior, citations, and sanitized trace;
+- build and visually verify the interactive Phase 4 demonstration interface;
+- prepare the Render Blueprint, operating guide, and deployment smoke-test procedure.
 
 ## Human responsibility and review
 
@@ -28,6 +32,9 @@ AI assistance was effective for mapping rubric requirements to repository eviden
 
 ## Limitations
 
-Generated code and documentation are not accepted as correct merely because they compile. Live MCP behavior, retrieval quality, workflow safety, provider integration, deployment reliability, and evaluation results require implementation-specific tests and human review in later milestones.
+Generated code and documentation are not accepted as correct merely because they compile. Phase 4
+MCP behavior is checked through automated and live HTTP tests. Retrieval quality, wider workflow
+safety, provider integration, hosted reliability, and evaluation results still require
+implementation-specific tests and human review in later milestones.
 
 This document will be updated throughout the project.

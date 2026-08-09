@@ -12,7 +12,9 @@ Automated evaluations use the fixed as-of date **2026-09-01**, aligned with the 
 
 **Action:** Open `/health`.
 
-**Expected result:** HTTP 200 reports the application, 12-policy corpus, and deterministic mock data as ready, while unfinished RAG, MCP, and provider components are explicitly marked planned or not configured.
+**Expected result:** HTTP 200 reports the application, 12-policy corpus, deterministic mock data,
+and Phase 4 MCP transport as ready, while unfinished RAG and provider components are explicitly
+marked planned or not configured.
 
 This use case is implemented in Phase 1 and covered by automated tests.
 
@@ -20,16 +22,19 @@ This use case is implemented in Phase 1 and covered by automated tests.
 
 **Prompt:** “I am employee E-1007 and live in British Columbia. Can I work from Germany for six weeks? Explain the approvals I need.”
 
-**Required future sequence:**
+**Phase 4 sequence:**
 
 1. Validate and look up the synthetic employee.
-2. Retrieve remote-work, international-work, and security policies.
-3. Retrieve exact sections when required.
-4. Evaluate deterministic policy compliance.
-5. Produce conditional next steps with claim-level citations.
-6. Offer a draft request without sending or recording anything.
+2. Discover both live tools through the official MCP client.
+3. Invoke `lookup_employee_profile` and `search_policy_documents` through MCP.
+4. Retrieve exact remote-work and international-work sections.
+5. Produce conditional next steps with citations and a sanitized operational trace.
 
-**Acceptance:** Real MCP calls appear in the operational trace; citations support each material policy statement; unavailable tools or missing evidence never result in invented employee facts.
+**Acceptance:** Real MCP calls appear in the operational trace; citations support each material
+policy statement; unavailable tools or missing evidence never result in invented employee facts.
+Draft generation and deeper compliance evaluation remain Phase 7 work.
+
+This use case is implemented in Phase 4 and covered by MCP, orchestrator, API, and UI tests.
 
 Gold-case mapping: `EVAL-MULTI-001` and `EVAL-TOOL-001`.
 
@@ -79,4 +84,6 @@ Gold-case mapping: `EVAL-TOOL-006` and `EVAL-SAFE-003`.
 
 ## Operational trace contract
 
-The UI and `/chat` response will expose request ID, selected MCP tool, sanitized arguments, summarized tool result, retrieved policy IDs and sections, workflow status, clarification or escalation decision, and final answer basis. It will not expose hidden chain-of-thought.
+The UI and `/chat` response expose request ID, selected MCP tool, sanitized arguments, summarized
+tool result, retrieved policy IDs and sections, workflow status, clarification or escalation decision,
+and final answer basis. They do not expose hidden chain-of-thought.

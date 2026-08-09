@@ -10,21 +10,20 @@ React/Vite UI
     v
 FastAPI application
     |-- /health
-    |-- /chat (planned)
+    |-- /chat
+    `-- /mcp (Streamable HTTP)
     |
     v
-Bounded agent orchestrator (planned)
-    |-- evidence sufficiency
-    |-- action confirmation
-    |-- citation validation
-    |-- operational trace
+Bounded Phase 4 orchestrator
+    |-- fixed workflow and evidence gate
+    |-- typed response and citations
+    `-- sanitized operational trace
     |
     v
-MCP client -> MCP server
-               |-- policy tools
-               |-- employee and PTO tools
-               |-- compliance tool
-               `-- confirmation-gated mock actions
+Official MCP client -> MCP server
+               |-- lookup_employee_profile (live)
+               |-- search_policy_documents (live)
+               `-- six additional contracts (Phase 6)
                     |                 |
                     v                 v
              Policy RAG index   Synthetic data store
@@ -37,15 +36,28 @@ MCP client -> MCP server
 
 - `app/api`: HTTP endpoints plus strict request, citation, trace, action-preview, and response contracts.
 - `app/core`: environment-driven configuration.
-- `app/rag`: corpus validation now; ingestion and retrieval next.
-- `app/agent`: future bounded state machine. It must not access data stores directly.
-- `app/mcp_client`: future MCP discovery and invocation boundary.
-- `peopleops_mcp`: tool contracts now; live server transport next.
+- `app/rag`: corpus validation now; Phase 5 ingestion and hybrid retrieval next.
+- `app/agent`: bounded Phase 4 orchestration. It does not access data stores directly.
+- `app/mcp_client`: official MCP client session boundary.
+- `peopleops_mcp`: all eight contracts plus the Streamable HTTP server and two live Phase 4 tools.
 - `policy_corpus`: authoritative runtime sources and human-review artifacts.
 - `mock_data`: future deterministic synthetic structured records.
 - `app/evaluation`: gold-suite schemas, loading, and semantic validation.
 - `evaluation`: 25 gold cases and generated JSON Schemas now; metrics, latency, and ablation results in Phase 10.
 - `ui`: React application built into static production assets.
+
+## Phase 4 request sequence
+
+1. `/chat` validates the strict request contract and fixed synthetic date.
+2. The orchestrator rejects unsupported prompts before accessing tools.
+3. The official MCP client discovers the server's current tool list.
+4. The orchestrator requires both Phase 4 tools before continuing.
+5. `lookup_employee_profile` reads the validated synthetic snapshot.
+6. `search_policy_documents` extracts stable sections from authoritative policy sources.
+7. The orchestrator produces a typed conditional answer, citations, and sanitized timing trace.
+
+This deterministic slice validates the protocol and security boundary. It is not a replacement for
+the hybrid RAG and wider state machine planned in Phases 5 and 7.
 
 ## Safety principles
 

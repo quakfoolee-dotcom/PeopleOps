@@ -67,6 +67,27 @@ Copy `.env.example` to `.env`. Provider keys are intentionally absent from the e
 
 `SYNTHETIC_AS_OF_DATE` defaults to `2026-09-01`, matching the policy corpus effective date. Keep that value fixed for ordinary automated tests and gold-suite runs. A deliberate date change requires updating the gold suite, mock-data snapshot, generated schemas where applicable, tests, and evaluation documentation together.
 
+`MCP_SERVER_URL` defaults to `http://127.0.0.1:8000/mcp`. The combined FastAPI process mounts the
+MCP Streamable HTTP application at that path, so `/chat` exercises a real client/server boundary
+without a second container. Do not point the orchestrator at a data store or corpus path.
+
+## Phase 4 API smoke test
+
+With the backend running, execute:
+
+```powershell
+$body = @{
+    employee_id = "E-1007"
+    message = "Can I work remotely from Germany for six weeks?"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/chat `
+    -ContentType application/json -Body $body
+```
+
+Verify a conditional outcome, citations `INT-4`, `INT-5`, `INT-13`, and `RWK-5`, and the three-step
+MCP trace. See `docs/phase4-thin-slice.md` for negative cases and architectural limits.
+
 ## Evaluation contracts
 
 The runtime Pydantic contracts live in `app/api/contracts.py`; gold-case models and semantic validation live in `app/evaluation`. The committed suite is `evaluation/gold_cases.json`.
