@@ -16,6 +16,8 @@ This package contains 12 coherent, synthetic HR policy and procedure documents f
 - `master_markdown/`: editable Markdown source for all 12 policies.
 - `review_pdfs/`: human-review PDF rendering of all 12 policies; not intended for indexing.
 - `corpus_docs/`: manifest, consistency matrix, glossary, and validation report.
+- `index/phase5_index.json`: persisted, fingerprinted hybrid-retrieval artifact generated only from
+  `runtime_corpus/`.
 - `Northstar_Policy_Handbook_V1.0.pdf`: combined human-review handbook; not intended for indexing.
 
 ## Shared policy assumptions
@@ -31,3 +33,6 @@ This package contains 12 coherent, synthetic HR policy and procedure documents f
 ## Recommended RAG metadata
 
 Preserve `policy_id`, `policy_title`, `version`, `effective_date`, heading/section ID, source filename, page where available, and a supporting snippet. The section identifiers embedded in headings, such as `PTO-6` or `INT-5`, are stable citation anchors.
+
+Rebuild and verify the committed index from the repository root with
+`python scripts/build_rag_index.py` and `python scripts/build_rag_index.py --check`.

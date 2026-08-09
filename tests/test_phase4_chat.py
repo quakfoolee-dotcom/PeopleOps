@@ -27,12 +27,13 @@ def test_orchestrator_completes_cited_mcp_workflow_with_operational_trace() -> N
     assert response.outcome == "conditional"
     assert "not automatically approved" in response.answer
     assert "30 business days" in response.answer
-    assert {citation.section_id for citation in response.citations} == {
-        "INT-4",
+    assert {
         "INT-5",
         "INT-13",
         "RWK-5",
-    }
+        "SEC-8",
+    }.issubset({citation.section_id for citation in response.citations})
+    assert all(citation.chunk_id for citation in response.citations)
     assert [entry.tool_name for entry in response.tool_trace] == [
         "mcp_discover_tools",
         "lookup_employee_profile",
@@ -63,7 +64,7 @@ def test_chat_api_returns_contract_validated_response_from_mcp_workflow() -> Non
     payload = response.json()
     assert payload["status"] == "completed"
     assert payload["outcome"] == "conditional"
-    assert len(payload["citations"]) == 4
+    assert len(payload["citations"]) == 8
     assert [entry["sequence"] for entry in payload["tool_trace"]] == [1, 2, 3]
     assert all("token" not in entry["sanitized_arguments"] for entry in payload["tool_trace"])
 

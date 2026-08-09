@@ -36,8 +36,17 @@ Each case identifies expected facts, policy sections, required, forbidden, and p
 - warm latency p50 and p95;
 - cold-start latency reported separately.
 
-The retrieval ablation will compare dense-only retrieval at `k=5`, hybrid retrieval at `k=5`, and hybrid retrieval at `k=8`. Production settings will be selected from evidence quality and latency results.
+The Phase 5 retrieval ablation compares dense-only retrieval at `k=5`, hybrid retrieval at `k=5`,
+and hybrid retrieval at `k=8`. Across the 24 cases with policy evidence and 48 exact expected
+sections, the measured recalls were 83.33%, 95.83%, and 100.00%, respectively. Hybrid `k=8` is the
+selected configuration. Full groundedness, tool, workflow, safety, and deployed latency metrics
+remain Phase 10 work.
 
 ## Current evidence
 
-Phases 1 through 3 validate startup, health reporting, the 12-policy/45-page corpus, product naming, MCP tool contracts, the web shell, container construction, runtime data contracts, schema drift checks, the 25-case gold suite, and the deterministic 30-employee operational snapshot. Phase 3 additionally proves checksum integrity, cross-record consistency, an acyclic manager hierarchy, date alignment, synthetic-only enforcement, and a foreign-key-clean SQLite build. These phases do not claim RAG, MCP transport, agent workflow, or answer-quality results before those components exist.
+Phases 1 through 5 validate startup and health reporting; the 12-policy/45-page corpus; deterministic
+structured data; API and evaluation contracts; live MCP discovery and calls; the bounded deployed
+workflow; direct Markdown and PDF ingestion; a persisted 169-section hybrid index; evidence
+sufficiency and conflict behavior; citation allow-listing; and 100% retrieval evidence recall for
+the selected Phase 5 configuration. This retrieval result does not claim that the still-planned
+eight-tool suite, broader workflows, provider generation, or final product evaluation is complete.

@@ -25,6 +25,8 @@ jobs:
         run: python scripts/export_contract_schemas.py --check
       - name: Validate policy corpus and mock data
         run: python scripts/validate_phase3_assets.py
+      - name: Verify persisted RAG index
+        run: python scripts/build_rag_index.py --check
       - name: Test
         run: python -m pytest --cov=app --cov=peopleops_mcp --cov-report=term-missing --cov-fail-under=85
 

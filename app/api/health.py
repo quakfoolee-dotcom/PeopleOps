@@ -4,7 +4,8 @@ from app.api.schemas import ComponentStatus, HealthResponse
 from app.core.config import get_settings
 from app.data.store import load_seed_bundle, validate_seed_directory
 from app.rag.corpus import validate_corpus
-from peopleops_mcp.server import PHASE4_TOOL_NAMES
+from app.rag.index import cached_index
+from peopleops_mcp.server import PHASE5_TOOL_NAMES
 
 router = APIRouter(tags=["system"])
 
@@ -22,9 +23,25 @@ async def health() -> HealthResponse:
     )
     mock_data_ready = not mock_data_errors
     employee_count = len(load_seed_bundle().employees) if mock_data_ready else 0
+    try:
+        rag_index = cached_index(
+            settings.policy_corpus_directory.resolve(),
+            settings.rag_index_path.resolve(),
+            settings.rag_embedding_dimensions,
+            settings.rag_chunk_target_words,
+            settings.rag_chunk_overlap_words,
+        )
+        rag_ready = rag_index.policy_count == 12 and rag_index.section_count >= 160
+        rag_detail = (
+            f"{rag_index.index_version} ready with {rag_index.policy_count} policies, "
+            f"{rag_index.section_count} sections, and {len(rag_index.indexed_chunks)} chunks."
+        )
+    except Exception as error:
+        rag_ready = False
+        rag_detail = f"RAG index unavailable: {type(error).__name__}: {error}"
 
     return HealthResponse(
-        status="ok" if corpus_ready and mock_data_ready else "degraded",
+        status="ok" if corpus_ready and mock_data_ready and rag_ready else "degraded",
         app_name=settings.app_name,
         version=settings.app_version,
         environment=settings.app_env,
@@ -35,13 +52,13 @@ async def health() -> HealthResponse:
                 detail=corpus["detail"],
             ),
             "rag_index": ComponentStatus(
-                status="planned", detail="Ingestion and retrieval are planned for Phase 5."
+                status="ready" if rag_ready else "error", detail=rag_detail
             ),
             "mcp": ComponentStatus(
                 status="ready",
                 detail=(
                     "Streamable HTTP transport is mounted at /mcp with "
-                    f"{len(PHASE4_TOOL_NAMES)} discoverable Phase 4 tools."
+                    f"{len(PHASE5_TOOL_NAMES)} discoverable Phase 5 tools."
                 ),
             ),
             "mock_database": ComponentStatus(

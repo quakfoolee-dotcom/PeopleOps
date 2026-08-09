@@ -19,5 +19,5 @@ async def chat(
     request: ChatRequest,
     orchestrator: Annotated[PeopleOpsOrchestrator, Depends(get_orchestrator)],
 ) -> ChatResponse:
-    """Run the bounded Phase 4 international remote-work workflow."""
+    """Run the bounded international remote-work workflow through MCP and hybrid RAG."""
     return await orchestrator.run(request)

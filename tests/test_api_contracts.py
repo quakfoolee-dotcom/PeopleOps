@@ -34,14 +34,19 @@ def test_citation_contract_enforces_stable_identifiers() -> None:
         title="Notice and request process",
         snippet="Three to five scheduled workdays normally require ten business days.",
         version="1.0",
+        effective_date=date(2026, 9, 1),
         source_format="markdown",
         source_path="runtime_corpus/POL-PTO-001_Paid-Time-Off-and-Vacation-Policy.md",
+        chunk_id="POL-PTO-001::PTO-6::01",
+        retrieval_score=0.91,
     )
 
     assert citation.section_id == "PTO-6"
 
     with pytest.raises(ValidationError):
         Citation.model_validate({**citation.model_dump(), "policy_id": "invented-policy"})
+    with pytest.raises(ValidationError):
+        Citation.model_validate({**citation.model_dump(), "retrieval_score": 1.1})
 
 
 def test_tool_trace_rejects_sensitive_arguments_and_invalid_error_states() -> None:

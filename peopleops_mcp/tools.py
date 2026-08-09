@@ -1,9 +1,12 @@
-import json
-import re
+from __future__ import annotations
+
 from functools import lru_cache
 
-from app.core.config import PROJECT_ROOT
+from app.core.config import get_settings
 from app.data.store import load_seed_bundle
+from app.rag.citations import citation_snippet, validate_retrieved_hits
+from app.rag.index import cached_index
+from app.rag.retrieval import HybridRetriever
 from peopleops_mcp.schemas import (
     EmployeeLocation,
     EmployeeProfile,
@@ -12,42 +15,23 @@ from peopleops_mcp.schemas import (
     PolicySearchResult,
 )
 
-POLICY_DIRECTORY = PROJECT_ROOT / "policy_corpus"
-POLICY_MANIFEST = POLICY_DIRECTORY / "corpus_docs" / "policy_manifest.json"
-SECTION_HEADING = re.compile(
-    r"^## (?P<section_id>[A-Z]{3}-\d+(?:\.\d+)?)\. (?P<title>.+)$",
-    re.MULTILINE,
-)
 
-
-@lru_cache
-def _policy_manifest() -> dict[str, dict[str, object]]:
-    raw_manifest = json.loads(POLICY_MANIFEST.read_text(encoding="utf-8"))
-    return {policy["policy_id"]: policy for policy in raw_manifest["policies"]}
-
-
-def _section(policy_id: str, section_id: str) -> PolicyEvidence:
-    policy = _policy_manifest()[policy_id]
-    source_path = str(policy["runtime_source"])
-    master_path = POLICY_DIRECTORY / str(policy["master_source"])
-    content = master_path.read_text(encoding="utf-8")
-    headings = list(SECTION_HEADING.finditer(content))
-    heading = next(match for match in headings if match.group("section_id") == section_id)
-    heading_index = headings.index(heading)
-    end = headings[heading_index + 1].start() if heading_index + 1 < len(headings) else len(content)
-    body = content[heading.end() : end].strip()
-    snippet = re.sub(r"\s+", " ", body).strip()
-    if len(snippet) > 997:
-        snippet = snippet[:997].rstrip() + "..."
-    return PolicyEvidence(
-        policy_id=policy_id,
-        section_id=section_id,
-        title=f"{policy['title']} — {heading.group('title')}",
-        snippet=snippet,
-        version=str(policy["version"]),
-        source_format=str(policy["runtime_format"]),
-        source_path=f"policy_corpus/{source_path}",
+@lru_cache(maxsize=1)
+def _retriever() -> HybridRetriever:
+    settings = get_settings()
+    index = cached_index(
+        settings.policy_corpus_directory.resolve(),
+        settings.rag_index_path.resolve(),
+        settings.rag_embedding_dimensions,
+        settings.rag_chunk_target_words,
+        settings.rag_chunk_overlap_words,
     )
+    return HybridRetriever(index)
+
+
+def clear_rag_caches() -> None:
+    _retriever.cache_clear()
+    cached_index.cache_clear()
 
 
 def lookup_employee_profile_data(employee_id: str) -> EmployeeProfileResult:
@@ -90,36 +74,34 @@ def lookup_employee_profile_data(employee_id: str) -> EmployeeProfileResult:
 
 
 def search_policy_documents_data(query: str) -> PolicySearchResult:
-    normalized = query.casefold()
-    international_terms = (
-        "germany",
-        "international",
-        "another country",
-        "outside canada",
-        "outside the country",
-        "out-of-jurisdiction",
-    )
-    remote_terms = ("remote", "work from", "working from", "work abroad")
-    is_international_remote = any(term in normalized for term in international_terms) and any(
-        term in normalized for term in remote_terms
-    )
-
-    matches = []
-    if is_international_remote:
-        matches = [
-            _section("POL-INT-001", "INT-4"),
-            _section("POL-INT-001", "INT-5"),
-            _section("POL-INT-001", "INT-13"),
-            _section("POL-RWK-001", "RWK-5"),
-        ]
-
+    settings = get_settings()
+    retriever = _retriever()
+    result = retriever.search(query, top_k=settings.rag_top_k)
+    validate_retrieved_hits(retriever.index, result.hits)
+    matches = [
+        PolicyEvidence(
+            policy_id=hit.chunk.policy_id,
+            section_id=hit.chunk.section_id,
+            title=f"{hit.chunk.policy_title} — {hit.chunk.section_title}",
+            snippet=citation_snippet(hit.chunk.text),
+            version=hit.chunk.version,
+            effective_date=hit.chunk.effective_date,
+            source_format=hit.chunk.source_format,
+            source_path=hit.chunk.source_path,
+            page=hit.chunk.page,
+            chunk_id=hit.chunk.chunk_id,
+            retrieval_score=hit.score,
+        )
+        for hit in result.hits
+    ]
     return PolicySearchResult(
         query=query,
-        retrieval_mode="phase4_deterministic_keyword",
-        sufficient_evidence=bool(matches),
+        retrieval_mode=result.mode,
+        index_version=retriever.index.index_version,
+        evidence_rule=result.evidence_rule,
+        sufficient_evidence=result.sufficient_evidence,
         matches=matches,
-        limitation=(
-            "Phase 4 supports the international remote-work demonstration. "
-            "Hybrid semantic and keyword retrieval is implemented in Phase 5."
-        ),
+        missing_policy_ids=list(result.missing_policy_ids),
+        conflicts=list(result.conflicts),
+        limitation=result.limitation,
     )

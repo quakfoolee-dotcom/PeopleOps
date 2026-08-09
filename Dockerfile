@@ -15,6 +15,7 @@ ARG PIP_TRUSTED_HOST=""
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
+    PYTHONPATH=/app \
     APP_ENV=production
 
 WORKDIR /app
@@ -26,6 +27,8 @@ RUN PIP_TRUSTED_HOST="${PIP_TRUSTED_HOST}" python -m pip install .
 
 COPY policy_corpus/ policy_corpus/
 COPY mock_data/ mock_data/
+COPY scripts/build_rag_index.py scripts/build_rag_index.py
+RUN python scripts/build_rag_index.py --check
 COPY --from=ui-build /workspace/ui/dist/ ui/dist/
 
 EXPOSE 8000

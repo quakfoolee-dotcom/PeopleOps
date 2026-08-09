@@ -8,15 +8,15 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Authoritative implementation sequence | `docs/execution-plan.md`, ten GitHub milestones, ten acceptance issues | Ready |
 | Fixed synthetic as-of date | `app/core/constants.py`, `.env.example`, gold-suite validation | Ready |
 | Strict API request/response contracts | `app/api/contracts.py`, generated JSON Schemas, contract tests | Ready |
-| Stable citation contract | `Citation`, corpus policy/section validation, generated schema | Ready |
+| Stable citation contract | `Citation`, exact chunk/source metadata, corpus policy/section validation, generated schema | Ready |
 | Sanitized operational trace contract | `ToolTraceEntry`, sensitive-key and error-state tests | Ready |
 | Local web application | FastAPI and React/Vite setup instructions | Ready |
 | `/health` endpoint | `app/api/health.py`, API tests | Ready |
 | Policy corpus: 5-20 documents, 30-120 pages | 12-policy Northstar corpus, manifest and validation report | Ready |
 | At least two source formats | 10 Markdown and 2 PDF runtime sources | Ready |
 | Stable citation metadata | Policy manifest, section identifiers, `Citation` schema | Ready |
-| RAG ingestion, chunking, index, retrieval | `app/rag` boundary and canonical corpus | Planned: Phase 5 |
-| Grounded answers and citation validation | Architecture and use-case acceptance criteria | Planned: Phase 5 |
+| RAG ingestion, chunking, index, retrieval | `app/rag`, persisted index, Markdown/PDF ingestion, hybrid retrieval, index drift check | Ready |
+| Grounded answers and citation validation | Evidence coverage/conflict checks, exact retrieved-chunk allow-list, citation tests | Ready: bounded workflow |
 | At least five MCP tools | Eight typed tool contracts | Foundation |
 | Actual MCP discovery and invocation | Official `mcp` client, Streamable HTTP server, Phase 4 integration test | Ready: 2-tool slice |
 | Two multi-step workflows | Remote-work and PTO use cases; expense backup | Planned: Phase 7 |
@@ -31,8 +31,8 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Evaluation set of 20-30 cases | 25 machine-readable cases with exact 7/5/6/4/3 distribution | Ready |
 | Evaluation expectations defined before implementation | Facts, policy sections, tools, outcomes, constraints, and safety per case | Ready |
 | Evaluation and API JSON Schemas | `evaluation/schemas`, drift-export script, CI check | Ready |
-| Required metrics and ablation | `design-and-evaluation.md` | Planned: Phase 10 |
-| README and design documentation | Repository documentation | Ready through Phase 4 |
+| Required metrics and ablation | Phase 5 retrieval ablation and raw results; full workflow metrics remain Phase 10 | Foundation: retrieval ready |
+| README and design documentation | Repository documentation | Ready through Phase 5 |
 | AI tooling disclosure | `ai-tooling.md` | Ready and maintained continuously |
 | Deployment URL and cold-start notes | `render.yaml`, `deployed.md`, verified public root and `/health` | Ready |
 | Recorded demo | Demo acceptance criteria in use cases | Planned: Phase 10 |

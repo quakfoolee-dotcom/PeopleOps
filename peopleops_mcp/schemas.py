@@ -43,13 +43,21 @@ class PolicyEvidence(MCPModel):
     title: str
     snippet: str = Field(min_length=1, max_length=1000)
     version: str
+    effective_date: date
     source_format: Literal["markdown", "pdf"]
     source_path: str
+    page: int | None = Field(default=None, ge=1)
+    chunk_id: str = Field(pattern=r"^POL-[A-Z]{3}-\d{3}::[A-Z]{3}-\d+(?:\.\d+)?::\d{2}$")
+    retrieval_score: float = Field(ge=0, le=1)
 
 
 class PolicySearchResult(MCPModel):
     query: str
-    retrieval_mode: Literal["phase4_deterministic_keyword"]
+    retrieval_mode: Literal["phase5_hybrid", "phase5_dense", "phase5_keyword"]
+    index_version: str
+    evidence_rule: str
     sufficient_evidence: bool
     matches: list[PolicyEvidence]
+    missing_policy_ids: list[str] = Field(default_factory=list)
+    conflicts: list[str] = Field(default_factory=list)
     limitation: str

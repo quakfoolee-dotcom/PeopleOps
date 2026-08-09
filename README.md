@@ -6,7 +6,7 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 ## Execution status
 
-Phases 1 through 4 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
+Phases 1 through 5 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
 
 - a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
 - a React and Vite demonstration interface with citations and an MCP trace;
@@ -23,10 +23,20 @@ Phases 1 through 4 of the [authoritative execution plan](docs/execution-plan.md)
 - deterministic employee, manager, location, PTO, benefits, and historical ticket fixtures;
 - strict mock-data schemas, checksums, semantic validation, and a reproducible SQLite build;
 - a bounded orchestrator that discovers and invokes two read-only tools through the official MCP client;
-- a cited E-1007 international remote-work demonstration with fail-closed behavior;
+- direct ingestion of the authoritative ten Markdown and two PDF runtime policies;
+- 169 heading-aware, metadata-enriched chunks and a persisted deterministic local embedding index;
+- BM25-style keyword retrieval, local embedding similarity, hybrid ranking, query decomposition,
+  deduplication, evidence coverage/conflict checks, and exact citation allow-listing;
+- a retrieval ablation over 24 policy-evidence cases and 48 expected sections, with hybrid `k=8`
+  selected at 100% gold evidence recall in the recorded Phase 5 run;
+- a cited E-1007 international remote-work demonstration with multi-document security evidence and
+  fail-closed behavior;
 - a live Render deployment whose Blueprint waits for passing GitHub checks.
 
-Hybrid RAG, the other six MCP tools, broader workflows, confirmation-gated writes, and provider-backed generation remain deliberately deferred to later phases. See [the Phase 4 guide](docs/phase4-thin-slice.md) for the exact boundary.
+The other six MCP tools, broader workflows, confirmation-gated writes, final product workspace, and
+provider-backed generation remain deliberately deferred to later phases. See the
+[Phase 5 RAG guide](docs/phase5-rag.md) and [Phase 4 workflow guide](docs/phase4-thin-slice.md) for
+the exact boundary.
 
 ## Live demonstration
 
@@ -55,10 +65,10 @@ FastAPI (/health, /chat, /mcp)
         |          |-- lookup_employee_profile
         |          `-- search_policy_documents
         |
-        +--> Policy corpus validator (ready)
+        +--> Hybrid RAG index (ready)
                    |
                    v
-              12 synthetic policies
+              169 validated sections
 
         +--> Mock-data validator / SQLite builder (ready)
                    |
@@ -107,7 +117,7 @@ npm run dev
 Open `http://127.0.0.1:5173`. Vite proxies `/health` and `/chat` to the backend during development.
 
 The page includes a preset E-1007 Germany request. Select **Run cited workflow** to see the
-conditional answer, four policy citations, request ID, and MCP discovery/call trace.
+conditional answer, multi-policy citations, request ID, and MCP discovery/call trace.
 
 ## Automated validation
 
@@ -132,6 +142,8 @@ The production image builds the React application and serves it from FastAPI.
 
 - [Use cases](docs/use-cases.md)
 - [Phase 4 thin vertical slice](docs/phase4-thin-slice.md)
+- [Phase 5 hybrid RAG](docs/phase5-rag.md)
+- [Score-5 UI design decision](docs/ui-design-decision.md)
 - [Developer guide](docs/developer-guide.md)
 - [Architecture](docs/architecture.md)
 - [Requirements traceability](docs/requirements-traceability.md)

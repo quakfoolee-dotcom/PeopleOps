@@ -8,7 +8,8 @@ const healthPayload = {
   components: {
     application: { status: "ready", detail: "FastAPI is serving requests." },
     policy_corpus: { status: "ready", detail: "12 synthetic policies validated." },
-    mcp: { status: "ready", detail: "2 Phase 4 tools are discoverable." },
+    rag_index: { status: "ready", detail: "169 sections indexed." },
+    mcp: { status: "ready", detail: "2 Phase 5 tools are discoverable." },
   },
 };
 
@@ -25,8 +26,12 @@ const chatPayload = {
       title: "International Work — Duration categories",
       snippet: "International exceptional requests require 30 business days of notice.",
       version: "1.0",
+      effective_date: "2026-09-01",
       source_format: "markdown",
       source_path: "policy_corpus/runtime_corpus/POL-INT-001.md",
+      page: null,
+      chunk_id: "POL-INT-001::INT-5::01",
+      retrieval_score: 0.91,
     },
   ],
   tool_trace: [
@@ -42,7 +47,7 @@ const chatPayload = {
   ],
 };
 
-describe("PeopleOps Assistant Phase 4 interface", () => {
+describe("PeopleOps Assistant Phase 5 interface", () => {
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
@@ -57,7 +62,7 @@ describe("PeopleOps Assistant Phase 4 interface", () => {
     render(<App />);
 
     expect(screen.getAllByText("PeopleOps Assistant").length).toBeGreaterThan(0);
-    expect(screen.getByText(/Phase 4 · v0.1.0/i)).toBeInTheDocument();
+    expect(screen.getByText(/Phase 5 · v0.2.0/i)).toBeInTheDocument();
     expect(await screen.findByText("Service healthy")).toBeInTheDocument();
     expect(screen.getByText("live MCP tools")).toBeInTheDocument();
     expect(screen.getByText("Trace a request from question to evidence")).toBeInTheDocument();

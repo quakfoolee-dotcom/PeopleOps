@@ -1,0 +1,1272 @@
+{
+  "suite": "phase5-rag-ablation",
+  "synthetic_as_of_date": "2026-09-01",
+  "configurations": [
+    {
+      "mode": "dense",
+      "top_k": 5,
+      "evaluated_cases": 24,
+      "expected_sections": 48,
+      "retrieved_expected_sections": 40,
+      "evidence_recall": 0.8333,
+      "latency_ms": {
+        "p50": 28.319,
+        "p95": 36.617
+      },
+      "case_results": [
+        {
+          "case_id": "EVAL-POL-001",
+          "expected": [
+            "POL-PTO-001:PTO-6"
+          ],
+          "retrieved": [
+            "POL-HOL-001:HOL-1",
+            "POL-HOL-001:HOL-8",
+            "POL-PTO-001:PTO-4",
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-002",
+          "expected": [
+            "POL-BEN-001:BEN-5"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-14",
+            "POL-BEN-001:BEN-2",
+            "POL-BEN-001:BEN-4",
+            "POL-BEN-001:BEN-8"
+          ],
+          "recall": 0.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-003",
+          "expected": [
+            "POL-HOL-001:HOL-6"
+          ],
+          "retrieved": [
+            "POL-HOL-001:HOL-11",
+            "POL-HOL-001:HOL-12",
+            "POL-HOL-001:HOL-2",
+            "POL-HOL-001:HOL-6",
+            "POL-LEV-001:LEV-3"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-004",
+          "expected": [
+            "POL-EQP-001:EQP-4"
+          ],
+          "retrieved": [
+            "POL-EQP-001:EQP-4",
+            "POL-EQP-001:EQP-5",
+            "POL-EXP-001:EXP-4",
+            "POL-EXP-001:EXP-7",
+            "POL-EXP-001:EXP-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-005",
+          "expected": [
+            "POL-EXP-001:EXP-4"
+          ],
+          "retrieved": [
+            "POL-EXP-001:EXP-1",
+            "POL-EXP-001:EXP-11",
+            "POL-EXP-001:EXP-2",
+            "POL-EXP-001:EXP-4",
+            "POL-EXP-001:EXP-8"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-006",
+          "expected": [
+            "POL-SEC-001:SEC-10"
+          ],
+          "retrieved": [
+            "POL-EQP-001:EQP-8",
+            "POL-HRC-001:HRC-12",
+            "POL-ONB-001:ONB-12",
+            "POL-SEC-001:SEC-10"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-007",
+          "expected": [
+            "POL-ONB-001:ONB-6"
+          ],
+          "retrieved": [
+            "POL-ONB-001:ONB-12",
+            "POL-ONB-001:ONB-5",
+            "POL-ONB-001:ONB-6",
+            "POL-ONB-001:ONB-7",
+            "POL-ONB-001:ONB-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-001",
+          "expected": [
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-5",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "retrieved": [
+            "POL-INT-001:INT-12",
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-9",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "recall": 0.75,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-002",
+          "expected": [
+            "POL-EQP-001:EQP-4",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7"
+          ],
+          "retrieved": [
+            "POL-EQP-001:EQP-4",
+            "POL-EQP-001:EQP-5",
+            "POL-EXP-001:EXP-4",
+            "POL-EXP-001:EXP-7",
+            "POL-EXP-001:EXP-9"
+          ],
+          "recall": 0.6667,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-003",
+          "expected": [
+            "POL-HOL-001:HOL-8",
+            "POL-PTO-001:PTO-5"
+          ],
+          "retrieved": [
+            "POL-HOL-001:HOL-8",
+            "POL-LEV-001:LEV-10",
+            "POL-LEV-001:LEV-14",
+            "POL-PTO-001:PTO-13",
+            "POL-PTO-001:PTO-5"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-004",
+          "expected": [
+            "POL-BEN-001:BEN-9",
+            "POL-LEV-001:LEV-10"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-9",
+            "POL-HOL-001:HOL-8",
+            "POL-LEV-001:LEV-10",
+            "POL-LEV-001:LEV-2",
+            "POL-PTO-001:PTO-13"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-005",
+          "expected": [
+            "POL-CON-001:CON-11",
+            "POL-CON-001:CON-12",
+            "POL-HRC-001:HRC-3",
+            "POL-HRC-001:HRC-7"
+          ],
+          "retrieved": [
+            "POL-CON-001:CON-11",
+            "POL-CON-001:CON-12",
+            "POL-HRC-001:HRC-16",
+            "POL-HRC-001:HRC-4",
+            "POL-HRC-001:HRC-7"
+          ],
+          "recall": 0.75,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-001",
+          "expected": [
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-5",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "retrieved": [
+            "POL-INT-001:INT-12",
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-9",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "recall": 0.75,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-002",
+          "expected": [
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "retrieved": [
+            "POL-HOL-001:HOL-1",
+            "POL-HOL-001:HOL-8",
+            "POL-PTO-001:PTO-4",
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-003",
+          "expected": [
+            "POL-EQP-001:EQP-4",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7"
+          ],
+          "retrieved": [
+            "POL-EQP-001:EQP-4",
+            "POL-EQP-001:EQP-5",
+            "POL-EXP-001:EXP-4",
+            "POL-EXP-001:EXP-7",
+            "POL-EXP-001:EXP-9"
+          ],
+          "recall": 0.6667,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-004",
+          "expected": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-3",
+            "POL-BEN-001:BEN-4"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-14",
+            "POL-BEN-001:BEN-4",
+            "POL-BEN-001:BEN-8",
+            "POL-ONB-001:ONB-14"
+          ],
+          "recall": 0.6667,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-005",
+          "expected": [
+            "POL-ONB-001:ONB-5",
+            "POL-ONB-001:ONB-6",
+            "POL-ONB-001:ONB-7"
+          ],
+          "retrieved": [
+            "POL-ONB-001:ONB-12",
+            "POL-ONB-001:ONB-5",
+            "POL-ONB-001:ONB-6",
+            "POL-ONB-001:ONB-7",
+            "POL-ONB-001:ONB-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-006",
+          "expected": [
+            "POL-CON-001:CON-11",
+            "POL-HRC-001:HRC-6",
+            "POL-HRC-001:HRC-8"
+          ],
+          "retrieved": [
+            "POL-CON-001:CON-12",
+            "POL-CON-001:CON-15",
+            "POL-HRC-001:HRC-6",
+            "POL-HRC-001:HRC-8",
+            "POL-LEV-001:LEV-12"
+          ],
+          "recall": 0.6667,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-001",
+          "expected": [
+            "POL-PTO-001:PTO-6"
+          ],
+          "retrieved": [
+            "POL-HOL-001:HOL-1",
+            "POL-HOL-001:HOL-8",
+            "POL-PTO-001:PTO-4",
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-002",
+          "expected": [
+            "POL-INT-001:INT-6"
+          ],
+          "retrieved": [
+            "POL-INT-001:INT-14",
+            "POL-INT-001:INT-6",
+            "POL-INT-001:INT-9",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-1"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-003",
+          "expected": [
+            "POL-BEN-001:BEN-11"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-14",
+            "POL-BEN-001:BEN-2",
+            "POL-BEN-001:BEN-4",
+            "POL-BEN-001:BEN-8"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-004",
+          "expected": [
+            "POL-LEV-001:LEV-5",
+            "POL-LEV-001:LEV-9"
+          ],
+          "retrieved": [
+            "POL-CON-001:CON-15",
+            "POL-LEV-001:LEV-3",
+            "POL-LEV-001:LEV-5",
+            "POL-LEV-001:LEV-9",
+            "POL-PTO-001:PTO-13"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-SAFE-002",
+          "expected": [
+            "POL-BEN-001:BEN-11",
+            "POL-CON-001:CON-8"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-11",
+            "POL-CON-001:CON-8",
+            "POL-HOL-001:HOL-13",
+            "POL-HOL-001:HOL-8",
+            "POL-LEV-001:LEV-10"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-SAFE-003",
+          "expected": [
+            "POL-HRC-001:HRC-8"
+          ],
+          "retrieved": [
+            "POL-HRC-001:HRC-2",
+            "POL-HRC-001:HRC-6",
+            "POL-HRC-001:HRC-8",
+            "POL-SEC-001:SEC-14",
+            "POL-SEC-001:SEC-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        }
+      ]
+    },
+    {
+      "mode": "hybrid",
+      "top_k": 5,
+      "evaluated_cases": 24,
+      "expected_sections": 48,
+      "retrieved_expected_sections": 46,
+      "evidence_recall": 0.9583,
+      "latency_ms": {
+        "p50": 30.847,
+        "p95": 43.38
+      },
+      "case_results": [
+        {
+          "case_id": "EVAL-POL-001",
+          "expected": [
+            "POL-PTO-001:PTO-6"
+          ],
+          "retrieved": [
+            "POL-PTO-001:PTO-1",
+            "POL-PTO-001:PTO-12",
+            "POL-PTO-001:PTO-4",
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-002",
+          "expected": [
+            "POL-BEN-001:BEN-5"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-14",
+            "POL-BEN-001:BEN-3",
+            "POL-BEN-001:BEN-4",
+            "POL-BEN-001:BEN-5"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-003",
+          "expected": [
+            "POL-HOL-001:HOL-6"
+          ],
+          "retrieved": [
+            "POL-HOL-001:HOL-12",
+            "POL-HOL-001:HOL-2",
+            "POL-HOL-001:HOL-6",
+            "POL-LEV-001:LEV-3",
+            "POL-PTO-001:PTO-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-004",
+          "expected": [
+            "POL-EQP-001:EQP-4"
+          ],
+          "retrieved": [
+            "POL-EQP-001:EQP-1",
+            "POL-EQP-001:EQP-4",
+            "POL-EQP-001:EQP-5",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-005",
+          "expected": [
+            "POL-EXP-001:EXP-4"
+          ],
+          "retrieved": [
+            "POL-EXP-001:EXP-2",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-4",
+            "POL-EXP-001:EXP-6",
+            "POL-EXP-001:EXP-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-006",
+          "expected": [
+            "POL-SEC-001:SEC-10"
+          ],
+          "retrieved": [
+            "POL-CON-001:CON-11",
+            "POL-EQP-001:EQP-9",
+            "POL-HRC-001:HRC-12",
+            "POL-INT-001:INT-9",
+            "POL-SEC-001:SEC-10"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-007",
+          "expected": [
+            "POL-ONB-001:ONB-6"
+          ],
+          "retrieved": [
+            "POL-ONB-001:ONB-12",
+            "POL-ONB-001:ONB-3",
+            "POL-ONB-001:ONB-5",
+            "POL-ONB-001:ONB-6",
+            "POL-ONB-001:ONB-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-001",
+          "expected": [
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-5",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "retrieved": [
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-3",
+            "POL-INT-001:INT-9",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "recall": 0.75,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-002",
+          "expected": [
+            "POL-EQP-001:EQP-4",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7"
+          ],
+          "retrieved": [
+            "POL-EQP-001:EQP-1",
+            "POL-EQP-001:EQP-4",
+            "POL-EQP-001:EQP-5",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-003",
+          "expected": [
+            "POL-HOL-001:HOL-8",
+            "POL-PTO-001:PTO-5"
+          ],
+          "retrieved": [
+            "POL-HOL-001:HOL-3",
+            "POL-HOL-001:HOL-8",
+            "POL-LEV-001:LEV-10",
+            "POL-PTO-001:PTO-13",
+            "POL-PTO-001:PTO-5"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-004",
+          "expected": [
+            "POL-BEN-001:BEN-9",
+            "POL-LEV-001:LEV-10"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-1",
+            "POL-BEN-001:BEN-9",
+            "POL-HOL-001:HOL-8",
+            "POL-LEV-001:LEV-10",
+            "POL-PTO-001:PTO-4"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-005",
+          "expected": [
+            "POL-CON-001:CON-11",
+            "POL-CON-001:CON-12",
+            "POL-HRC-001:HRC-3",
+            "POL-HRC-001:HRC-7"
+          ],
+          "retrieved": [
+            "POL-CON-001:CON-11",
+            "POL-CON-001:CON-12",
+            "POL-CON-001:CON-15",
+            "POL-HRC-001:HRC-3",
+            "POL-HRC-001:HRC-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-001",
+          "expected": [
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-5",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "retrieved": [
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-3",
+            "POL-INT-001:INT-9",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "recall": 0.75,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-002",
+          "expected": [
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "retrieved": [
+            "POL-PTO-001:PTO-1",
+            "POL-PTO-001:PTO-12",
+            "POL-PTO-001:PTO-4",
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-003",
+          "expected": [
+            "POL-EQP-001:EQP-4",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7"
+          ],
+          "retrieved": [
+            "POL-EQP-001:EQP-1",
+            "POL-EQP-001:EQP-4",
+            "POL-EQP-001:EQP-5",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-004",
+          "expected": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-3",
+            "POL-BEN-001:BEN-4"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-1",
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-3",
+            "POL-BEN-001:BEN-4",
+            "POL-BEN-001:BEN-5"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-005",
+          "expected": [
+            "POL-ONB-001:ONB-5",
+            "POL-ONB-001:ONB-6",
+            "POL-ONB-001:ONB-7"
+          ],
+          "retrieved": [
+            "POL-ONB-001:ONB-12",
+            "POL-ONB-001:ONB-3",
+            "POL-ONB-001:ONB-5",
+            "POL-ONB-001:ONB-6",
+            "POL-ONB-001:ONB-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-006",
+          "expected": [
+            "POL-CON-001:CON-11",
+            "POL-HRC-001:HRC-6",
+            "POL-HRC-001:HRC-8"
+          ],
+          "retrieved": [
+            "POL-CON-001:CON-11",
+            "POL-CON-001:CON-15",
+            "POL-CON-001:CON-3",
+            "POL-HRC-001:HRC-6",
+            "POL-HRC-001:HRC-8"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-001",
+          "expected": [
+            "POL-PTO-001:PTO-6"
+          ],
+          "retrieved": [
+            "POL-PTO-001:PTO-12",
+            "POL-PTO-001:PTO-13",
+            "POL-PTO-001:PTO-4",
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-002",
+          "expected": [
+            "POL-INT-001:INT-6"
+          ],
+          "retrieved": [
+            "POL-INT-001:INT-12",
+            "POL-INT-001:INT-14",
+            "POL-INT-001:INT-6",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-1"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-003",
+          "expected": [
+            "POL-BEN-001:BEN-11"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-12",
+            "POL-BEN-001:BEN-3",
+            "POL-BEN-001:BEN-4",
+            "POL-BEN-001:BEN-5"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-004",
+          "expected": [
+            "POL-LEV-001:LEV-5",
+            "POL-LEV-001:LEV-9"
+          ],
+          "retrieved": [
+            "POL-LEV-001:LEV-1",
+            "POL-LEV-001:LEV-3",
+            "POL-LEV-001:LEV-5",
+            "POL-LEV-001:LEV-6",
+            "POL-LEV-001:LEV-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-SAFE-002",
+          "expected": [
+            "POL-BEN-001:BEN-11",
+            "POL-CON-001:CON-8"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-11",
+            "POL-CON-001:CON-8",
+            "POL-HOL-001:HOL-8",
+            "POL-LEV-001:LEV-10",
+            "POL-PTO-001:PTO-3"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-SAFE-003",
+          "expected": [
+            "POL-HRC-001:HRC-8"
+          ],
+          "retrieved": [
+            "POL-HRC-001:HRC-13",
+            "POL-HRC-001:HRC-16",
+            "POL-HRC-001:HRC-2",
+            "POL-HRC-001:HRC-6",
+            "POL-HRC-001:HRC-8"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        }
+      ]
+    },
+    {
+      "mode": "hybrid",
+      "top_k": 8,
+      "evaluated_cases": 24,
+      "expected_sections": 48,
+      "retrieved_expected_sections": 48,
+      "evidence_recall": 1.0,
+      "latency_ms": {
+        "p50": 27.951,
+        "p95": 37.0
+      },
+      "case_results": [
+        {
+          "case_id": "EVAL-POL-001",
+          "expected": [
+            "POL-PTO-001:PTO-6"
+          ],
+          "retrieved": [
+            "POL-LEV-001:LEV-14",
+            "POL-PTO-001:PTO-1",
+            "POL-PTO-001:PTO-11",
+            "POL-PTO-001:PTO-12",
+            "POL-PTO-001:PTO-13",
+            "POL-PTO-001:PTO-4",
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-002",
+          "expected": [
+            "POL-BEN-001:BEN-5"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-14",
+            "POL-BEN-001:BEN-2",
+            "POL-BEN-001:BEN-3",
+            "POL-BEN-001:BEN-4",
+            "POL-BEN-001:BEN-5",
+            "POL-BEN-001:BEN-8",
+            "POL-ONB-001:ONB-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-003",
+          "expected": [
+            "POL-HOL-001:HOL-6"
+          ],
+          "retrieved": [
+            "POL-HOL-001:HOL-1",
+            "POL-HOL-001:HOL-11",
+            "POL-HOL-001:HOL-12",
+            "POL-HOL-001:HOL-2",
+            "POL-HOL-001:HOL-6",
+            "POL-LEV-001:LEV-3",
+            "POL-PTO-001:PTO-3",
+            "POL-PTO-001:PTO-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-004",
+          "expected": [
+            "POL-EQP-001:EQP-4"
+          ],
+          "retrieved": [
+            "POL-EQP-001:EQP-1",
+            "POL-EQP-001:EQP-14",
+            "POL-EQP-001:EQP-4",
+            "POL-EQP-001:EQP-5",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7",
+            "POL-EXP-001:EXP-9",
+            "POL-RWK-001:RWK-10"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-005",
+          "expected": [
+            "POL-EXP-001:EXP-4"
+          ],
+          "retrieved": [
+            "POL-EXP-001:EXP-1",
+            "POL-EXP-001:EXP-11",
+            "POL-EXP-001:EXP-14",
+            "POL-EXP-001:EXP-2",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-4",
+            "POL-EXP-001:EXP-6",
+            "POL-EXP-001:EXP-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-006",
+          "expected": [
+            "POL-SEC-001:SEC-10"
+          ],
+          "retrieved": [
+            "POL-CON-001:CON-11",
+            "POL-CON-001:CON-5",
+            "POL-EQP-001:EQP-9",
+            "POL-HRC-001:HRC-12",
+            "POL-INT-001:INT-9",
+            "POL-SEC-001:SEC-10",
+            "POL-SEC-001:SEC-13",
+            "POL-SEC-001:SEC-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-POL-007",
+          "expected": [
+            "POL-ONB-001:ONB-6"
+          ],
+          "retrieved": [
+            "POL-ONB-001:ONB-1",
+            "POL-ONB-001:ONB-12",
+            "POL-ONB-001:ONB-3",
+            "POL-ONB-001:ONB-4",
+            "POL-ONB-001:ONB-5",
+            "POL-ONB-001:ONB-6",
+            "POL-ONB-001:ONB-7",
+            "POL-ONB-001:ONB-8"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-001",
+          "expected": [
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-5",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "retrieved": [
+            "POL-INT-001:INT-1",
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-3",
+            "POL-INT-001:INT-5",
+            "POL-INT-001:INT-9",
+            "POL-RWK-001:RWK-1",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-002",
+          "expected": [
+            "POL-EQP-001:EQP-4",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7"
+          ],
+          "retrieved": [
+            "POL-EQP-001:EQP-1",
+            "POL-EQP-001:EQP-14",
+            "POL-EQP-001:EQP-4",
+            "POL-EQP-001:EQP-5",
+            "POL-EXP-001:EXP-14",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7",
+            "POL-RWK-001:RWK-10"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-003",
+          "expected": [
+            "POL-HOL-001:HOL-8",
+            "POL-PTO-001:PTO-5"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-9",
+            "POL-HOL-001:HOL-3",
+            "POL-HOL-001:HOL-7",
+            "POL-HOL-001:HOL-8",
+            "POL-LEV-001:LEV-10",
+            "POL-LEV-001:LEV-14",
+            "POL-PTO-001:PTO-13",
+            "POL-PTO-001:PTO-5"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-004",
+          "expected": [
+            "POL-BEN-001:BEN-9",
+            "POL-LEV-001:LEV-10"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-1",
+            "POL-BEN-001:BEN-10",
+            "POL-BEN-001:BEN-9",
+            "POL-HOL-001:HOL-8",
+            "POL-LEV-001:LEV-10",
+            "POL-PTO-001:PTO-13",
+            "POL-PTO-001:PTO-4",
+            "POL-PTO-001:PTO-8"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-MULTI-005",
+          "expected": [
+            "POL-CON-001:CON-11",
+            "POL-CON-001:CON-12",
+            "POL-HRC-001:HRC-3",
+            "POL-HRC-001:HRC-7"
+          ],
+          "retrieved": [
+            "POL-CON-001:CON-11",
+            "POL-CON-001:CON-12",
+            "POL-CON-001:CON-15",
+            "POL-HRC-001:HRC-1",
+            "POL-HRC-001:HRC-12",
+            "POL-HRC-001:HRC-3",
+            "POL-HRC-001:HRC-4",
+            "POL-HRC-001:HRC-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-001",
+          "expected": [
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-5",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "retrieved": [
+            "POL-INT-001:INT-1",
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-3",
+            "POL-INT-001:INT-5",
+            "POL-INT-001:INT-9",
+            "POL-RWK-001:RWK-1",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-8"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-002",
+          "expected": [
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "retrieved": [
+            "POL-HOL-001:HOL-4",
+            "POL-PTO-001:PTO-1",
+            "POL-PTO-001:PTO-11",
+            "POL-PTO-001:PTO-12",
+            "POL-PTO-001:PTO-13",
+            "POL-PTO-001:PTO-4",
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-003",
+          "expected": [
+            "POL-EQP-001:EQP-4",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7"
+          ],
+          "retrieved": [
+            "POL-EQP-001:EQP-1",
+            "POL-EQP-001:EQP-14",
+            "POL-EQP-001:EQP-4",
+            "POL-EQP-001:EQP-5",
+            "POL-EXP-001:EXP-3",
+            "POL-EXP-001:EXP-7",
+            "POL-EXP-001:EXP-9",
+            "POL-RWK-001:RWK-10"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-004",
+          "expected": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-3",
+            "POL-BEN-001:BEN-4"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-1",
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-2",
+            "POL-BEN-001:BEN-3",
+            "POL-BEN-001:BEN-4",
+            "POL-BEN-001:BEN-5",
+            "POL-BEN-001:BEN-8",
+            "POL-ONB-001:ONB-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-005",
+          "expected": [
+            "POL-ONB-001:ONB-5",
+            "POL-ONB-001:ONB-6",
+            "POL-ONB-001:ONB-7"
+          ],
+          "retrieved": [
+            "POL-ONB-001:ONB-1",
+            "POL-ONB-001:ONB-12",
+            "POL-ONB-001:ONB-3",
+            "POL-ONB-001:ONB-5",
+            "POL-ONB-001:ONB-6",
+            "POL-ONB-001:ONB-7",
+            "POL-ONB-001:ONB-8",
+            "POL-ONB-001:ONB-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-TOOL-006",
+          "expected": [
+            "POL-CON-001:CON-11",
+            "POL-HRC-001:HRC-6",
+            "POL-HRC-001:HRC-8"
+          ],
+          "retrieved": [
+            "POL-CON-001:CON-11",
+            "POL-CON-001:CON-12",
+            "POL-CON-001:CON-15",
+            "POL-CON-001:CON-3",
+            "POL-CON-001:CON-4",
+            "POL-HRC-001:HRC-16",
+            "POL-HRC-001:HRC-6",
+            "POL-HRC-001:HRC-8"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-001",
+          "expected": [
+            "POL-PTO-001:PTO-6"
+          ],
+          "retrieved": [
+            "POL-PTO-001:PTO-1",
+            "POL-PTO-001:PTO-11",
+            "POL-PTO-001:PTO-12",
+            "POL-PTO-001:PTO-13",
+            "POL-PTO-001:PTO-4",
+            "POL-PTO-001:PTO-6",
+            "POL-PTO-001:PTO-7",
+            "POL-PTO-001:PTO-9"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-002",
+          "expected": [
+            "POL-INT-001:INT-6"
+          ],
+          "retrieved": [
+            "POL-INT-001:INT-12",
+            "POL-INT-001:INT-13",
+            "POL-INT-001:INT-14",
+            "POL-INT-001:INT-2",
+            "POL-INT-001:INT-3",
+            "POL-INT-001:INT-6",
+            "POL-RWK-001:RWK-5",
+            "POL-SEC-001:SEC-1"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-003",
+          "expected": [
+            "POL-BEN-001:BEN-11"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-12",
+            "POL-BEN-001:BEN-2",
+            "POL-BEN-001:BEN-3",
+            "POL-BEN-001:BEN-4",
+            "POL-BEN-001:BEN-5",
+            "POL-BEN-001:BEN-8",
+            "POL-HRC-001:HRC-16"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-AMB-004",
+          "expected": [
+            "POL-LEV-001:LEV-5",
+            "POL-LEV-001:LEV-9"
+          ],
+          "retrieved": [
+            "POL-CON-001:CON-15",
+            "POL-LEV-001:LEV-1",
+            "POL-LEV-001:LEV-3",
+            "POL-LEV-001:LEV-4",
+            "POL-LEV-001:LEV-5",
+            "POL-LEV-001:LEV-6",
+            "POL-LEV-001:LEV-9",
+            "POL-SEC-001:SEC-11"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-SAFE-002",
+          "expected": [
+            "POL-BEN-001:BEN-11",
+            "POL-CON-001:CON-8"
+          ],
+          "retrieved": [
+            "POL-BEN-001:BEN-11",
+            "POL-BEN-001:BEN-9",
+            "POL-CON-001:CON-11",
+            "POL-CON-001:CON-8",
+            "POL-HOL-001:HOL-8",
+            "POL-LEV-001:LEV-10",
+            "POL-PTO-001:PTO-13",
+            "POL-PTO-001:PTO-3"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        },
+        {
+          "case_id": "EVAL-SAFE-003",
+          "expected": [
+            "POL-HRC-001:HRC-8"
+          ],
+          "retrieved": [
+            "POL-HRC-001:HRC-13",
+            "POL-HRC-001:HRC-15",
+            "POL-HRC-001:HRC-16",
+            "POL-HRC-001:HRC-2",
+            "POL-HRC-001:HRC-5",
+            "POL-HRC-001:HRC-6",
+            "POL-HRC-001:HRC-8",
+            "POL-SEC-001:SEC-14"
+          ],
+          "recall": 1.0,
+          "sufficient_evidence": true
+        }
+      ]
+    }
+  ],
+  "selected_configuration": "hybrid-k8"
+}

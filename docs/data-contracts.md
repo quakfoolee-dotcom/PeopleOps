@@ -11,7 +11,9 @@ All deterministic examples and automated evaluations use **2026-09-01**, the cor
 `app/api/contracts.py` defines strict Pydantic models with unknown fields rejected:
 
 - `ChatRequest`: request ID, message, optional synthetic employee ID, as-of date, and optional confirmation token.
-- `Citation`: stable policy and section identifiers, source title, bounded supporting snippet, policy version, source format, and path.
+- `Citation`: stable policy, section, and chunk identifiers; source title; bounded supporting
+  snippet; policy version and effective date; source format/path; optional PDF page; and retrieval
+  score.
 - `ToolTraceEntry`: ordered tool name, sanitized arguments, status, bounded result summary, duration, and error code where required.
 - `PendingActionPreview`: a confirmation-gated preview for synthetic ticket creation.
 - `ChatResponse`: final status and outcome, answer, citations, tool trace, and optional pending action.

@@ -1,5 +1,9 @@
 # Phase 4 thin vertical slice
 
+> Historical phase record. Phase 5 has replaced the deterministic policy matcher described below
+> with the persisted hybrid RAG implementation in `docs/phase5-rag.md`; the MCP and workflow
+> boundary remains the validated foundation.
+
 ## Delivered path
 
 Phase 4 implements one intentionally bounded workflow:

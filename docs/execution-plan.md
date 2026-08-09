@@ -8,7 +8,7 @@ This ten-phase plan controls implementation order. A phase is complete only when
 | 2. Evaluation and data contracts | Twenty-five gold cases, API/citation/trace schemas, and fixed synthetic date | Every case declares facts, policy sections, tools, outcome, and safety behavior and passes schema/semantic validation | Define success before implementation to prevent subjective evaluation and missing scenarios. | Ready |
 | 3. Policy corpus and mock data | Coherent policies plus employee, PTO, benefits, manager, location, and ticket data | Corpus and synthetic-data validation pass | Retrieval and workflows depend on consistent evidence and deterministic structured data. | Ready |
 | 4. Thin vertical slice | API to orchestrator to discovered MCP tools to cited response and trace; deploy immediately | MCP discovery/invocation test and hosted `/health` pass | Validate the highest-risk architectural boundary before implementing the full tool suite. | Ready |
-| 5. RAG implementation | Format-aware ingestion, hybrid retrieval, evidence and citation validation | Known and multi-document queries retrieve correct evidence; fabricated citations fail | Hybrid retrieval covers semantic language and exact policy terminology. | Planned |
+| 5. RAG implementation | Format-aware ingestion, hybrid retrieval, evidence and citation validation | Known and multi-document queries retrieve correct evidence; fabricated citations fail | Hybrid retrieval covers semantic language and exact policy terminology. | Ready |
 | 6. MCP tool suite | Implement all eight planned tools through MCP | All tools are discoverable, schema-valid, traced, timeout-controlled, and tested | Enforce genuine MCP integration rather than direct data or retrieval access. | Planned |
 | 7. Agent workflows and safety | Bounded remote-work, PTO, and expense workflows with safety gates | Primary workflows and failure/safety cases pass repeatedly | Typed bounded workflows provide testable and safer behavior. | Planned |
 | 8. Product interface | Chat, demo tasks, citations, traces, status, and confirmation experience | Grader can reproduce both workflows and inspect evidence | Expose operational evidence without exposing hidden chain-of-thought. | Foundation shell ready; functionality planned |
@@ -32,6 +32,7 @@ This ten-phase plan controls implementation order. A phase is complete only when
 
 ## Next action
 
-Begin Phase 5 RAG implementation: format-aware ingestion, heading-aware chunks, metadata enrichment,
-hybrid retrieval, evidence sufficiency, and citation validation. Preserve the working Phase 4 MCP
-boundary while replacing its deterministic policy route with the tested retrieval service.
+Begin Phase 6 MCP tool-suite implementation. Add the exact-section, PTO, benefits, compliance,
+draft-email, and confirmation-gated mock-ticket tools; make all eight discoverable, schema-valid,
+timeout-controlled, traced, and integration-tested without permitting direct orchestrator access to
+the RAG index or structured store.

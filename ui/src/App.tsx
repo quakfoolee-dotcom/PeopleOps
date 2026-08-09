@@ -13,8 +13,12 @@ type Citation = {
   title: string;
   snippet: string;
   version: string;
+  effective_date: string;
   source_format: "markdown" | "pdf";
   source_path: string;
+  page: number | null;
+  chunk_id: string;
+  retrieval_score: number;
 };
 
 type TraceEntry = {
@@ -43,7 +47,7 @@ const workflows = [
   {
     label: "International remote work",
     description: "Evaluate a six-week Germany request using profile and policy evidence.",
-    state: "Live in Phase 4",
+    state: "Live · hybrid RAG",
   },
   {
     label: "PTO request guidance",
@@ -107,7 +111,7 @@ export default function App() {
           <span className="brand-mark" aria-hidden="true">P</span>
           <span>PeopleOps Assistant</span>
         </div>
-        <span className="milestone-pill">Phase 4 · v0.1.0</span>
+        <span className="milestone-pill">Phase 5 · v0.2.0</span>
       </nav>
 
       <section className="hero">
@@ -167,7 +171,7 @@ export default function App() {
               />
             </div>
             <p className="form-note">
-              Phase 4 intentionally supports this international remote-work path. Phase 5 adds hybrid retrieval.
+              The current workflow is intentionally bounded; policy evidence now uses Phase 5 hybrid retrieval.
             </p>
             <button className="submit-action" disabled={submitting || !message.trim()} type="submit">
               {submitting ? "Tracing request…" : "Run cited workflow"}
@@ -217,7 +221,11 @@ export default function App() {
                   </div>
                   <h3>{citation.title}</h3>
                   <p>{citation.snippet}</p>
-                  <small>v{citation.version} · {citation.source_format} · {citation.source_path}</small>
+                  <small>
+                    v{citation.version} · effective {citation.effective_date} · {citation.source_format}
+                    {citation.page ? ` · page ${citation.page}` : ""} · score {citation.retrieval_score.toFixed(3)}
+                    <br />{citation.chunk_id} · {citation.source_path}
+                  </small>
                 </article>
               ))}
             </div>

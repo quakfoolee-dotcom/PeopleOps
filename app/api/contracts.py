@@ -44,8 +44,14 @@ class Citation(ContractModel):
     title: str = Field(min_length=1, max_length=200)
     snippet: str = Field(min_length=1, max_length=1000)
     version: str = Field(min_length=1, max_length=40)
+    effective_date: date
     source_format: Literal["markdown", "pdf"]
     source_path: str = Field(min_length=1, max_length=500)
+    page: int | None = Field(default=None, ge=1)
+    chunk_id: str = Field(
+        pattern=r"^POL-[A-Z]{3}-\d{3}::[A-Z]{3}-\d+(?:\.\d+)?::\d{2}$"
+    )
+    retrieval_score: float = Field(ge=0, le=1)
 
 
 SENSITIVE_TRACE_KEYS = frozenset(

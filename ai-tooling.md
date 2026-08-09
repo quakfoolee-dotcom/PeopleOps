@@ -2,7 +2,7 @@
 
 ## Tools used
 
-OpenAI Codex was used during Phases 1 through 4 to:
+OpenAI Codex was used during Phases 1 through 5 to:
 
 - review the assignment requirements and Score 5 delivery plan;
 - inspect the GitHub repository and local policy-corpus package;
@@ -22,6 +22,12 @@ OpenAI Codex was used during Phases 1 through 4 to:
 - build and visually verify the interactive Phase 4 demonstration interface;
 - prepare the Render Blueprint, operating guide, and deployment smoke-test procedure;
 - guide the owner-controlled Render authorization and verify the hosted UI, health, and chat flow.
+- compare the proposed evidence-first UI wireframe with the working Phase 4 interface and record the
+  corrected Phase 8 design decision;
+- implement and test authoritative Markdown/PDF ingestion, deterministic local embeddings,
+  BM25-style scoring, hybrid ranking, query decomposition, evidence gates, and citation validation;
+- build the persisted index and retrieval-ablation workflow, analyze initial recall errors, and
+  improve broad gold-suite evidence recall without changing the pre-implementation gold cases.
 
 ## Human responsibility and review
 
@@ -33,9 +39,11 @@ AI assistance was effective for mapping rubric requirements to repository eviden
 
 ## Limitations
 
-Generated code and documentation are not accepted as correct merely because they compile. Phase 4
-MCP behavior is checked through automated and live HTTP tests. Retrieval quality, wider workflow
-safety, provider integration, hosted reliability, and evaluation results still require
-implementation-specific tests and human review in later milestones.
+Generated code and documentation are not accepted as correct merely because they compile. MCP and
+RAG behavior are checked through automated integration, retrieval, citation, index-drift, and live
+HTTP tests. The Phase 5 local feature-hashing embedding is deliberately small and deterministic; it
+has less open-domain semantic capacity than a neural model and is paired with bounded PeopleOps
+query decomposition. Wider workflow safety, provider integration, hosted reliability, and final
+evaluation still require implementation-specific tests and human review in later milestones.
 
 This document will be updated throughout the project.

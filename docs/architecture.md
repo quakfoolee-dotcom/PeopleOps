@@ -14,7 +14,7 @@ FastAPI application
     `-- /mcp (Streamable HTTP)
     |
     v
-Bounded Phase 4 orchestrator
+Bounded international-work orchestrator
     |-- fixed workflow and evidence gate
     |-- typed response and citations
     `-- sanitized operational trace
@@ -26,7 +26,7 @@ Official MCP client -> MCP server
                `-- six additional contracts (Phase 6)
                     |                 |
                     v                 v
-             Policy RAG index   Synthetic data store
+             Hybrid RAG index   Synthetic data store
                     |
                     v
               LLM provider adapter
@@ -36,28 +36,30 @@ Official MCP client -> MCP server
 
 - `app/api`: HTTP endpoints plus strict request, citation, trace, action-preview, and response contracts.
 - `app/core`: environment-driven configuration.
-- `app/rag`: corpus validation now; Phase 5 ingestion and hybrid retrieval next.
-- `app/agent`: bounded Phase 4 orchestration. It does not access data stores directly.
+- `app/rag`: authoritative Markdown/PDF ingestion, enriched chunks, local embeddings, BM25-style
+  keyword scoring, hybrid ranking, query decomposition, evidence checks, and citation validation.
+- `app/agent`: bounded international-work orchestration. It does not access data stores or RAG directly.
 - `app/mcp_client`: official MCP client session boundary.
-- `peopleops_mcp`: all eight contracts plus the Streamable HTTP server and two live Phase 4 tools.
+- `peopleops_mcp`: all eight contracts plus the Streamable HTTP server and two live Phase 5 tools.
 - `policy_corpus`: authoritative runtime sources and human-review artifacts.
 - `mock_data`: future deterministic synthetic structured records.
 - `app/evaluation`: gold-suite schemas, loading, and semantic validation.
-- `evaluation`: 25 gold cases and generated JSON Schemas now; metrics, latency, and ablation results in Phase 10.
+- `evaluation`: 25 gold cases, generated JSON Schemas, and Phase 5 retrieval ablation artifacts;
+  full workflow metrics remain Phase 10.
 - `ui`: React application built into static production assets.
 
-## Phase 4 request sequence
+## Phase 5 request sequence
 
 1. `/chat` validates the strict request contract and fixed synthetic date.
 2. The orchestrator rejects unsupported prompts before accessing tools.
 3. The official MCP client discovers the server's current tool list.
-4. The orchestrator requires both Phase 4 tools before continuing.
+4. The orchestrator requires both currently live tools before continuing.
 5. `lookup_employee_profile` reads the validated synthetic snapshot.
-6. `search_policy_documents` extracts stable sections from authoritative policy sources.
+6. `search_policy_documents` loads the persisted hybrid index, decomposes the query, applies hybrid
+   ranking and evidence coverage, validates citations, and returns enriched evidence.
 7. The orchestrator produces a typed conditional answer, citations, and sanitized timing trace.
 
-This deterministic slice validates the protocol and security boundary. It is not a replacement for
-the hybrid RAG and wider state machine planned in Phases 5 and 7.
+The workflow remains bounded while Phase 6 adds tools and Phase 7 adds the wider state machine.
 
 ## Safety principles
 

@@ -17,6 +17,7 @@ python -m pip install -e ".[dev]"
 python -m ruff check .
 python scripts/export_contract_schemas.py --check
 python scripts/validate_phase3_assets.py
+python scripts/build_rag_index.py --check
 python -m pytest --cov=app --cov=peopleops_mcp --cov-report=term-missing
 uvicorn app.main:app --reload
 ```
@@ -44,6 +45,29 @@ When changing a policy:
 3. Update the manifest and consistency matrix.
 4. Re-run corpus validation and retrieval tests.
 5. Preserve stable policy and section identifiers unless a documented migration is required.
+6. Run `python scripts/build_rag_index.py`, commit the regenerated index, and run the retrieval
+   evaluation.
+
+## RAG development
+
+Rebuild and verify the deterministic index:
+
+```powershell
+python scripts/build_rag_index.py
+python scripts/build_rag_index.py --check
+```
+
+Run and optionally refresh the Phase 5 retrieval ablation:
+
+```powershell
+python scripts/evaluate_rag.py
+python scripts/evaluate_rag.py --write
+```
+
+The authoritative settings are `RAG_INDEX_PATH`, `RAG_EMBEDDING_DIMENSIONS`,
+`RAG_CHUNK_TARGET_WORDS`, `RAG_CHUNK_OVERLAP_WORDS`, and `RAG_TOP_K`. A change to embedding or
+chunk behavior must bump its version, rebuild the persisted artifact, and preserve at least 95%
+gold evidence recall for the selected configuration.
 
 ## Synthetic operational data
 
@@ -71,7 +95,7 @@ Copy `.env.example` to `.env`. Provider keys are intentionally absent from the e
 MCP Streamable HTTP application at that path, so `/chat` exercises a real client/server boundary
 without a second container. Do not point the orchestrator at a data store or corpus path.
 
-## Phase 4 API smoke test
+## Phase 5 API smoke test
 
 With the backend running, execute:
 
@@ -85,8 +109,9 @@ Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/chat `
     -ContentType application/json -Body $body
 ```
 
-Verify a conditional outcome, citations `INT-4`, `INT-5`, `INT-13`, and `RWK-5`, and the three-step
-MCP trace. See `docs/phase4-thin-slice.md` for negative cases and architectural limits.
+Verify a conditional outcome; citations including `INT-5`, `INT-13`, `RWK-5`, and `SEC-8`; enriched
+chunk metadata; and the three-step MCP trace. See `docs/phase5-rag.md` for retrieval behavior and
+`docs/phase4-thin-slice.md` for the original workflow boundary.
 
 ## Evaluation contracts
 

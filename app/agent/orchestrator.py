@@ -16,14 +16,14 @@ from app.api.contracts import (
 from app.core.config import get_settings
 from app.mcp_client import MCPGateway
 from peopleops_mcp.schemas import EmployeeProfileResult, PolicySearchResult
-from peopleops_mcp.server import PHASE4_TOOL_NAMES
+from peopleops_mcp.server import PHASE5_TOOL_NAMES
 
 
 def _elapsed_ms(started: float) -> int:
     return max(0, round((perf_counter() - started) * 1000))
 
 
-def _supports_phase4_demo(message: str) -> bool:
+def _supports_international_demo(message: str) -> bool:
     normalized = message.casefold()
     has_duration = "six week" in normalized or "6 week" in normalized
     has_work_intent = "work" in normalized or "remote" in normalized
@@ -31,7 +31,7 @@ def _supports_phase4_demo(message: str) -> bool:
 
 
 class PeopleOpsOrchestrator:
-    """Run one typed, bounded Phase 4 workflow through an MCP client only."""
+    """Run one typed, bounded international-work workflow through an MCP client only."""
 
     def __init__(self, gateway: MCPGateway | None = None) -> None:
         self.gateway = gateway or MCPGateway()
@@ -57,13 +57,14 @@ class PeopleOpsOrchestrator:
                 outcome=WorkflowOutcome.CLARIFICATION_REQUIRED,
                 answer="Please provide a synthetic employee ID in the form E-####.",
             )
-        if not _supports_phase4_demo(request.message):
+        if not _supports_international_demo(request.message):
             return self._response(
                 request,
                 status=WorkflowStatus.OUT_OF_SCOPE,
                 outcome=WorkflowOutcome.REFUSED,
                 answer=(
-                    "Phase 4 currently supports the international remote-work demonstration. "
+                    "The current bounded workflow supports the international remote-work "
+                    "demonstration. "
                     "No policy or employee-data tools were called for this unsupported request."
                 ),
             )
@@ -73,8 +74,8 @@ class PeopleOpsOrchestrator:
         try:
             async with self.gateway.connect() as client:
                 tool_names = await self._discover_tools(client, trace, connection_started)
-                if not PHASE4_TOOL_NAMES.issubset(tool_names):
-                    missing = sorted(PHASE4_TOOL_NAMES - tool_names)
+                if not PHASE5_TOOL_NAMES.issubset(tool_names):
+                    missing = sorted(PHASE5_TOOL_NAMES - tool_names)
                     trace[-1] = trace[-1].model_copy(
                         update={
                             "status": ToolCallStatus.FAILED,
@@ -118,7 +119,7 @@ class PeopleOpsOrchestrator:
                         status=WorkflowStatus.ESCALATED,
                         outcome=WorkflowOutcome.ESCALATION_REQUIRED,
                         answer=(
-                            "The bounded Phase 4 policy tool did not return enough evidence to "
+                            "The hybrid policy tool did not return enough evidence to "
                             "answer safely. Escalate to People Operations rather than "
                             "inferring a rule."
                         ),

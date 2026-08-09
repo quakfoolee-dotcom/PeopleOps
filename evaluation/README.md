@@ -6,4 +6,7 @@ The suite covers straightforward policy questions, multi-document questions, emp
 
 Machine-readable JSON Schemas are committed under `schemas/`. See `docs/data-contracts.md` for the contract reference, validation commands, and case-authoring guide.
 
-Phase 10 will add execution runners, scoring, results, latency measurements, and retrieval ablations. Phase 2 defines what success means; it does not report runtime quality before those capabilities exist.
+Phase 5 adds the retrieval-only ablation under `results/`: dense `k=5`, hybrid `k=5`, and hybrid
+`k=8` over the 24 cases that declare 48 policy-section expectations. It does not claim final answer,
+tool-selection, workflow, safety, or deployed latency results. Phase 10 will add those complete
+execution metrics and cold/warm hosted measurements.

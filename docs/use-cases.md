@@ -12,9 +12,9 @@ Automated evaluations use the fixed as-of date **2026-09-01**, aligned with the 
 
 **Action:** Open `/health`.
 
-**Expected result:** HTTP 200 reports the application, 12-policy corpus, deterministic mock data,
-and Phase 4 MCP transport as ready, while unfinished RAG and provider components are explicitly
-marked planned or not configured.
+**Expected result:** HTTP 200 reports the application, 12-policy corpus, 169-section hybrid RAG
+index, deterministic mock data, and MCP transport as ready, while the provider remains explicitly
+not configured.
 
 This use case is implemented in Phase 1 and covered by automated tests.
 
@@ -27,14 +27,16 @@ This use case is implemented in Phase 1 and covered by automated tests.
 1. Validate and look up the synthetic employee.
 2. Discover both live tools through the official MCP client.
 3. Invoke `lookup_employee_profile` and `search_policy_documents` through MCP.
-4. Retrieve exact remote-work and international-work sections.
+4. Retrieve and validate exact international-work, remote-work, and security sections through the
+   hybrid RAG-backed policy tool.
 5. Produce conditional next steps with citations and a sanitized operational trace.
 
 **Acceptance:** Real MCP calls appear in the operational trace; citations support each material
 policy statement; unavailable tools or missing evidence never result in invented employee facts.
 Draft generation and deeper compliance evaluation remain Phase 7 work.
 
-This use case is implemented in Phase 4 and covered by MCP, orchestrator, API, and UI tests.
+This workflow was implemented in Phase 4 and upgraded to hybrid retrieval in Phase 5. MCP,
+orchestrator, API, RAG, and UI tests cover it.
 
 Gold-case mapping: `EVAL-MULTI-001` and `EVAL-TOOL-001`.
 
