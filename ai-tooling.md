@@ -49,6 +49,9 @@ OpenAI Codex was used during Phases 1 through 9 to:
   smoke, and an explicit release gate;
 - implement exact-commit release identity, cold-start-aware public deployment verification, grouped
   dependency maintenance, and release/rollback operating documentation.
+- review the assignment's LLM requirement and implement a replaceable OpenRouter/OpenAI-compatible
+  provider boundary, deterministic CI adapter, grounded-output validator, provider health, visible
+  generation metadata, safe fallback behavior, tests, and operating documentation.
 
 ## Human responsibility and review
 
@@ -67,7 +70,8 @@ has less open-domain semantic capacity than a neural model and is paired with bo
 query decomposition. The confirmation service and mock tickets are intentionally single-process
 demonstration state, not durable workflow infrastructure. Phase 7 classification is deterministic
 and limited to the documented workflow language rather than general natural-language coverage.
-Provider integration and final evaluation still require implementation-specific tests and human
-review in the final milestone.
+Provider integration is deliberately constrained to post-workflow synthesis and still requires the
+owner to configure the hosted secret and review the production smoke evidence. Final full-suite
+evaluation and human review remain in the final milestone.
 
 This document will be updated throughout the project.

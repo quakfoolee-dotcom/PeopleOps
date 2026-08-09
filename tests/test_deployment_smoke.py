@@ -9,9 +9,9 @@ from scripts.smoke_deployment import SmokeFailure, _request, validate_chat, vali
 
 
 def health_payload() -> dict[str, object]:
-    return {
+    payload: dict[str, object] = {
         "status": "ok",
-        "version": "0.7.0",
+        "version": "0.8.0",
         "environment": "production",
         "release_sha": "a" * 40,
         "components": {
@@ -22,9 +22,14 @@ def health_payload() -> dict[str, object]:
                 "rag_index",
                 "mcp",
                 "mock_database",
+                "llm_provider",
             )
         },
     }
+    components = payload["components"]
+    assert isinstance(components, dict)
+    components["llm_provider"]["detail"] = "deterministic provider is ready"
+    return payload
 
 
 def chat_payload() -> dict[str, object]:
@@ -55,15 +60,23 @@ def chat_payload() -> dict[str, object]:
             "next_steps": ["Provide exact dates."],
         },
         "pending_action": None,
+        "generation": {
+            "mode": "provider",
+            "provider": "deterministic",
+            "model": "deterministic-grounded-v1",
+            "resolved_model": "deterministic-grounded-v1",
+            "duration_ms": 0,
+        },
     }
 
 
 def test_health_smoke_contract_accepts_matching_release() -> None:
     validate_health(
         health_payload(),
-        expected_version="0.7.0",
+        expected_version="0.8.0",
         expected_environment="production",
         expected_release_sha="a" * 40,
+        expected_llm_provider="deterministic",
     )
 
 
@@ -71,14 +84,14 @@ def test_health_smoke_contract_rejects_wrong_release() -> None:
     with pytest.raises(SmokeFailure, match="release_sha"):
         validate_health(
             health_payload(),
-            expected_version="0.7.0",
+            expected_version="0.8.0",
             expected_environment="production",
             expected_release_sha="b" * 40,
         )
 
 
 def test_chat_smoke_contract_accepts_grounded_remote_work() -> None:
-    validate_chat(chat_payload())
+    validate_chat(chat_payload(), expected_llm_provider="deterministic")
 
 
 def test_chat_smoke_contract_rejects_citation_drift() -> None:
@@ -87,6 +100,17 @@ def test_chat_smoke_contract_rejects_citation_drift() -> None:
 
     with pytest.raises(SmokeFailure, match="citations"):
         validate_chat(payload)
+
+
+def test_chat_smoke_contract_rejects_missing_provider_generation() -> None:
+    payload = deepcopy(chat_payload())
+    payload["generation"] = {
+        "mode": "deterministic_fallback",
+        "provider": "deterministic",
+    }
+
+    with pytest.raises(SmokeFailure, match="did not generate"):
+        validate_chat(payload, expected_llm_provider="deterministic")
 
 
 def test_request_translates_transient_disconnect_for_startup_retry(monkeypatch) -> None:

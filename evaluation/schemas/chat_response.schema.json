@@ -157,6 +157,63 @@
       "title": "DecisionSummary",
       "type": "object"
     },
+    "GenerationMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "default": "Verified deterministic workflow response.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Detail",
+          "type": "string"
+        },
+        "duration_ms": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "mode": {
+          "default": "deterministic",
+          "enum": [
+            "deterministic",
+            "provider",
+            "deterministic_fallback"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "model": {
+          "default": "not-configured",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "provider": {
+          "default": "not-configured",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "resolved_model": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolved Model"
+        }
+      },
+      "title": "GenerationMetadata",
+      "type": "object"
+    },
     "PendingActionPreview": {
       "additionalProperties": false,
       "properties": {
@@ -368,6 +425,9 @@
         }
       ],
       "default": null
+    },
+    "generation": {
+      "$ref": "#/$defs/GenerationMetadata"
     },
     "outcome": {
       "$ref": "#/$defs/WorkflowOutcome"

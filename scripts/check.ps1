@@ -58,6 +58,8 @@ if (Get-Command docker -ErrorAction SilentlyContinue) {
             "--publish", "127.0.0.1::8000",
             "--env", "APP_RELEASE_SHA=local-check",
             "--env", "MCP_SERVER_URL=http://127.0.0.1:8000/mcp",
+            "--env", "LLM_PROVIDER=deterministic",
+            "--env", "LLM_MODEL=deterministic-grounded-v1",
             "peopleops-assistant:local"
         )
         $portLine = & docker port $containerName "8000/tcp"
@@ -70,6 +72,7 @@ if (Get-Command docker -ErrorAction SilentlyContinue) {
             "--base-url", "http://127.0.0.1:$publishedPort",
             "--expected-environment", "production",
             "--expected-release-sha", "local-check",
+            "--expected-llm-provider", "deterministic",
             "--deadline-seconds", "90",
             "--output", "artifacts/local-container-smoke.json"
         )

@@ -32,6 +32,9 @@ This ten-phase plan controls implementation order. A phase is complete only when
 
 ## Next action
 
-Begin Phase 10 evaluation and submission. Run all 25 gold cases, full groundedness, citation,
+The pre-evaluation LLM provider adapter, deterministic CI substitute, grounding validation, health,
+fallback, UI metadata, and provider-aware smoke contract are implemented. Configure the owner-held
+production key, capture the successful provider smoke, then begin Phase 10 evaluation and submission.
+Run all 25 gold cases, full groundedness, citation,
 tool-selection, workflow, safety, retrieval-ablation, and warm/cold latency measurements; complete
 the submission evidence; grant grader access; and rehearse the 7–10 minute demo.

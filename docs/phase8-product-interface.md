@@ -24,12 +24,13 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 
 1. Open the application and confirm the blue **Synthetic demo environment** banner.
 2. Check **System health** in the left rail. The API, corpus, RAG index, MCP, and mock database
-   should report ready; the optional provider may truthfully report not configured.
+   should report ready. The provider reports ready when configured, not configured when deliberately
+   disabled, or error when its sanitized health probe fails.
 3. In **International remote work**, select **Run task**.
 4. Confirm the card separately shows conditional status, 42 calendar/30 business days,
    `International exceptional`, required approvals, exact-date clarification, and ordered next
    steps. Inspect four exact citations, eight MCP operations, request ID, trace ID, employee
-   context, and the labelled demo policy as-of date.
+   context, labelled generation mode/provider, and the demo policy as-of date.
 5. Select **Draft PeopleOps email**. Confirm the bounded workflow calls `draft_hr_email` and returns
    a visible `Draft - not sent` result without sending or persisting anything.
 6. Run **PTO request guidance**. Confirm the result is labelled draft-only and the message is not

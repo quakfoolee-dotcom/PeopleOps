@@ -98,6 +98,8 @@ jobs:
           --publish 8000:8000
           --env APP_RELEASE_SHA="${GITHUB_SHA}"
           --env MCP_SERVER_URL=http://127.0.0.1:8000/mcp
+          --env LLM_PROVIDER=deterministic
+          --env LLM_MODEL=deterministic-grounded-v1
           peopleops-assistant:ci
       - name: Verify startup and read-only MCP workflow
         run: >-
@@ -105,6 +107,7 @@ jobs:
           --base-url http://127.0.0.1:8000
           --expected-environment production
           --expected-release-sha "${GITHUB_SHA}"
+          --expected-llm-provider deterministic
           --deadline-seconds 90
           --output artifacts/container-smoke.json
       - name: Capture failed container logs

@@ -53,6 +53,15 @@ type DecisionSummary = {
   next_steps: string[];
 };
 
+type GenerationMetadata = {
+  mode: "deterministic" | "provider" | "deterministic_fallback";
+  provider: string;
+  model: string;
+  resolved_model: string | null;
+  duration_ms: number;
+  detail: string;
+};
+
 type ChatPayload = {
   request_id: string;
   trace_id: string;
@@ -65,6 +74,7 @@ type ChatPayload = {
   citations: Citation[];
   tool_trace: TraceEntry[];
   decision_summary: DecisionSummary | null;
+  generation: GenerationMetadata;
   pending_action: PendingAction | null;
 };
 
@@ -536,7 +546,17 @@ export default function App() {
               <article className="message-card assistant-message">
                 <span className="assistant-orb small" aria-hidden="true">✦</span>
                 <div className="assistant-content">
-                  <div className="message-author"><strong>PeopleOps Assistant</strong><span>As of {chat.as_of_date}</span></div>
+                  <div className="message-author">
+                    <strong>PeopleOps Assistant</strong>
+                    <span className={`generation-badge ${chat.generation.mode}`} title={chat.generation.detail}>
+                      {chat.generation.mode === "provider"
+                        ? `${displayName(chat.generation.provider)} · ${chat.generation.resolved_model ?? chat.generation.model}`
+                        : chat.generation.mode === "deterministic_fallback"
+                          ? "Verified fallback"
+                          : "Verified deterministic"}
+                    </span>
+                    <span>As of {chat.as_of_date}</span>
+                  </div>
                   <section className={`result-card outcome-${chat.outcome}`} aria-labelledby="result-title">
                     <div className="result-card-header">
                       <span className="result-icon" aria-hidden="true">✓</span>
@@ -607,7 +627,10 @@ export default function App() {
                   <div className="result-metrics" aria-label="Operational evidence summary">
                     <span><strong>{chat.citations.length}</strong> cited sections</span>
                     <span><strong>{chat.tool_trace.length}</strong> MCP operations</span>
-                    <span><strong>{totalTraceDuration} ms</strong> traced tool time</span>
+                    <span>
+                      <strong>{chat.generation.mode === "provider" ? `${chat.generation.duration_ms} ms` : `${totalTraceDuration} ms`}</strong>
+                      {chat.generation.mode === "provider" ? "provider synthesis" : "traced tool time"}
+                    </span>
                   </div>
 
                   <dl className="identifier-row">

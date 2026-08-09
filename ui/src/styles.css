@@ -248,6 +248,9 @@ button.secondary-button, .response-actions button, .confirmation-actions button 
 .message-card.user-message { background: #f9fafc; }
 .message-author { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 7px; font-size: 11px; }
 .message-author span { color: #657187; font-size: 12px; }
+.message-author .generation-badge { margin-left: auto; padding: 4px 7px; color: #155a43; background: #e9f7f1; border: 1px solid #b9dfd1; border-radius: 999px; font-size: 10px; font-weight: 750; }
+.message-author .generation-badge.deterministic_fallback { color: #7a5209; background: #fff8e6; border-color: #ead49d; }
+.message-author .generation-badge.deterministic { color: #4d5a70; background: #eef2f7; border-color: #d6deea; }
 .user-message p, .loading-message p { margin: 0; color: #3f495d; font-size: 12px; line-height: 1.55; }
 .loading-message { animation: pulse-border 1.3s ease-in-out infinite; }
 @keyframes pulse-border { 50% { border-color: #88afea; } }

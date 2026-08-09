@@ -12,5 +12,13 @@ services:
         value: production
       - key: MCP_SERVER_URL
         value: http://127.0.0.1:8000/mcp
+      - key: LLM_MODEL
+        value: openrouter/free
+      - key: LLM_BASE_URL
+        value: https://openrouter.ai/api/v1
+      - key: LLM_HTTP_REFERER
+        value: https://peopleops-assistant-demo.onrender.com
+      - key: LLM_APP_TITLE
+        value: PeopleOps Assistant
       - key: MCP_CONFIRMATION_SECRET
         generateValue: true

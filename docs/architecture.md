@@ -20,7 +20,11 @@ Bounded typed workflow orchestrator
     |-- classification, evidence, conflict, and confirmation gates
     |-- ten logical calls maximum; one bounded retry
     |-- typed response and citations
-    `-- sanitized operational trace
+    |-- sanitized operational trace
+    `-- grounded response synthesis -> LLM provider adapter
+                                  |-- OpenRouter / OpenAI-compatible
+                                  |-- deterministic CI adapter
+                                  `-- verified deterministic fallback
     |
     v
 Official MCP client -> MCP server
@@ -32,9 +36,6 @@ Official MCP client -> MCP server
                     |                 |
                     v                 v
              Hybrid RAG index   Synthetic data + action stores
-                    |
-                    v
-              LLM provider adapter
 ```
 
 ## Foundation boundaries
@@ -45,6 +46,9 @@ Official MCP client -> MCP server
   keyword scoring, hybrid ranking, query decomposition, evidence checks, and citation validation.
 - `app/agent`: typed workflow classification, state transitions, tool selection, and safety gates. It
   does not access data stores, RAG, tool implementations, or the action store directly.
+- `app/providers`: replaceable synthesis protocol, OpenAI-compatible HTTP adapter, deterministic CI
+  adapter, authenticated cached health, structured-output parser, exact citation allow-list, and
+  protected-fact/identifier validation. It receives no direct data-store, RAG, or MCP access.
 - `app/services`: confirmation coordinator outside the agent data-access boundary; creation still
   occurs only through the MCP tool.
 - `app/mcp_client`: official MCP client session plus shared timeout, sanitization, summary, and
@@ -92,6 +96,9 @@ employee, and message are resubmitted with proof that is neither displayed nor t
    fetched exactly and converted to an allow-listed citation.
 8. The state machine returns conditional guidance, a non-persistent draft, a clarification, an
    escalation, or a confirmation preview. A confirmed mock create is idempotent.
+9. For completed read-only guidance only, a configured provider may summarize the already verified
+   result. Accepted text is displayed with the unchanged deterministic result; every error or gate
+   failure returns the deterministic result alone.
 
 ## Phase 6 tool and action boundary
 
@@ -114,3 +121,5 @@ record; source fixtures and external HR systems are never changed.
 6. All people and records remain synthetic.
 7. Relative dates, conflicting IDs, unknown destinations, and incomplete amounts are never silently
    resolved.
+8. Provider output cannot select tools, change decisions, create citations, approve actions, or
+   replace confirmation gates; it is accepted only through the grounded-output validator.

@@ -6,7 +6,8 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 ## Execution status
 
-Phases 1 through 9 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
+Phases 1 through 9 of the [authoritative execution plan](docs/execution-plan.md) and the pre-evaluation
+LLM provider integration are complete. The repository currently provides:
 
 - a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
 - an evidence-first React/Vite product workspace with four demo tasks, employee context, live
@@ -46,9 +47,12 @@ Phases 1 through 9 of the [authoritative execution plan](docs/execution-plan.md)
 - repeatable cited remote-work and PTO primary workflows, a cited expense backup, and a complete
   preview/confirm/idempotent mock-ticket API sequence;
 - a live Render deployment whose Blueprint waits for passing GitHub checks and exposes its exact
-  release commit through `/health`.
+  release commit through `/health`;
+- a replaceable OpenAI-compatible LLM adapter with OpenRouter configuration, authenticated model
+  health, grounded-summary validation, deterministic fallback, and visible generation metadata;
+- a network-free deterministic provider used by CI plus an opt-in production-provider smoke gate.
 
-Provider-backed generation remains deliberately deferred to a later phase. See the
+See the [LLM provider guide](docs/llm-provider-integration.md),
 [Phase 8 product-interface guide](docs/phase8-product-interface.md),
 [Phase 7 workflow guide](docs/phase7-workflows.md),
 [Phase 6 MCP guide](docs/phase6-mcp-tools.md),
@@ -95,6 +99,11 @@ FastAPI (/health, /chat, /mcp)
                    |
                    v
               30 synthetic employees
+
+        +--> LLM provider adapter (optional locally; OpenRouter-ready)
+                   |
+                   +-- grounded summary after verified workflow
+                   `-- deterministic fallback on any provider/gating failure
 ```
 
 See [docs/architecture.md](docs/architecture.md) for component boundaries and [docs/requirements-traceability.md](docs/requirements-traceability.md) for rubric coverage.
@@ -143,6 +152,10 @@ the bounded result, exact policy citations, request and trace IDs, employee cont
 discovery/call trace. The ticket task exposes an exact action preview and remains blocked until the
 user selects **Confirm mock ticket**. See the Phase 8 guide for the complete grader walkthrough.
 
+When an external provider is configured, the response header identifies the provider and resolved
+model. The generated summary is shown above the unchanged verified workflow result. Disabled,
+unavailable, or rejected provider output is labelled as deterministic or verified fallback.
+
 ## Automated validation
 
 ```powershell
@@ -173,6 +186,7 @@ The production image builds the React application and serves it from FastAPI.
 - [Phase 7 bounded workflows](docs/phase7-workflows.md)
 - [Phase 8 product interface](docs/phase8-product-interface.md)
 - [Phase 9 CI/CD and deployment](docs/phase9-cicd-deployment.md)
+- [LLM provider integration](docs/llm-provider-integration.md)
 - [Score-5 UI design decision](docs/ui-design-decision.md)
 - [Developer guide](docs/developer-guide.md)
 - [Architecture](docs/architecture.md)

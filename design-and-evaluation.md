@@ -10,6 +10,8 @@
 - **Structured data:** deterministic synthetic records; no real personal information.
 - **Safety:** bounded tool calls, evidence sufficiency, citation allow-listing, explicit confirmation for persistent mock actions, and controlled degraded-mode responses.
 - **Testing:** deterministic substitutes in CI; live providers are not required for ordinary pull requests.
+- **LLM provider:** replaceable OpenAI-compatible post-workflow synthesis; the model cannot select
+  tools, change decisions, create citations, or authorize actions.
 
 ## Evaluation design
 
@@ -58,6 +60,12 @@ The Phase 8 interface suite verifies the grader-visible evidence path: live heal
 employee selection and context, cited results, complete operational trace, request and trace IDs,
 explicit confirmation, request-bound creation, token non-rendering, and cancel-without-create.
 
+The provider suite verifies OpenRouter request/authentication shape, one bounded transient retry,
+authenticated cached model health, credential redaction, structured JSON parsing, exact citation
+coverage, protected facts, unknown fact rejection, provider-mode orchestration, and deterministic
+fallback. CI exercises this boundary without network access; production evidence requires the
+owner-configured secret and provider-aware hosted smoke.
+
 ## Current evidence
 
 Phases 1 through 8 validate startup and health reporting; the 12-policy/45-page corpus; deterministic
@@ -69,5 +77,5 @@ timeouts and sanitized traces, read-only structured-data operations, determinist
 draft-only email behavior, confirmation-gated idempotent mock actions, and typed remote-work, PTO,
 expense, and ticket workflows with clarification, retry, evidence, conflict, citation, escalation,
 and confirmation gates. Phase 8 adds the responsive evidence-first product workspace and interactive
-confirmation experience. Provider generation and the complete gold-suite evaluation are not yet
-complete.
+confirmation experience. The provider integration adds bounded grounded synthesis and safe fallback.
+The complete gold-suite evaluation is not yet complete.

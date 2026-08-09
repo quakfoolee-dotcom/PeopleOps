@@ -39,6 +39,7 @@ def validate_health(
     expected_version: str,
     expected_environment: str | None,
     expected_release_sha: str | None,
+    expected_llm_provider: str | None = None,
 ) -> None:
     if payload.get("status") != "ok":
         raise SmokeFailure(f"health status is {payload.get('status')!r}, expected 'ok'")
@@ -67,9 +68,24 @@ def validate_health(
     }
     if unhealthy:
         raise SmokeFailure(f"required health components are not ready: {unhealthy}")
+    if expected_llm_provider:
+        provider_status = components.get("llm_provider", {})
+        if provider_status.get("status") != "ready":
+            raise SmokeFailure(
+                "configured LLM provider is not ready: "
+                f"{provider_status.get('status')!r}"
+            )
+        if expected_llm_provider.casefold() not in str(
+            provider_status.get("detail", "")
+        ).casefold():
+            raise SmokeFailure(
+                f"health does not identify expected LLM provider {expected_llm_provider!r}"
+            )
 
 
-def validate_chat(payload: dict[str, Any]) -> None:
+def validate_chat(
+    payload: dict[str, Any], *, expected_llm_provider: str | None = None
+) -> None:
     expected_values = {
         "status": "completed",
         "outcome": "conditional",
@@ -114,6 +130,19 @@ def validate_chat(payload: dict[str, Any]) -> None:
         raise SmokeFailure("structured decision approvals or next steps are missing")
     if payload.get("pending_action") is not None:
         raise SmokeFailure("read-only remote-work smoke unexpectedly returned a pending action")
+    generation = payload.get("generation")
+    if not isinstance(generation, dict):
+        raise SmokeFailure("response generation metadata is missing")
+    if expected_llm_provider:
+        if generation.get("mode") != "provider":
+            raise SmokeFailure("configured provider did not generate the grounded summary")
+        if generation.get("provider") != expected_llm_provider:
+            raise SmokeFailure(
+                f"response provider is {generation.get('provider')!r}, "
+                f"expected {expected_llm_provider!r}"
+            )
+        if not generation.get("resolved_model"):
+            raise SmokeFailure("provider response did not report the resolved model")
 
 
 def _request(
@@ -165,6 +194,7 @@ def wait_for_health(
     expected_version: str,
     expected_environment: str | None,
     expected_release_sha: str | None,
+    expected_llm_provider: str | None,
     deadline_seconds: int,
 ) -> tuple[dict[str, Any], int, int]:
     started = time.perf_counter()
@@ -182,6 +212,7 @@ def wait_for_health(
                 expected_version=expected_version,
                 expected_environment=expected_environment,
                 expected_release_sha=expected_release_sha,
+                expected_llm_provider=expected_llm_provider,
             )
             wake_ms = round((time.perf_counter() - started) * 1000)
             return payload, duration_ms, wake_ms
@@ -201,6 +232,7 @@ def run_smoke(args: argparse.Namespace) -> dict[str, Any]:
         expected_version=expected_version,
         expected_environment=args.expected_environment,
         expected_release_sha=args.expected_release_sha,
+        expected_llm_provider=args.expected_llm_provider,
         deadline_seconds=args.deadline_seconds,
     )
 
@@ -219,7 +251,7 @@ def run_smoke(args: argparse.Namespace) -> dict[str, Any]:
     )
     if not isinstance(chat, dict):
         raise SmokeFailure("chat endpoint did not return a JSON object")
-    validate_chat(chat)
+    validate_chat(chat, expected_llm_provider=args.expected_llm_provider)
 
     return {
         "passed": True,
@@ -238,6 +270,7 @@ def run_smoke(args: argparse.Namespace) -> dict[str, Any]:
             ),
             "tool_call_count": len(chat["tool_trace"]),
             "outcome": chat["outcome"],
+            "generation": chat["generation"],
         },
     }
 
@@ -250,6 +283,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--expected-version")
     parser.add_argument("--expected-environment")
     parser.add_argument("--expected-release-sha")
+    parser.add_argument("--expected-llm-provider")
     parser.add_argument("--deadline-seconds", type=int, default=180)
     parser.add_argument("--output", type=Path)
     return parser.parse_args()

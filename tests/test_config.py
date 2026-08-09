@@ -17,3 +17,17 @@ def test_explicit_release_identity_takes_priority(monkeypatch) -> None:
     settings = Settings(_env_file=None)
 
     assert settings.app_release_sha == "local-check"
+
+
+def test_openrouter_key_alias_is_secret_and_environment_driven(monkeypatch) -> None:
+    monkeypatch.setenv("LLM_PROVIDER", "openrouter")
+    monkeypatch.setenv("LLM_MODEL", "openrouter/free")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "synthetic-secret-value")
+
+    settings = Settings(_env_file=None)
+
+    assert settings.llm_provider == "openrouter"
+    assert settings.llm_model == "openrouter/free"
+    assert settings.llm_api_key is not None
+    assert settings.llm_api_key.get_secret_value() == "synthetic-secret-value"
+    assert "synthetic-secret-value" not in repr(settings)

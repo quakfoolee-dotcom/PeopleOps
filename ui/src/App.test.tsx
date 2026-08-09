@@ -6,7 +6,7 @@ import App from "./App";
 const healthPayload = {
   status: "ok",
   app_name: "PeopleOps Assistant",
-  version: "0.7.0",
+  version: "0.8.0",
   environment: "test",
   release_sha: "test-release-sha",
   components: {
@@ -14,6 +14,7 @@ const healthPayload = {
     policy_corpus: { status: "ready", detail: "12 synthetic policies validated." },
     rag_index: { status: "ready", detail: "169 sections indexed." },
     mcp: { status: "ready", detail: "8 tools serve the Phase 8 interface." },
+    llm_provider: { status: "ready", detail: "Deterministic test provider is ready." },
   },
 };
 
@@ -62,6 +63,14 @@ const chatPayload = {
       "Provide exact travel and working dates.",
       "Obtain all required reviews.",
     ],
+  },
+  generation: {
+    mode: "provider",
+    provider: "openrouter",
+    model: "openrouter/free",
+    resolved_model: "nvidia/example:free",
+    duration_ms: 240,
+    detail: "Provider output passed the grounding gate.",
   },
   pending_action: null,
 };
@@ -150,10 +159,11 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getByRole("heading", { name: "Demo tasks" })).toBeInTheDocument();
     expect(screen.getByText("International remote work")).toBeInTheDocument();
     expect(screen.getAllByText("Alex Morgan").length).toBeGreaterThan(0);
-    expect(await screen.findByText("v0.7.0 · test · ok", { exact: false })).toBeInTheDocument();
+    expect(await screen.findByText("v0.8.0 · test · ok", { exact: false })).toBeInTheDocument();
     expect(screen.getByText("release test-re", { exact: false })).toBeInTheDocument();
     expect(screen.getAllByText(/Citations/i).length).toBeGreaterThan(0);
     expect(screen.getByText("Tool trace", { exact: false })).toBeInTheDocument();
+    expect(screen.getByText("llm provider", { exact: false })).toBeInTheDocument();
   });
 
   it("loads a demo task and updates the selected employee context", async () => {
@@ -195,6 +205,8 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getByText("mcp discover tools")).toBeInTheDocument();
     expect(screen.getByText(chatPayload.request_id)).toBeInTheDocument();
     expect(screen.getByText(chatPayload.trace_id)).toBeInTheDocument();
+    expect(screen.getByText(/openrouter · nvidia\/example:free/i)).toBeInTheDocument();
+    expect(screen.getByText("240 ms")).toBeInTheDocument();
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     expect(fetchMock).toHaveBeenLastCalledWith(
       "/chat",

@@ -20,6 +20,7 @@ from app.api.contracts import (
     ChatResponse,
     Citation,
     DecisionSummary,
+    GenerationMetadata,
     PendingActionPreview,
     ToolCallStatus,
     ToolTraceEntry,
@@ -30,6 +31,7 @@ from app.api.contracts import (
 )
 from app.core.config import get_settings
 from app.mcp_client import MCPGateway, MCPToolExecutor
+from app.providers import GroundedSynthesisRequest, LLMProvider, get_llm_provider
 from peopleops_mcp.schemas import (
     ComplianceCheckResult,
     EmployeeProfileResult,
@@ -141,13 +143,19 @@ class PeopleOpsOrchestrator:
         gateway: MCPGateway | None = None,
         *,
         ticket_actions: TicketActionCoordinator | None = None,
+        llm_provider: LLMProvider | None = None,
     ) -> None:
         self.gateway = gateway or MCPGateway()
         self.timeout_seconds = self.gateway.timeout_seconds
         self.executor = MCPToolExecutor(self.timeout_seconds)
         self.ticket_actions = ticket_actions
+        self.llm_provider = llm_provider or get_llm_provider()
 
     async def run(self, request: ChatRequest) -> ChatResponse:
+        response = await self._run_bounded_workflow(request)
+        return await self._synthesize_grounded_response(request, response)
+
+    async def _run_bounded_workflow(self, request: ChatRequest) -> ChatResponse:
         settings = get_settings()
         intent = classify_request(request.message, request.employee_id)
         machine = WorkflowMachine(intent.kind, max_tool_calls=settings.max_tool_calls)
@@ -291,6 +299,121 @@ class PeopleOpsOrchestrator:
                     )
                 )
             return self._service_error(request, machine, trace)
+
+    @staticmethod
+    def _protected_facts(response: ChatResponse) -> tuple[str, ...]:
+        decision = response.decision_summary
+        if decision is None:
+            return ()
+        facts = [decision.status_label]
+        if decision.duration_label:
+            facts.append(decision.duration_label)
+        if decision.category_label:
+            facts.append(decision.category_label)
+        facts.extend(decision.required_approvals)
+        for safety_fact in (
+            "not approval",
+            "does not guarantee approval",
+            "No PTO record was changed",
+            "not reimbursement or approval",
+        ):
+            if safety_fact.casefold() in response.answer.casefold():
+                facts.append(safety_fact)
+        return tuple(dict.fromkeys(facts))
+
+    async def _synthesize_grounded_response(
+        self,
+        request: ChatRequest,
+        response: ChatResponse,
+    ) -> ChatResponse:
+        eligible = (
+            response.status is WorkflowStatus.COMPLETED
+            and response.outcome in {WorkflowOutcome.ANSWERED, WorkflowOutcome.CONDITIONAL}
+            and response.workflow
+            in {WorkflowKind.REMOTE_WORK, WorkflowKind.PTO, WorkflowKind.EXPENSE}
+            and response.decision_summary is not None
+            and bool(response.citations)
+            and response.pending_action is None
+        )
+        if not eligible:
+            return response
+        if not self.llm_provider.configured:
+            return response.model_copy(
+                update={
+                    "generation": GenerationMetadata(
+                        mode="deterministic",
+                        provider=self.llm_provider.name,
+                        model=self.llm_provider.model,
+                        detail=(
+                            "Provider synthesis was not configured; the verified typed workflow "
+                            "response was returned unchanged."
+                        ),
+                    )
+                }
+            )
+
+        synthesis_request = GroundedSynthesisRequest(
+            request_id=str(response.request_id),
+            user_message=request.message,
+            workflow=response.workflow,
+            deterministic_answer=response.answer,
+            decision_summary=response.decision_summary,
+            citations=tuple(response.citations),
+            protected_facts=self._protected_facts(response),
+        )
+        try:
+            generated = await self.llm_provider.synthesize(synthesis_request)
+        except Exception as error:
+            return response.model_copy(
+                update={
+                    "generation": GenerationMetadata(
+                        mode="deterministic_fallback",
+                        provider=self.llm_provider.name,
+                        model=self.llm_provider.model,
+                        detail=(
+                            "Provider output was unavailable or rejected by the grounding gate "
+                            f"({type(error).__name__}); the verified workflow response was "
+                            "returned unchanged."
+                        ),
+                    )
+                }
+            )
+
+        combined_answer = (
+            f"AI-generated grounded summary\n{generated.summary}\n\n"
+            f"Verified workflow result\n{response.answer}"
+        )
+        if len(combined_answer) > 12000:
+            return response.model_copy(
+                update={
+                    "generation": GenerationMetadata(
+                        mode="deterministic_fallback",
+                        provider=self.llm_provider.name,
+                        model=self.llm_provider.model,
+                        detail=(
+                            "Provider output exceeded the validated response budget; the verified "
+                            "workflow response was returned unchanged."
+                        ),
+                    )
+                }
+            )
+
+        return response.model_copy(
+            update={
+                "answer": combined_answer,
+                "generation": GenerationMetadata(
+                    mode="provider",
+                    provider=generated.provider,
+                    model=generated.configured_model,
+                    resolved_model=generated.resolved_model,
+                    duration_ms=generated.duration_ms,
+                    detail=(
+                        "Provider summary passed protected-fact, identifier, number, and exact "
+                        "citation allow-list validation."
+                    ),
+                ),
+            }
+        )
 
     async def _profile(
         self,

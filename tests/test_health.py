@@ -18,7 +18,7 @@ def test_health_reports_foundation_and_corpus() -> None:
     payload = response.json()
     assert payload["status"] == "ok"
     assert payload["app_name"] == "PeopleOps Assistant"
-    assert payload["version"] == "0.7.0"
+    assert payload["version"] == "0.8.0"
     assert payload["release_sha"] == "local"
     assert payload["components"]["application"]["status"] == "ready"
     assert payload["components"]["policy_corpus"]["status"] == "ready"
@@ -33,6 +33,10 @@ def test_health_reports_foundation_and_corpus() -> None:
     )
     assert payload["components"]["rag_index"]["status"] == "ready"
     assert "169 sections" in payload["components"]["rag_index"]["detail"]
+    assert payload["components"]["llm_provider"]["status"] == "not_configured"
+    assert "deterministic guidance remains active" in payload["components"][
+        "llm_provider"
+    ]["detail"]
 
 
 def test_root_exposes_service_or_built_web_interface() -> None:
@@ -42,7 +46,7 @@ def test_root_exposes_service_or_built_web_interface() -> None:
     if response.headers["content-type"].startswith("application/json"):
         payload = response.json()
         assert payload["name"] == "PeopleOps Assistant"
-        assert payload["status"] == "phase-8-ready"
+        assert payload["status"] == "provider-integration-ready"
         assert payload["health"] == "/health"
         assert payload["chat"] == "/chat"
         assert payload["mcp"] == "/mcp"

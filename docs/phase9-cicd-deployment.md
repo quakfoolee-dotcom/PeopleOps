@@ -18,7 +18,8 @@ immutable full-SHA pins for third-party Actions.
 2. **Frontend test and production build** uses the lockfile with `npm ci`, runs the component suite,
    performs strict TypeScript validation, and creates the Vite production bundle.
 3. **Container startup and workflow smoke** builds the actual Dockerfile, injects the candidate SHA,
-   starts the container, waits for health, and runs the E-1007 Germany workflow. Its JSON evidence is
+   starts the container with the deterministic CI provider, waits for health, and runs the E-1007
+   Germany workflow. It requires ready provider health and provider-mode grounded synthesis. Its JSON evidence is
    retained for 14 days; container logs are emitted on failure.
 4. **Release gate** fails unless every prerequisite job succeeded. Render's Blueprint uses
    `autoDeployTrigger: checksPass`, so a failed candidate is not deployed.
@@ -37,7 +38,7 @@ references remain pinned to immutable full SHAs even when the readable version c
 2. verify `/` identifies PeopleOps Assistant;
 3. submit a read-only E-1007 six-week Germany question to `/chat`;
 4. require the conditional decision, sections `INT-5`, `INT-13`, `RWK-5`, `SEC-8`, eight traced MCP
-   operations from discovery through compliance, and no pending write action.
+   operations from discovery through compliance, generation metadata, and no pending write action.
 
 The emitted JSON records timestamps, wake and request latency, request/trace IDs, citations, tool
 count, and outcome. Validation functions are unit tested, including commit and citation drift.
@@ -51,13 +52,15 @@ the same smoke contract to `https://peopleops-assistant-demo.onrender.com`. Evid
 
 For a manual recheck, open **Actions → Hosted smoke → Run workflow**. Normally leave `expected_sha`
 blank to check the selected branch commit; enter an exact 40-character SHA when auditing a known
-deployment. Locally, use:
+deployment. After the production secret is configured, enter `openrouter` under
+`expected_llm_provider` to require authenticated health and actual provider synthesis. Locally, use:
 
 ```powershell
 .\scripts\smoke_test_api.ps1 `
   -BaseUrl "https://peopleops-assistant-demo.onrender.com" `
   -ExpectedEnvironment production `
-  -ExpectedReleaseSha "<deployed-sha>"
+  -ExpectedReleaseSha "<deployed-sha>" `
+  -ExpectedLlmProvider openrouter
 ```
 
 ## Failure triage

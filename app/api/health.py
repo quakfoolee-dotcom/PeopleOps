@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.api.schemas import ComponentStatus, HealthResponse
 from app.core.config import get_settings
 from app.data.store import load_seed_bundle, validate_seed_directory
+from app.providers import get_llm_provider
 from app.rag.corpus import validate_corpus
 from app.rag.index import cached_index
 from peopleops_mcp.server import PHASE6_TOOL_NAMES
@@ -40,8 +41,15 @@ async def health() -> HealthResponse:
         rag_ready = False
         rag_detail = f"RAG index unavailable: {type(error).__name__}: {error}"
 
+    provider_health = await get_llm_provider().health()
+    core_ready = corpus_ready and mock_data_ready and rag_ready
+
     return HealthResponse(
-        status="ok" if corpus_ready and mock_data_ready and rag_ready else "degraded",
+        status=(
+            "ok"
+            if core_ready and provider_health.status != "error"
+            else "degraded"
+        ),
         app_name=settings.app_name,
         version=settings.app_version,
         environment=settings.app_env,
@@ -72,8 +80,8 @@ async def health() -> HealthResponse:
                 ),
             ),
             "llm_provider": ComponentStatus(
-                status="not_configured",
-                detail=f"Provider setting is {settings.llm_provider!r}.",
+                status=provider_health.status,
+                detail=provider_health.detail,
             ),
         },
     )

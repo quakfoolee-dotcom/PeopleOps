@@ -89,7 +89,11 @@ The build is accepted only after strict schema, checksum, cross-record, date, ma
 
 ## Configuration
 
-Copy `.env.example` to `.env`. Provider keys are intentionally absent from the example. Future provider-specific keys must be read from the environment and must never be returned by `/health`.
+Copy `.env.example` to `.env`. Real provider keys are intentionally absent from the example. Set
+`LLM_PROVIDER=openrouter` and add `OPENROUTER_API_KEY` only in the ignored local file or hosting
+secret store. The replaceable model, base URL, timeouts, response budget, and application attribution
+are environment-driven. The key is a `SecretStr` and must never be returned by `/health`, response
+metadata, logs, errors, traces, or artifacts. See `docs/llm-provider-integration.md`.
 
 `SYNTHETIC_AS_OF_DATE` defaults to `2026-09-01`, matching the policy corpus effective date. Keep that value fixed for ordinary automated tests and gold-suite runs. A deliberate date change requires updating the gold suite, mock-data snapshot, generated schemas where applicable, tests, and evaluation documentation together.
 
@@ -185,6 +189,20 @@ remote-work path with four exact citations and eight MCP operations. It is inten
 The JSON artifact records wake time, endpoint latencies, request ID, trace ID, evidence sections,
 and outcome. See `docs/phase9-cicd-deployment.md` for release, manual-dispatch, failure triage, and
 rollback procedures.
+
+## LLM provider verification
+
+Run the network-free adapter, grounding-gate, retry, health-cache, authentication-redaction,
+orchestration, and fallback tests:
+
+```powershell
+python -m pytest tests/test_llm_provider.py
+```
+
+CI starts the production container with `LLM_PROVIDER=deterministic` and requires
+`generation.mode=provider`, so the adapter boundary is exercised without a secret. After configuring
+OpenRouter in Render, add `-ExpectedLlmProvider openrouter` to the hosted smoke command. This requires
+ready authenticated provider health, a provider-generated grounded summary, and a resolved model.
 
 ## Evaluation contracts
 

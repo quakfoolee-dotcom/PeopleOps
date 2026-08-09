@@ -3,6 +3,7 @@ param(
     [string]$BaseUrl,
     [string]$ExpectedEnvironment,
     [string]$ExpectedReleaseSha,
+    [string]$ExpectedLlmProvider,
     [int]$DeadlineSeconds = 180,
     [string]$Output = "artifacts/deployment-smoke.json"
 )
@@ -20,6 +21,9 @@ if ($ExpectedEnvironment) {
 }
 if ($ExpectedReleaseSha) {
     $arguments += @("--expected-release-sha", $ExpectedReleaseSha)
+}
+if ($ExpectedLlmProvider) {
+    $arguments += @("--expected-llm-provider", $ExpectedLlmProvider)
 }
 
 & $python @arguments

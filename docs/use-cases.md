@@ -15,8 +15,9 @@ versioned in `evaluation/gold_cases.json`.
 **Action:** Open `/health`.
 
 **Expected result:** HTTP 200 reports the application, 12-policy corpus, 169-section hybrid RAG
-index, deterministic mock data, and MCP transport as ready, while the provider remains explicitly
-not configured.
+index, deterministic mock data, and MCP transport as ready. The provider reports `ready` after a
+successful authenticated model probe, `not_configured` when deliberately disabled, or `error`
+without exposing credentials.
 
 This use case is implemented in Phase 1 and covered by automated tests.
 
@@ -127,3 +128,21 @@ response matches the exact commit before completing a real read-only cited MCP w
 **Failure behavior:** A failed or skipped prerequisite fails the release gate. Version, environment,
 commit, component, citation, trace, or decision drift fails smoke with no write-like action. Follow
 the Phase 9 runbook to inspect evidence and roll back to the last verified immutable commit.
+
+## UC-09: Generate a provider-backed grounded summary
+
+**Actor:** Grader or reviewer
+
+**Precondition:** OpenRouter is configured through Render environment variables and provider health
+is ready.
+
+**Action:** Run the E-1007 Germany workflow and inspect the response header and generation metadata.
+
+**Expected result:** The response identifies `openrouter` and the resolved model, displays a concise
+AI-generated summary with the complete verified citation set, then displays the unchanged verified
+workflow result. The provider has no tool, RAG, data-store, or action access.
+
+**Failure behavior:** A timeout, retry exhaustion, authentication/quota problem, invalid JSON,
+unknown citation, omitted protected fact, or introduced identifier/number results in
+`deterministic_fallback`; no partial model output is shown and the verified workflow answer remains
+available.

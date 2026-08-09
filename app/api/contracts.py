@@ -158,6 +158,19 @@ class DecisionSummary(ContractModel):
     next_steps: list[str] = Field(default_factory=list, min_length=1, max_length=8)
 
 
+class GenerationMetadata(ContractModel):
+    mode: Literal["deterministic", "provider", "deterministic_fallback"] = "deterministic"
+    provider: str = Field(default="not-configured", min_length=1, max_length=100)
+    model: str = Field(default="not-configured", min_length=1, max_length=200)
+    resolved_model: str | None = Field(default=None, max_length=200)
+    duration_ms: int = Field(default=0, ge=0)
+    detail: str = Field(
+        default="Verified deterministic workflow response.",
+        min_length=1,
+        max_length=500,
+    )
+
+
 class ChatRequest(ContractModel):
     request_id: UUID = Field(default_factory=uuid4)
     message: str = Field(min_length=1, max_length=4000)
@@ -178,6 +191,7 @@ class ChatResponse(ContractModel):
     citations: list[Citation] = Field(default_factory=list)
     tool_trace: list[ToolTraceEntry] = Field(default_factory=list)
     decision_summary: DecisionSummary | None = None
+    generation: GenerationMetadata = Field(default_factory=GenerationMetadata)
     pending_action: PendingActionPreview | None = None
 
     @model_validator(mode="after")

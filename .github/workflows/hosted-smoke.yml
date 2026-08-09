@@ -8,6 +8,10 @@ on:
         description: Commit SHA expected from the hosted health response
         required: false
         type: string
+      expected_llm_provider:
+        description: Require this configured provider (for example, openrouter)
+        required: false
+        type: string
 
 concurrency:
   group: hosted-smoke-${{ github.event.deployment.sha || inputs.expected_sha || github.sha }}
@@ -28,6 +32,7 @@ jobs:
     env:
       BASE_URL: https://peopleops-assistant-demo.onrender.com
       DEPLOY_SHA: ${{ github.event.deployment.sha || inputs.expected_sha || github.sha }}
+      EXPECTED_LLM_PROVIDER: ${{ inputs.expected_llm_provider || vars.PRODUCTION_LLM_PROVIDER || '' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -41,6 +46,7 @@ jobs:
           --base-url "${BASE_URL}"
           --expected-environment production
           --expected-release-sha "${DEPLOY_SHA}"
+          --expected-llm-provider "${EXPECTED_LLM_PROVIDER}"
           --deadline-seconds 240
           --output artifacts/hosted-smoke.json
       - name: Upload hosted evidence
