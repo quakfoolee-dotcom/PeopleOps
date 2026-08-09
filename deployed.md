@@ -3,9 +3,9 @@
 ## Current status
 
 PeopleOps Assistant is live on a free Render web service managed by the repository's Blueprint.
-The initial deployment of commit `8582fa3` passed Render's `/health` check on 2026-08-08. Public
-browser and API smoke tests then proved the application shell, production health response, and
-complete Phase 4 `/chat` workflow.
+The Phase 5 deployment of commit `3f18d1a` passed Render's `/health` check on 2026-08-08. Public
+browser and API smoke tests then proved the application shell, production hybrid RAG health
+response, and complete cited `/chat` workflow.
 
 ## Hosted endpoints
 
@@ -22,13 +22,17 @@ ephemeral filesystem is safe for this phase. Phase 10 will measure cold and warm
 
 ## Verified production evidence
 
-- root returned HTTP 200 and rendered the Phase 4 interface;
-- `/health` returned `status=ok`, `environment=production`, and MCP `status=ready`;
+- root returned HTTP 200 and rendered the Phase 5 interface;
+- `/health` returned `status=ok`, `version=0.2.0`, `environment=production`, and MCP
+  `status=ready`;
+- the production RAG component reported `phase5-hybrid-v2` ready with 12 policies, 169 sections,
+  and 169 chunks;
 - `/chat` returned `status=completed` and `outcome=conditional` for E-1007;
-- citations were `INT-4`, `INT-5`, `INT-13`, and `RWK-5`;
+- the eight validated citation sections were `INT-9`, `RWK-5`, `SEC-8`, `INT-13`, `INT-3`,
+  `INT-1`, `INT-5`, and `RWK-1`;
 - the operational trace recorded discovery, employee lookup, and policy search;
-- GitHub CI run 31285649773 passed backend, frontend, and production-container jobs before the
-  initial deployment.
+- GitHub CI run 31288806706 passed backend, frontend, and production-container jobs before the
+  Phase 5 deployment.
 
 ## Release procedure
 
