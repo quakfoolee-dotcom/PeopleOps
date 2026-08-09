@@ -17,7 +17,7 @@ Phases 1 through 9 of the [authoritative execution plan](docs/execution-plan.md)
 - a multi-stage Docker build;
 - SHA-pinned GitHub Actions checks for Python, web, container startup, and a real MCP workflow;
 - an explicit pre-deployment release gate plus exact-commit hosted smoke verification;
-- weekly grouped Dependabot maintenance for Actions, Python, npm, and Docker dependencies;
+- weekly grouped compatible-update maintenance for Actions, Python, npm, and Docker dependencies;
 - architecture, developer, use-case, traceability, AI-tooling, and deployment documentation;
 - ten GitHub phase milestones with acceptance-criteria issues;
 - a strict runtime request, citation, tool-trace, response, and pending-action contract;

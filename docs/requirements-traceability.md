@@ -28,7 +28,7 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | MCP discovery/call test | `tests/test_phase4_mcp.py`, `tests/test_phase4_chat.py`, `tests/test_phase6_mcp.py` | Ready |
 | CI on push and pull request | SHA-pinned, timeout-bounded `.github/workflows/ci.yml` with retained test/smoke evidence | Ready |
 | Deployment gated on passing tests | Explicit `release-gate`; Render `autoDeployTrigger: checksPass`; exact-commit post-deploy hosted smoke | Ready |
-| Dependency-action maintenance | Weekly grouped Dependabot checks for Actions, pip, npm, and Docker | Ready |
+| Dependency-action maintenance | Weekly grouped compatible updates for Actions, pip, npm, and Docker; major/runtime-line migrations remain explicit | Ready |
 | Release and rollback controls | Release identity in `/health`, runbook, immutable commit rollback, cold-start-aware smoke | Ready |
 | Evaluation set of 20-30 cases | 25 machine-readable cases with exact 7/5/6/4/3 distribution | Ready |
 | Evaluation expectations defined before implementation | Facts, policy sections, tools, outcomes, constraints, and safety per case | Ready |

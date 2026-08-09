@@ -23,9 +23,10 @@ immutable full-SHA pins for third-party Actions.
 4. **Release gate** fails unless every prerequisite job succeeded. Render's Blueprint uses
    `autoDeployTrigger: checksPass`, so a failed candidate is not deployed.
 
-Dependabot opens grouped weekly maintenance updates for GitHub Actions, Python, npm, and Docker.
-Action references remain pinned to immutable full SHAs even when the readable version comment is
-updated.
+Dependabot opens grouped weekly minor/patch maintenance updates for GitHub Actions, Python, and npm,
+plus patch updates for Docker. Major package updates and Python/Node base-image line changes remain
+deliberate migration work; security updates are not suppressed by this version-update policy. Action
+references remain pinned to immutable full SHAs even when the readable version comment is updated.
 
 ## Smoke contract
 

@@ -248,7 +248,7 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(within(dialog).getByText(/No production HR system/i)).toBeInTheDocument();
     expect(screen.queryByText(/signed-confirmation-token/i)).not.toBeInTheDocument();
     const confirmButton = within(dialog).getByRole("button", { name: "Confirm mock ticket" });
-    expect(confirmButton).toHaveFocus();
+    await waitFor(() => expect(confirmButton).toHaveFocus());
     fireEvent.click(confirmButton);
 
     expect(await screen.findByText(/Created synthetic ticket TKT-9001/i)).toBeInTheDocument();
