@@ -185,6 +185,14 @@ function outcomeLabel(outcome: string) {
   return labels[outcome] ?? displayName(outcome);
 }
 
+function readableCitationSnippet(value: string) {
+  return value
+    .replace(/\|\s*-{3,}\s*/g, " ")
+    .replace(/\s*\|\s*/g, " · ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 async function responseError(response: Response) {
   try {
     const payload = (await response.json()) as { detail?: string };
@@ -572,8 +580,9 @@ export default function App() {
                   <div>
                     <div className="citation-meta"><strong>{citation.policy_id}</strong><span>v{citation.version}</span><span>{citation.source_format.toUpperCase()}</span></div>
                     <h2>{citation.title}</h2>
-                    <p><strong>§ {citation.section_id}</strong> {citation.snippet}</p>
+                    <p className="citation-snippet"><strong>§ {citation.section_id}</strong> {readableCitationSnippet(citation.snippet)}</p>
                     <small>Effective {citation.effective_date}{citation.page ? ` · page ${citation.page}` : ""} · score {citation.retrieval_score.toFixed(3)}</small>
+                    <details className="full-snippet"><summary>Full cited snippet</summary><p>{citation.snippet}</p></details>
                     <details className="source-detail"><summary>Source metadata</summary><code>{citation.chunk_id}<br />{citation.source_path}</code></details>
                   </div>
                 </article>

@@ -6,7 +6,7 @@ import App from "./App";
 const healthPayload = {
   status: "ok",
   app_name: "PeopleOps Assistant",
-  version: "0.5.0",
+  version: "0.5.1",
   environment: "test",
   components: {
     application: { status: "ready", detail: "FastAPI is serving requests." },
@@ -112,7 +112,7 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getByRole("heading", { name: "Demo tasks" })).toBeInTheDocument();
     expect(screen.getByText("International remote work")).toBeInTheDocument();
     expect(screen.getAllByText("Alex Morgan").length).toBeGreaterThan(0);
-    expect(await screen.findByText("v0.5.0 · test · ok")).toBeInTheDocument();
+    expect(await screen.findByText("v0.5.1 · test · ok")).toBeInTheDocument();
     expect(screen.getAllByText(/Citations/i).length).toBeGreaterThan(0);
     expect(screen.getByText("Tool trace", { exact: false })).toBeInTheDocument();
   });
@@ -146,6 +146,7 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
 
     expect(await screen.findByText(/not automatically approved/i)).toBeInTheDocument();
     expect(screen.getAllByText(/INT-5/).length).toBeGreaterThan(0);
+    expect(screen.getByText("Full cited snippet")).toBeInTheDocument();
     expect(screen.getByText("mcp discover tools")).toBeInTheDocument();
     expect(screen.getByText(chatPayload.request_id)).toBeInTheDocument();
     expect(screen.getByText(chatPayload.trace_id)).toBeInTheDocument();
