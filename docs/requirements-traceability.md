@@ -11,7 +11,7 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Stable citation contract | `Citation`, exact chunk/source metadata, corpus policy/section validation, generated schema | Ready |
 | Sanitized operational trace contract | `ToolTraceEntry`, sensitive-key and error-state tests | Ready |
 | Local web application | FastAPI and React/Vite setup instructions | Ready |
-| `/health` endpoint | `app/api/health.py`, API tests | Ready |
+| `/health` endpoint | `app/api/health.py`, API tests, exact deployed release SHA | Ready |
 | Policy corpus: 5-20 documents, 30-120 pages | 12-policy Northstar corpus, manifest and validation report | Ready |
 | At least two source formats | 10 Markdown and 2 PDF runtime sources | Ready |
 | Stable citation metadata | Policy manifest, section identifiers, `Citation` schema | Ready |
@@ -24,15 +24,17 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Confirmation before write-like actions | Signed expiring confirmation, exact preview binding, idempotency, redaction, and safety tests | Ready |
 | Synthetic structured data | 30 employees, 6 locations, manager, PTO, benefits, and ticket seeds; strict schemas, checksums, semantic validation, SQLite build | Ready |
 | `/chat` endpoint and UI workflow | Four bounded API workflows plus typed decision summary, evidence-first workspace, real next actions, presets, employee context, citations, trace, identifiers, health, and confirmation dialog | Ready |
-| Automated startup test | FastAPI TestClient health and root tests | Ready |
+| Automated startup test | FastAPI tests plus production-container startup and MCP workflow smoke | Ready |
 | MCP discovery/call test | `tests/test_phase4_mcp.py`, `tests/test_phase4_chat.py`, `tests/test_phase6_mcp.py` | Ready |
-| CI on push and pull request | `.github/workflows/ci.yml` | Ready |
-| Deployment gated on passing tests | CI container depends on backend/frontend jobs; Render uses `autoDeployTrigger: checksPass` | Ready: initial service |
+| CI on push and pull request | SHA-pinned, timeout-bounded `.github/workflows/ci.yml` with retained test/smoke evidence | Ready |
+| Deployment gated on passing tests | Explicit `release-gate`; Render `autoDeployTrigger: checksPass`; exact-commit post-deploy hosted smoke | Ready |
+| Dependency-action maintenance | Weekly grouped Dependabot checks for Actions, pip, npm, and Docker | Ready |
+| Release and rollback controls | Release identity in `/health`, runbook, immutable commit rollback, cold-start-aware smoke | Ready |
 | Evaluation set of 20-30 cases | 25 machine-readable cases with exact 7/5/6/4/3 distribution | Ready |
 | Evaluation expectations defined before implementation | Facts, policy sections, tools, outcomes, constraints, and safety per case | Ready |
 | Evaluation and API JSON Schemas | `evaluation/schemas`, drift-export script, CI check | Ready |
 | Required metrics and ablation | Phase 5 retrieval ablation and raw results; full workflow metrics remain Phase 10 | Foundation: retrieval ready |
-| README and design documentation | Repository documentation plus Phase 7 workflow and Phase 8 product-interface/operator guides | Ready through Phase 8 |
+| README and design documentation | Repository documentation plus Phase 7–9 workflow, interface, and release-operations guides | Ready through Phase 9 |
 | AI tooling disclosure | `ai-tooling.md` | Ready and maintained continuously |
 | Deployment URL and cold-start notes | `render.yaml`, `deployed.md`, verified public root and `/health` | Ready |
 | Recorded demo | Demo acceptance criteria in use cases | Planned: Phase 10 |

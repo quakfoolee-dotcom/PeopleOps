@@ -6,7 +6,7 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 ## Execution status
 
-Phases 1 through 8 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
+Phases 1 through 9 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
 
 - a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
 - an evidence-first React/Vite product workspace with four demo tasks, employee context, live
@@ -15,7 +15,9 @@ Phases 1 through 8 of the [authoritative execution plan](docs/execution-plan.md)
 - typed configuration, policy-corpus validation, and MCP tool contracts;
 - backend, frontend, corpus, and tool-contract tests;
 - a multi-stage Docker build;
-- GitHub Actions checks for Python, web, and container builds;
+- SHA-pinned GitHub Actions checks for Python, web, container startup, and a real MCP workflow;
+- an explicit pre-deployment release gate plus exact-commit hosted smoke verification;
+- weekly grouped Dependabot maintenance for Actions, Python, npm, and Docker dependencies;
 - architecture, developer, use-case, traceability, AI-tooling, and deployment documentation;
 - ten GitHub phase milestones with acceptance-criteria issues;
 - a strict runtime request, citation, tool-trace, response, and pending-action contract;
@@ -43,14 +45,16 @@ Phases 1 through 8 of the [authoritative execution plan](docs/execution-plan.md)
   selected at 100% gold evidence recall in the recorded Phase 5 run;
 - repeatable cited remote-work and PTO primary workflows, a cited expense backup, and a complete
   preview/confirm/idempotent mock-ticket API sequence;
-- a live Render deployment whose Blueprint waits for passing GitHub checks.
+- a live Render deployment whose Blueprint waits for passing GitHub checks and exposes its exact
+  release commit through `/health`.
 
 Provider-backed generation remains deliberately deferred to a later phase. See the
 [Phase 8 product-interface guide](docs/phase8-product-interface.md),
 [Phase 7 workflow guide](docs/phase7-workflows.md),
 [Phase 6 MCP guide](docs/phase6-mcp-tools.md),
 [Phase 5 RAG guide](docs/phase5-rag.md), and
-[Phase 4 workflow guide](docs/phase4-thin-slice.md) for the exact boundary.
+[Phase 4 workflow guide](docs/phase4-thin-slice.md) for the exact boundary. Release operation and
+rollback are documented in the [Phase 9 CI/CD guide](docs/phase9-cicd-deployment.md).
 
 ## Live demonstration
 
@@ -145,7 +149,9 @@ user selects **Confirm mock ticket**. See the Phase 8 guide for the complete gra
 .\scripts\check.ps1
 ```
 
-The script runs schema drift and Phase 3 asset validation, Python linting and tests, web tests and production build, and a Docker build when Docker is available.
+The script runs schema drift and Phase 3 asset validation, Python linting and tests, web tests and
+production build, and, when Docker is available, a production-image build plus startup/workflow
+smoke. CI applies the same container contract before the release gate can pass.
 
 Individual commands are documented in [docs/developer-guide.md](docs/developer-guide.md).
 
@@ -166,6 +172,7 @@ The production image builds the React application and serves it from FastAPI.
 - [Phase 6 MCP tool suite](docs/phase6-mcp-tools.md)
 - [Phase 7 bounded workflows](docs/phase7-workflows.md)
 - [Phase 8 product interface](docs/phase8-product-interface.md)
+- [Phase 9 CI/CD and deployment](docs/phase9-cicd-deployment.md)
 - [Score-5 UI design decision](docs/ui-design-decision.md)
 - [Developer guide](docs/developer-guide.md)
 - [Architecture](docs/architecture.md)

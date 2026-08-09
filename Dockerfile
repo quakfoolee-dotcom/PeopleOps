@@ -27,7 +27,7 @@ RUN PIP_TRUSTED_HOST="${PIP_TRUSTED_HOST}" python -m pip install .
 
 COPY policy_corpus/ policy_corpus/
 COPY mock_data/ mock_data/
-COPY scripts/build_rag_index.py scripts/build_rag_index.py
+COPY scripts/build_rag_index.py scripts/smoke_deployment.py scripts/
 RUN python scripts/build_rag_index.py --check
 COPY --from=ui-build /workspace/ui/dist/ ui/dist/
 

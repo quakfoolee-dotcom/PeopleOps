@@ -102,6 +102,11 @@ characters. Render generates the production value. The `.env.example` value is l
 `MCP_CONFIRMATION_TTL_SECONDS` defaults to 900 seconds. Never log or add the token to an operational
 trace.
 
+`APP_RELEASE_SHA` defaults to `local` and is useful for local container smoke tests. Production does
+not set it explicitly: Render's built-in `RENDER_GIT_COMMIT` is accepted as the release identity and
+returned by `/health`. Do not put a release SHA in `render.yaml`, because that would mask the actual
+deployed commit.
+
 ## Phase 6 MCP verification
 
 Run the complete tool-layer tests:
@@ -163,6 +168,23 @@ The suite covers task loading, employee context, live health rendering, structur
 approvals, clarification, next steps, the MCP-backed draft action, citations, sanitized MCP trace,
 request/trace identifiers, confirmation focus and creation, and cancellation without action.
 For manual verification, follow `docs/phase8-product-interface.md` at desktop and mobile widths.
+
+## Phase 9 deployment verification
+
+Run the same cold-start-aware contract used by CI and the post-deploy workflow:
+
+```powershell
+.\scripts\smoke_test_api.ps1 `
+  -BaseUrl "https://peopleops-assistant-demo.onrender.com" `
+  -ExpectedEnvironment production `
+  -ExpectedReleaseSha "<40-character deployed commit>"
+```
+
+The command verifies health, release identity, the root application, and the E-1007 Germany
+remote-work path with four exact citations and eight MCP operations. It is intentionally read-only.
+The JSON artifact records wake time, endpoint latencies, request ID, trace ID, evidence sections,
+and outcome. See `docs/phase9-cicd-deployment.md` for release, manual-dispatch, failure triage, and
+rollback procedures.
 
 ## Evaluation contracts
 

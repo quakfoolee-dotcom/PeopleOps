@@ -50,4 +50,35 @@ if (Get-Command docker -ErrorAction SilentlyContinue) {
         )
     }
     Invoke-NativeCommand -FilePath "docker" -Arguments $dockerArguments
+
+    $containerName = "peopleops-check-$([guid]::NewGuid().ToString('N'))"
+    try {
+        Invoke-NativeCommand -FilePath "docker" -Arguments @(
+            "run", "--detach", "--name", $containerName,
+            "--publish", "127.0.0.1::8000",
+            "--env", "APP_RELEASE_SHA=local-check",
+            "--env", "MCP_SERVER_URL=http://127.0.0.1:8000/mcp",
+            "peopleops-assistant:local"
+        )
+        $portLine = & docker port $containerName "8000/tcp"
+        if ($LASTEXITCODE -ne 0 -or -not $portLine) {
+            throw "Unable to discover the local smoke-test port."
+        }
+        $publishedPort = ($portLine | Select-Object -First 1).Split(":")[-1]
+        Invoke-NativeCommand -FilePath $python -Arguments @(
+            "scripts/smoke_deployment.py",
+            "--base-url", "http://127.0.0.1:$publishedPort",
+            "--expected-environment", "production",
+            "--expected-release-sha", "local-check",
+            "--deadline-seconds", "90",
+            "--output", "artifacts/local-container-smoke.json"
+        )
+    }
+    catch {
+        & docker logs $containerName
+        throw
+    }
+    finally {
+        & docker rm --force $containerName | Out-Null
+    }
 }

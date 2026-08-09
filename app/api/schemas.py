@@ -15,4 +15,5 @@ class HealthResponse(BaseModel):
     app_name: str
     version: str
     environment: str
+    release_sha: str
     components: dict[str, ComponentStatus] = Field(default_factory=dict)

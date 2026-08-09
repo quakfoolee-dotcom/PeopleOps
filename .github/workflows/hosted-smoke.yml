@@ -1,0 +1,53 @@
+name: Hosted smoke
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      expected_sha:
+        description: Commit SHA expected from the hosted health response
+        required: false
+        type: string
+
+concurrency:
+  group: hosted-smoke-${{ github.event.deployment.sha || inputs.expected_sha || github.sha }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Public release verification
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+      github.event.deployment.environment == 'main - peopleops-assistant-demo')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      BASE_URL: https://peopleops-assistant-demo.onrender.com
+      DEPLOY_SHA: ${{ github.event.deployment.sha || inputs.expected_sha || github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.DEPLOY_SHA }}
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Verify hosted startup, release identity, and MCP workflow
+        run: >-
+          python scripts/smoke_deployment.py
+          --base-url "${BASE_URL}"
+          --expected-environment production
+          --expected-release-sha "${DEPLOY_SHA}"
+          --deadline-seconds 240
+          --output artifacts/hosted-smoke.json
+      - name: Upload hosted evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: hosted-smoke-${{ github.run_id }}
+          path: artifacts/hosted-smoke.json
+          if-no-files-found: error
+          retention-days: 30

@@ -7,6 +7,7 @@ type HealthPayload = {
   app_name: string;
   version: string;
   environment: string;
+  release_sha: string;
   components: Record<string, { status: ComponentState; detail: string }>;
 };
 
@@ -485,7 +486,7 @@ export default function App() {
               </ul>
             )}
             {health && (
-              <p className="health-meta">v{health.version} · {health.environment} · {health.status}</p>
+              <p className="health-meta">v{health.version} · {health.environment} · {health.status}<br />release {health.release_sha.slice(0, 7)}</p>
             )}
           </section>
         </aside>

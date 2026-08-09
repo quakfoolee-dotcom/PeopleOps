@@ -2,7 +2,7 @@ from datetime import date
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.constants import SYNTHETIC_AS_OF_DATE
@@ -12,8 +12,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 class Settings(BaseSettings):
     app_name: str = "PeopleOps Assistant"
-    app_version: str = "0.6.0"
+    app_version: str = "0.7.0"
     app_env: str = "development"
+    app_release_sha: str = Field(
+        default="local",
+        min_length=5,
+        max_length=64,
+        validation_alias=AliasChoices("APP_RELEASE_SHA", "RENDER_GIT_COMMIT"),
+    )
     log_level: str = "INFO"
     policy_corpus_directory: Path = PROJECT_ROOT / "policy_corpus"
     rag_index_path: Path = PROJECT_ROOT / "policy_corpus" / "index" / "phase5_index.json"

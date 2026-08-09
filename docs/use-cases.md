@@ -112,3 +112,18 @@ employee context, citations, tool trace, request ID, trace ID, and service healt
 **Expected result:** Both workflows are reproducible without editing JSON or opening developer
 tools. Citation and tool details reflect the live API response, responsive panels remain usable at
 narrow widths, and no navigation or action control is a non-functional placeholder.
+
+## UC-08: Verify and release an exact commit
+
+**Actor:** Maintainer or automated release workflow
+
+**Action:** Push a candidate commit to `main`, or run `Hosted smoke` manually with an expected SHA.
+
+**Expected result:** Backend contracts, lint, corpus/index checks, MCP/workflow evaluations, frontend
+tests/build, and a production-container startup smoke all pass. The explicit release gate succeeds;
+Render deploys only after the linked checks pass; and the post-deploy job proves the public health
+response matches the exact commit before completing a real read-only cited MCP workflow.
+
+**Failure behavior:** A failed or skipped prerequisite fails the release gate. Version, environment,
+commit, component, citation, trace, or decision drift fails smoke with no write-like action. Follow
+the Phase 9 runbook to inspect evidence and roll back to the last verified immutable commit.

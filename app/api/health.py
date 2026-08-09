@@ -45,6 +45,7 @@ async def health() -> HealthResponse:
         app_name=settings.app_name,
         version=settings.app_version,
         environment=settings.app_env,
+        release_sha=settings.app_release_sha,
         components={
             "application": ComponentStatus(status="ready", detail="FastAPI is serving requests."),
             "policy_corpus": ComponentStatus(

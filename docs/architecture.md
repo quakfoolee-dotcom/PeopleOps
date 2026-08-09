@@ -59,6 +59,19 @@ Official MCP client -> MCP server
 - `ui`: evidence-first React application built into static production assets; consumes only the
   public health, chat, and action-confirmation contracts.
 
+## Phase 9 release boundary
+
+Every push and pull request runs independent backend and frontend jobs. The production image can be
+accepted only after both jobs succeed, the image starts, `/health` identifies the candidate commit,
+and the smoke runner completes a real read-only remote-work workflow with exact citations and MCP
+trace shape. The explicit `Release gate` job aggregates those results for Render's
+`checksPass` trigger.
+
+After Render marks that exact commit deployed, a separate `deployment_status` workflow checks the
+public URL. It tolerates a documented free-tier cold start, rejects version or commit drift, verifies
+required components, and repeats the read-only MCP workflow. CI and hosted JSON evidence are retained
+as Actions artifacts; no write-like ticket action is part of automated smoke testing.
+
 ## Phase 8 presentation boundary
 
 The browser selects a synthetic employee, loads or runs a versioned task, and renders the typed

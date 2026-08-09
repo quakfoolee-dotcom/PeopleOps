@@ -12,7 +12,7 @@ This ten-phase plan controls implementation order. A phase is complete only when
 | 6. MCP tool suite | Implement all eight planned tools through MCP | All tools are discoverable, schema-valid, traced, timeout-controlled, and tested | Enforce genuine MCP integration rather than direct data or retrieval access. | Ready |
 | 7. Agent workflows and safety | Bounded remote-work, PTO, and expense workflows with safety gates | Primary workflows and failure/safety cases pass repeatedly | Typed bounded workflows provide testable and safer behavior. | Ready |
 | 8. Product interface | Chat, demo tasks, citations, traces, status, and confirmation experience | Grader can reproduce both workflows and inspect evidence | Expose operational evidence without exposing hidden chain-of-thought. | Ready |
-| 9. CI/CD and deployment | Complete checks, deterministic CI substitutes, and gated hosting | Hosted application and health smoke tests pass after required checks | Deploy from the vertical slice onward and gate releases on verification. | CI/Docker and initial gated hosting ready; full Phase 9 hardening planned |
+| 9. CI/CD and deployment | Complete checks, deterministic CI substitutes, and gated hosting | Hosted application and health smoke tests pass after required checks | Deploy from the vertical slice onward and gate releases on verification. | Ready |
 | 10. Evaluation and submission | Gold-suite run, ablations, metrics, documents, access, and demo | Every Score-5 gate passes | Evaluation and demo evidence are graded deliverables. | Planned |
 
 ## GitHub planning map
@@ -32,6 +32,6 @@ This ten-phase plan controls implementation order. A phase is complete only when
 
 ## Next action
 
-Begin Phase 9 CI/CD and deployment hardening. Add startup and hosted smoke coverage, maintain the
-GitHub Actions runtime, document release rollback and cold-start operations, and prove that only a
-fully passing main commit reaches the hosted application.
+Begin Phase 10 evaluation and submission. Run all 25 gold cases, full groundedness, citation,
+tool-selection, workflow, safety, retrieval-ablation, and warm/cold latency measurements; complete
+the submission evidence; grant grader access; and rehearse the 7–10 minute demo.
