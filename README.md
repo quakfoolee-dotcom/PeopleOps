@@ -11,7 +11,7 @@ Phases 1 through 9 of the [authoritative execution plan](docs/execution-plan.md)
 final submission link checks remain. The repository currently provides:
 
 - a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
-- an evidence-first React/Vite product workspace with four demo tasks, employee context, live
+- an evidence-first React/Vite product workspace with five demo tasks, employee context, live
   health, citations, complete MCP trace, request/trace IDs, and explicit action confirmation;
 - a validated 12-policy corpus in Markdown and PDF formats;
 - typed configuration, policy-corpus validation, and MCP tool contracts;
@@ -157,10 +157,12 @@ npm run dev
 Open `http://127.0.0.1:5173`. Vite proxies `/health`, `/chat`, and `/actions` to the backend during
 development.
 
-The workspace includes remote-work, PTO, expense, and mock-ticket tasks. Select **Run task** to see
-the bounded result, exact policy citations, request and trace IDs, employee context, and complete MCP
-discovery/call trace. The ticket task exposes an exact action preview and remains blocked until the
-user selects **Confirm mock ticket**. See the Phase 8 guide for the complete grader walkthrough.
+The workspace includes remote-work, PTO, expense, mock-ticket, and employee-neutral policy/benefits
+guidance tasks. Select **Run task** to see the bounded result, exact policy citations, request and
+trace IDs, employee context where required, and complete MCP discovery/call trace. The policy task
+omits the employee ID and proves that general guidance does not access employee or benefits records.
+The ticket task exposes an exact action preview and remains blocked until the user selects **Confirm
+mock ticket**. See the Phase 8 guide for the complete grader walkthrough.
 
 When an external provider is configured, the response header identifies the provider and resolved
 model. The generated summary is shown above the unchanged verified workflow result. Disabled,

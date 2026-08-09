@@ -9,7 +9,7 @@ is a React/Vite application served by FastAPI in production and uses only the pu
 | Area | Purpose | Evidence source |
 |---|---|---|
 | Header | Product identity, synthetic-data warning, selected employee | Local presentation data aligned to the committed synthetic seed |
-| Demo-task rail | One-click remote-work, PTO, expense, and ticket scenarios | Versioned Phase 7 workflow prompts |
+| Demo-task rail | One-click remote-work, PTO, expense, ticket, and general policy/benefits scenarios | Versioned bounded-workflow prompts |
 | System health | MCP connectivity, RAG index, mock database, LLM provider, application version, environment, last-check time, and release identity | Live `/health` response plus client refresh time |
 | Conversation | User request, structured decision, answer, next steps, counts, request ID, trace ID | Live `/chat` response |
 | Employee context | Role, department, manager, location, employment, PTO snapshot | Presentation subset of committed synthetic records |
@@ -44,11 +44,15 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
    **Review pending action**.
 9. Select **Confirm mock ticket**. Confirm the final response identifies the synthetic ticket and
    the trace now contains one `create_mock_hr_ticket` call. The signed token is never rendered.
+10. Run **Policy and benefits guidance**. Confirm the answer cites `POL-BEN-001 BEN-5`; the trace
+    contains policy search and exact-section retrieval but no employee-profile or benefits-status
+    lookup. The preset intentionally sends no employee ID.
 
 ## Control behavior
 
 - **Load** places a task in the composer without making an API request.
-- **Run task** selects the correct employee and immediately runs the versioned prompt.
+- **Run task** selects the correct employee when required and immediately runs the versioned prompt.
+  The general policy/benefits task is explicitly employee-neutral.
 - The header employee selector changes the composer context and the employee context panel.
 - **New chat** and **Ask another question** clear the current response without mutating data.
 - **Copy guidance** copies the answer plus request and trace identifiers when clipboard access is

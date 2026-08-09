@@ -33,6 +33,17 @@ const citation = {
   retrieval_score: 0.91,
 };
 
+const policyCitation = {
+  ...citation,
+  policy_id: "POL-BEN-001",
+  section_id: "BEN-5",
+  title: "Employee Benefits Eligibility — Enrollment and changes",
+  snippet: "A newly eligible employee has 31 calendar days to complete enrollment or waiver elections.",
+  source_path: "policy_corpus/runtime_corpus/POL-BEN-001.md",
+  chunk_id: "POL-BEN-001::BEN-5::01",
+  retrieval_score: 0.95,
+};
+
 const traceEntry = {
   sequence: 1,
   tool_name: "mcp_discover_tools",
@@ -115,6 +126,40 @@ const draftPayload = {
   ],
 };
 
+const policyPayload = {
+  ...chatPayload,
+  request_id: "69928d70-989a-4c5e-b603-9d99fa5be577",
+  trace_id: "59928d70-989a-4c5e-b603-9d99fa5be588",
+  outcome: "answered",
+  answer:
+    "A newly eligible employee has 31 calendar days after the eligibility notice to complete enrollment or waiver elections.",
+  workflow: "policy",
+  citations: [policyCitation],
+  tool_trace: [
+    traceEntry,
+    {
+      ...traceEntry,
+      sequence: 2,
+      tool_name: "search_policy_documents",
+      result_summary: "Returned the benefits enrollment policy evidence.",
+    },
+    {
+      ...traceEntry,
+      sequence: 3,
+      tool_name: "get_policy_section",
+      result_summary: "Retrieved POL-BEN-001 BEN-5.",
+    },
+  ],
+  decision_summary: {
+    status_label: "Policy guidance ready",
+    duration_label: null,
+    category_label: "Benefits enrollment",
+    required_approvals: [],
+    clarification_needed: [],
+    next_steps: ["Complete enrollment or waiver elections within the applicable window."],
+  },
+};
+
 const createdPayload = {
   ...previewPayload,
   trace_id: "19928d70-989a-4c5e-b603-9d99fa5be544",
@@ -159,6 +204,9 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getByRole("heading", { name: "Chat with PeopleOps Assistant" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Demo tasks" })).toBeInTheDocument();
     expect(screen.getByText("International remote work")).toBeInTheDocument();
+    const taskRegion = screen.getByRole("region", { name: "Demo tasks" });
+    expect(within(taskRegion).getByText("5")).toBeInTheDocument();
+    expect(within(taskRegion).getByText("Policy and benefits guidance")).toBeInTheDocument();
     expect(screen.getAllByText("Alex Morgan").length).toBeGreaterThan(0);
     const healthRegion = await screen.findByRole("region", { name: "System health" });
     expect(within(healthRegion).getByText("MCP Connectivity")).toBeInTheDocument();
@@ -194,6 +242,32 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getAllByText("E-1021").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Logan Murphy").length).toBeGreaterThan(0);
     expect(screen.getByText("12 days")).toBeInTheDocument();
+  });
+
+  it("runs the employee-neutral policy and benefits demo without employee-data tools", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => healthPayload })
+      .mockResolvedValueOnce({ ok: true, json: async () => policyPayload });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+
+    const policyCard = screen.getByText("Policy and benefits guidance").closest("article");
+    expect(policyCard).not.toBeNull();
+    expect(within(policyCard!).getByText("Not used")).toBeInTheDocument();
+    fireEvent.click(within(policyCard!).getByRole("button", { name: "Run task" }));
+
+    expect(await screen.findByText(/31 calendar days after the eligibility notice/i)).toBeInTheDocument();
+    expect(screen.getByText("General policy")).toBeInTheDocument();
+    expect(screen.getAllByText(/BEN-5/).length).toBeGreaterThan(0);
+    expect(screen.getByText("search policy documents")).toBeInTheDocument();
+    expect(screen.getByText("get policy section")).toBeInTheDocument();
+    expect(screen.queryByText("lookup employee profile")).not.toBeInTheDocument();
+    expect(screen.queryByText("lookup benefits status")).not.toBeInTheDocument();
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    const policyBody = JSON.parse(String(fetchMock.mock.calls[1][1]?.body));
+    expect(policyBody.message).toMatch(/newly eligible employee/i);
+    expect(policyBody).not.toHaveProperty("employee_id");
   });
 
   it("runs a cited workflow and exposes sources, trace, and both identifiers", async () => {

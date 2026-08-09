@@ -100,7 +100,7 @@ type DemoTask = {
   id: string;
   number: string;
   title: string;
-  employeeId: string;
+  employeeId: string | null;
   facts: string[];
   message: string;
 };
@@ -181,6 +181,14 @@ const demoTasks: DemoTask[] = [
     employeeId: "E-1011",
     facts: ["Synthetic case", "Explicit confirmation"],
     message: "Employee E-1011 reported repeated harassment. Prepare an HR ticket for the concern.",
+  },
+  {
+    id: "policy-benefits",
+    number: "05",
+    title: "Policy and benefits guidance",
+    employeeId: null,
+    facts: ["BEN-5", "31-day enrollment window"],
+    message: "How long does a newly eligible employee have to complete benefits enrollment?",
   },
 ];
 
@@ -272,10 +280,10 @@ export default function App() {
   const [healthError, setHealthError] = useState("");
   const [healthLoading, setHealthLoading] = useState(true);
   const [healthCheckedAt, setHealthCheckedAt] = useState<Date | null>(null);
-  const [employeeId, setEmployeeId] = useState(initialTask.employeeId);
+  const [employeeId, setEmployeeId] = useState(initialTask.employeeId ?? employees[0].id);
   const [message, setMessage] = useState(initialTask.message);
   const [lastQuestion, setLastQuestion] = useState(initialTask.message);
-  const [lastEmployeeId, setLastEmployeeId] = useState(initialTask.employeeId);
+  const [lastEmployeeId, setLastEmployeeId] = useState<string | null>(initialTask.employeeId);
   const [chat, setChat] = useState<ChatPayload | null>(null);
   const [chatError, setChatError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -289,7 +297,7 @@ export default function App() {
     [employeeId],
   );
   const lastEmployee = useMemo(
-    () => employees.find((employee) => employee.id === lastEmployeeId) ?? employees[0],
+    () => employees.find((employee) => employee.id === lastEmployeeId) ?? null,
     [lastEmployeeId],
   );
   const totalTraceDuration = useMemo(
@@ -322,7 +330,7 @@ export default function App() {
 
   async function runChat(
     question: string,
-    targetEmployeeId: string,
+    targetEmployeeId: string | null,
     options?: { requestId?: string; confirmationToken?: string; preserveResult?: boolean },
   ) {
     setSubmitting(true);
@@ -331,10 +339,8 @@ export default function App() {
     setLastQuestion(question);
     setLastEmployeeId(targetEmployeeId);
     try {
-      const body: Record<string, string> = {
-        employee_id: targetEmployeeId,
-        message: question,
-      };
+      const body: Record<string, string> = { message: question };
+      if (targetEmployeeId) body.employee_id = targetEmployeeId;
       if (options?.requestId) body.request_id = options.requestId;
       if (options?.confirmationToken) body.confirmation_token = options.confirmationToken;
       const response = await fetch("/chat", {
@@ -363,7 +369,7 @@ export default function App() {
   }
 
   function loadTask(task: DemoTask) {
-    setEmployeeId(task.employeeId);
+    if (task.employeeId) setEmployeeId(task.employeeId);
     setMessage(task.message);
     setChat(null);
     setChatError("");
@@ -371,7 +377,7 @@ export default function App() {
   }
 
   async function runTask(task: DemoTask) {
-    setEmployeeId(task.employeeId);
+    if (task.employeeId) setEmployeeId(task.employeeId);
     setMessage(task.message);
     await runChat(task.message, task.employeeId);
   }
@@ -487,7 +493,7 @@ export default function App() {
                 <article className="task-card" key={task.id}>
                   <div className="task-title"><span>{task.number}</span><strong>{task.title}</strong></div>
                   <dl>
-                    <div><dt>Employee</dt><dd>{task.employeeId}</dd></div>
+                    <div><dt>Employee</dt><dd>{task.employeeId ?? "Not used"}</dd></div>
                     {task.facts.map((fact, index) => (
                       <div key={fact}><dt>{index === 0 ? "Detail" : "Scope"}</dt><dd>{fact}</dd></div>
                     ))}
@@ -568,8 +574,8 @@ export default function App() {
 
             {(chat || submitting) && lastQuestion && (
               <article className="message-card user-message">
-                <span className="avatar small" aria-hidden="true">{lastEmployee.name.charAt(0)}</span>
-                <div><div className="message-author"><strong>You</strong><span>{lastEmployee.id}</span></div><p>{lastQuestion}</p></div>
+                <span className="avatar small" aria-hidden="true">{lastEmployee ? lastEmployee.name.charAt(0) : "P"}</span>
+                <div><div className="message-author"><strong>You</strong><span>{lastEmployee?.id ?? "General policy"}</span></div><p>{lastQuestion}</p></div>
               </article>
             )}
 
