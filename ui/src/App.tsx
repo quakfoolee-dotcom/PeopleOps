@@ -11,6 +11,13 @@ type HealthPayload = {
   components: Record<string, { status: ComponentState; detail: string }>;
 };
 
+const primaryHealthComponents = [
+  { key: "mcp", label: "MCP Connectivity" },
+  { key: "rag_index", label: "RAG Index" },
+  { key: "mock_database", label: "Mock Database" },
+  { key: "llm_provider", label: "LLM Provider" },
+] as const;
+
 type Citation = {
   policy_id: string;
   section_id: string;
@@ -183,6 +190,24 @@ function displayName(value: string) {
   return value.replaceAll("_", " ");
 }
 
+function healthStatusLabel(status: ComponentState) {
+  const labels: Record<ComponentState, string> = {
+    ready: "Healthy",
+    planned: "Planned",
+    not_configured: "Not configured",
+    error: "Unavailable",
+  };
+  return labels[status];
+}
+
+function healthCheckedLabel(value: Date) {
+  return value.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
 function workflowTitle(workflow: string) {
   const titles: Record<string, string> = {
     policy: "Policy guidance",
@@ -246,6 +271,7 @@ export default function App() {
   const [health, setHealth] = useState<HealthPayload | null>(null);
   const [healthError, setHealthError] = useState("");
   const [healthLoading, setHealthLoading] = useState(true);
+  const [healthCheckedAt, setHealthCheckedAt] = useState<Date | null>(null);
   const [employeeId, setEmployeeId] = useState(initialTask.employeeId);
   const [message, setMessage] = useState(initialTask.message);
   const [lastQuestion, setLastQuestion] = useState(initialTask.message);
@@ -281,6 +307,7 @@ export default function App() {
     } catch (error) {
       setHealthError(error instanceof Error ? error.message : "Service status unavailable.");
     } finally {
+      setHealthCheckedAt(new Date());
       setHealthLoading(false);
     }
   }, []);
@@ -476,28 +503,44 @@ export default function App() {
             </div>
           </section>
 
-          <section id="system-health" className="rail-section health-section" aria-labelledby="health-title">
+          <section id="system-health" className="rail-section health-section" aria-labelledby="health-title" aria-live="polite">
             <div className="rail-heading">
-              <h2 id="health-title">System health</h2>
+              <div className="health-title-line">
+                <h2 id="health-title">System health</h2>
+                <a className="health-endpoint" href="/health" target="_blank" rel="noreferrer">/health</a>
+              </div>
               <button type="button" onClick={() => void refreshHealth()} disabled={healthLoading}>
                 {healthLoading ? "Checking" : "Refresh"}
               </button>
             </div>
             {healthError ? (
               <p className="health-error" role="alert">{healthError}</p>
+            ) : healthLoading && !health ? (
+              <p className="health-loading">Checking service health…</p>
             ) : (
               <ul className="health-list">
-                {Object.entries(health?.components ?? {}).map(([name, component]) => (
-                  <li key={name}>
-                    <span className={`health-dot ${component.status}`} aria-hidden="true" />
-                    <span>{displayName(name)}</span>
-                    <strong>{displayName(component.status)}</strong>
-                  </li>
-                ))}
+                {primaryHealthComponents.map(({ key, label }) => {
+                  const component = health?.components[key];
+                  const status = component?.status ?? "error";
+                  return (
+                    <li key={key} title={component?.detail ?? `${label} status is unavailable.`}>
+                      <span className={`health-dot ${status}`} aria-hidden="true" />
+                      <span>{label}</span>
+                      <strong className={`health-status ${status}`}>{healthStatusLabel(status)}</strong>
+                    </li>
+                  );
+                })}
               </ul>
             )}
             {health && (
-              <p className="health-meta">v{health.version} · {health.environment} · {health.status}<br />release {health.release_sha.slice(0, 7)}</p>
+              <dl className="health-meta">
+                <div><dt>App Version</dt><dd>v{health.version} · {health.environment}</dd></div>
+                <div>
+                  <dt>Last checked</dt>
+                  <dd>{healthCheckedAt ? <time dateTime={healthCheckedAt.toISOString()}>{healthCheckedLabel(healthCheckedAt)}</time> : "—"}</dd>
+                </div>
+                <div><dt>Release</dt><dd>{health.release_sha.slice(0, 7)}</dd></div>
+              </dl>
             )}
           </section>
         </aside>

@@ -10,7 +10,7 @@ is a React/Vite application served by FastAPI in production and uses only the pu
 |---|---|---|
 | Header | Product identity, synthetic-data warning, selected employee | Local presentation data aligned to the committed synthetic seed |
 | Demo-task rail | One-click remote-work, PTO, expense, and ticket scenarios | Versioned Phase 7 workflow prompts |
-| System health | Current component status, application version, environment | Live `/health` response |
+| System health | MCP connectivity, RAG index, mock database, LLM provider, application version, environment, last-check time, and release identity | Live `/health` response plus client refresh time |
 | Conversation | User request, structured decision, answer, next steps, counts, request ID, trace ID | Live `/chat` response |
 | Employee context | Role, department, manager, location, employment, PTO snapshot | Presentation subset of committed synthetic records |
 | Citation inspector | Policy/section IDs, snippets, versions, effective dates, format, pages, chunk IDs, scores | Validated citation objects returned by `/chat` |
@@ -23,9 +23,11 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 ## Grader walkthrough
 
 1. Open the application and confirm the blue **Synthetic demo environment** banner.
-2. Check **System health** in the left rail. The API, corpus, RAG index, MCP, and mock database
-   should report ready. The provider reports ready when configured, not configured when deliberately
-   disabled, or error when its sanitized health probe fails.
+2. Check **System health** in the left rail. `MCP Connectivity`, `RAG Index`, `Mock Database`, and
+   `LLM Provider` should report healthy. Confirm the explicit **App Version**, **Last checked**, and
+   shortened **Release** rows. The `/health` link exposes the complete application and policy-corpus
+   detail. The provider reports healthy when configured, not configured when deliberately disabled,
+   or unavailable when its sanitized health probe fails.
 3. In **International remote work**, select **Run task**.
 4. Confirm the card separately shows conditional status, 42 calendar/30 business days,
    `International exceptional`, required approvals, exact-date clarification, and ordered next
@@ -58,8 +60,9 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 - Citation and trace panels use native expandable controls, including on narrow screens.
 - The confirmation dialog focuses the primary decision, supports Escape/cancel, and reuses the
   original request ID, employee, and message after confirmation.
-- Health refresh, network failures, clarifications, escalations, denied actions, and timeouts remain
-  visible controlled states.
+- Health refresh updates the visible local **Last checked** time. Network failures, missing primary
+  components, clarifications, escalations, denied actions, and timeouts remain visible controlled
+  states.
 
 ## Responsive and accessibility behavior
 

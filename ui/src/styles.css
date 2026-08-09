@@ -193,15 +193,25 @@ h1, h2, p { overflow-wrap: anywhere; }
 }
 .task-actions button.run-task { color: #ffffff; background: var(--blue); border-color: var(--blue); }
 .task-actions button:disabled { cursor: wait; opacity: 0.55; }
-.health-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-.health-list li { display: grid; grid-template-columns: 11px 1fr auto; align-items: center; gap: 8px; font-size: 12px; text-transform: capitalize; }
-.health-list li strong { color: var(--success); font-size: 11px; font-weight: 750; }
+.health-title-line { display: flex; align-items: baseline; gap: 7px; }
+.health-endpoint { color: #7b8597; font-size: 10px; font-weight: 650; text-decoration: none; }
+.health-endpoint:hover { color: var(--blue); text-decoration: underline; }
+.health-list { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.health-list li { display: grid; grid-template-columns: 11px 1fr auto; align-items: center; gap: 8px; font-size: 12px; }
+.health-status { color: #687489; font-size: 11px; font-weight: 750; }
+.health-status.ready { color: var(--success); }
+.health-status.error { color: var(--danger); }
+.health-status.not_configured, .health-status.planned { color: var(--warning); }
 .health-dot { width: 7px; height: 7px; border-radius: 50%; background: #9ca5b4; }
 .health-dot.ready { background: var(--success); box-shadow: 0 0 0 2px #d9f1e7; }
 .health-dot.error { background: var(--danger); box-shadow: 0 0 0 2px #f8dddd; }
 .health-dot.not_configured, .health-dot.planned { background: var(--warning); }
-.health-meta { margin: 14px 0 0; color: #626e83; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+.health-meta { display: grid; gap: 6px; margin: 13px 0 0; padding-top: 11px; border-top: 1px solid #e5e9f0; }
+.health-meta div { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.health-meta dt { color: #687489; font-size: 10px; }
+.health-meta dd { margin: 0; color: #465269; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; text-align: right; }
 .health-error { margin: 0; color: var(--danger); font-size: 12px; line-height: 1.5; }
+.health-loading { margin: 0; color: #687489; font-size: 11px; line-height: 1.5; }
 
 .conversation-column { min-width: 0; padding: 24px 26px 40px; }
 .conversation-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 18px; }

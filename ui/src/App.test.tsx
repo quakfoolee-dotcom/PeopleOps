@@ -6,7 +6,7 @@ import App from "./App";
 const healthPayload = {
   status: "ok",
   app_name: "PeopleOps Assistant",
-  version: "0.8.0",
+  version: "1.0.0",
   environment: "test",
   release_sha: "test-release-sha",
   components: {
@@ -14,6 +14,7 @@ const healthPayload = {
     policy_corpus: { status: "ready", detail: "12 synthetic policies validated." },
     rag_index: { status: "ready", detail: "169 sections indexed." },
     mcp: { status: "ready", detail: "8 tools serve the Phase 8 interface." },
+    mock_database: { status: "ready", detail: "30 synthetic employee records validated." },
     llm_provider: { status: "ready", detail: "Deterministic test provider is ready." },
   },
 };
@@ -159,11 +160,23 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getByRole("heading", { name: "Demo tasks" })).toBeInTheDocument();
     expect(screen.getByText("International remote work")).toBeInTheDocument();
     expect(screen.getAllByText("Alex Morgan").length).toBeGreaterThan(0);
-    expect(await screen.findByText("v0.8.0 · test · ok", { exact: false })).toBeInTheDocument();
-    expect(screen.getByText("release test-re", { exact: false })).toBeInTheDocument();
+    const healthRegion = await screen.findByRole("region", { name: "System health" });
+    expect(within(healthRegion).getByText("MCP Connectivity")).toBeInTheDocument();
+    expect(within(healthRegion).getByText("RAG Index")).toBeInTheDocument();
+    expect(within(healthRegion).getByText("Mock Database")).toBeInTheDocument();
+    expect(within(healthRegion).getByText("LLM Provider")).toBeInTheDocument();
+    expect(within(healthRegion).getAllByText("Healthy")).toHaveLength(4);
+    expect(within(healthRegion).queryByText("Application")).not.toBeInTheDocument();
+    expect(within(healthRegion).queryByText("Policy Corpus")).not.toBeInTheDocument();
+    expect(within(healthRegion).getByText("App Version")).toBeInTheDocument();
+    expect(within(healthRegion).getByText("v1.0.0 · test")).toBeInTheDocument();
+    expect(within(healthRegion).getByText("Last checked")).toBeInTheDocument();
+    expect(within(healthRegion).getByText("Release")).toBeInTheDocument();
+    expect(within(healthRegion).getByText("test-re")).toBeInTheDocument();
+    expect(within(healthRegion).getByRole("link", { name: "/health" })).toHaveAttribute("href", "/health");
     expect(screen.getAllByText(/Citations/i).length).toBeGreaterThan(0);
     expect(screen.getByText("Tool trace", { exact: false })).toBeInTheDocument();
-    expect(screen.getByText("llm provider", { exact: false })).toBeInTheDocument();
+    expect(screen.getByText("LLM Provider", { exact: true })).toBeInTheDocument();
   });
 
   it("loads a demo task and updates the selected employee context", async () => {
