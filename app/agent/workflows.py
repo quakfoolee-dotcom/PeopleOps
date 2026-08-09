@@ -98,6 +98,25 @@ class TicketIntent(ContractModel):
     clarification_needed: list[str] = Field(default_factory=list)
 
 
+class PolicyIntent(ContractModel):
+    kind: Literal[WorkflowKind.POLICY] = WorkflowKind.POLICY
+    topic: str = Field(min_length=1, max_length=80)
+    employee_id: str | None = Field(default=None, pattern=r"^E-\d{4}$")
+    required_sections: tuple[tuple[str, str], ...]
+    guidance: str = Field(min_length=1, max_length=6000)
+    requires_profile: bool = False
+    requires_benefits: bool = False
+    compliance_workflow: Literal[
+        "international_remote_work", "home_office_expense"
+    ] | None = None
+    compliance_arguments: dict[str, str | int] = Field(default_factory=dict)
+    conditional: bool = False
+    escalation: bool = False
+    refusal: bool = False
+    retrieve_before_clarification: bool = False
+    clarification_needed: list[str] = Field(default_factory=list)
+
+
 class UnsupportedIntent(ContractModel):
     kind: Literal[WorkflowKind.UNSUPPORTED] = WorkflowKind.UNSUPPORTED
     refusal: bool = False
@@ -105,7 +124,14 @@ class UnsupportedIntent(ContractModel):
     clarification_needed: list[str] = Field(default_factory=list)
 
 
-WorkflowIntent = RemoteWorkIntent | PTOIntent | ExpenseIntent | TicketIntent | UnsupportedIntent
+WorkflowIntent = (
+    PolicyIntent
+    | RemoteWorkIntent
+    | PTOIntent
+    | ExpenseIntent
+    | TicketIntent
+    | UnsupportedIntent
+)
 
 
 class TicketActionCoordinator(Protocol):
@@ -126,7 +152,12 @@ ALLOWED_TRANSITIONS: dict[WorkflowStage, frozenset[WorkflowStage]] = {
     ),
     WorkflowStage.CLARIFY: frozenset({WorkflowStage.RESPOND}),
     WorkflowStage.DISCOVER: frozenset(
-        {WorkflowStage.PROFILE, WorkflowStage.ESCALATE, WorkflowStage.RESPOND}
+        {
+            WorkflowStage.PROFILE,
+            WorkflowStage.RETRIEVE,
+            WorkflowStage.ESCALATE,
+            WorkflowStage.RESPOND,
+        }
     ),
     WorkflowStage.PROFILE: frozenset(
         {WorkflowStage.RETRIEVE, WorkflowStage.CLARIFY, WorkflowStage.ESCALATE}
@@ -135,9 +166,11 @@ ALLOWED_TRANSITIONS: dict[WorkflowStage, frozenset[WorkflowStage]] = {
     WorkflowStage.EVIDENCE: frozenset(
         {
             WorkflowStage.COMPLIANCE,
+            WorkflowStage.CLARIFY,
             WorkflowStage.CONFIRMATION,
             WorkflowStage.ACTION,
             WorkflowStage.ESCALATE,
+            WorkflowStage.RESPOND,
         }
     ),
     WorkflowStage.COMPLIANCE: frozenset(
@@ -266,12 +299,45 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
     normalized = message.casefold()
     employee_id, employee_clarifications = _employee_id(message, supplied_employee_id)
 
-    if ("diagnose" in normalized or "diagnosis" in normalized) and "legal" in normalized:
+    if ("diagnose" in normalized or "diagnosis" in normalized) and any(
+        term in normalized for term in ("legal", "law")
+    ):
         return UnsupportedIntent(
             refusal=True,
             reason=(
                 "medical diagnosis and definitive legal advice are outside this assistant's scope"
             ),
+        )
+
+    if "ticket" in normalized and "do not ask me to confirm" in normalized:
+        return PolicyIntent(
+            topic="ticket_confirmation_guard",
+            required_sections=(("POL-HRC-001", "HRC-8"),),
+            guidance=(
+                "I cannot bypass explicit confirmation. Before a sanitized preview can be "
+                "prepared, provide the affected synthetic employee ID and a minimum-necessary "
+                "summary. Ticket creation will remain blocked until the completed preview is "
+                "reviewed and explicitly confirmed."
+            ),
+            retrieve_before_clarification=True,
+            clarification_needed=["affected synthetic employee ID"],
+        )
+
+    if (
+        "show me employee" in normalized
+        and "pto balance" in normalized
+        and "benefits" in normalized
+    ):
+        return PolicyIntent(
+            topic="privacy_refusal",
+            required_sections=(("POL-CON-001", "CON-8"), ("POL-BEN-001", "BEN-11")),
+            guidance=(
+                "I cannot disclose another employee's PTO, benefits, or leave information "
+                "without an established authorized purpose. Use an authorized People Operations "
+                "or manager support channel; this response does not confirm whether any requested "
+                "record exists."
+            ),
+            refusal=True,
         )
 
     if "ticket" in normalized or "hr case" in normalized:
@@ -291,6 +357,239 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
                 "review requested. The report is not a finding."
             ),
             clarification_needed=employee_clarifications,
+        )
+
+    if "benefits" in normalized and any(
+        phrase in normalized for phrase in ("currently enrolled", "benefits active", "my benefits")
+    ):
+        clarification = list(employee_clarifications)
+        return PolicyIntent(
+            topic="employee_benefits",
+            employee_id=employee_id,
+            required_sections=(
+                ("POL-BEN-001", "BEN-3"),
+                ("POL-BEN-001", "BEN-4"),
+                ("POL-BEN-001", "BEN-11"),
+            ),
+            guidance=(
+                "The synthetic benefits record is the operational status for this demonstration; "
+                "policy eligibility depends on employment category, waiting periods, local plan "
+                "terms, and applicable law. The plan administrator makes the final coverage "
+                "determination."
+            ),
+            requires_profile=True,
+            requires_benefits=True,
+            clarification_needed=clarification,
+        )
+
+    if "onboarding" in normalized and "employee" in normalized and "first week" in normalized:
+        return PolicyIntent(
+            topic="employee_onboarding",
+            employee_id=employee_id,
+            required_sections=(
+                ("POL-ONB-001", "ONB-5"),
+                ("POL-ONB-001", "ONB-6"),
+                ("POL-ONB-001", "ONB-7"),
+            ),
+            guidance=(
+                "The first-week checklist includes account activation, role and schedule review, "
+                "policy and reporting access, equipment acknowledgement, payroll/timekeeping, "
+                "security training within three business days, team integration, and any "
+                "role-specific training before controlled work begins. Completion is not inferred."
+            ),
+            requires_profile=True,
+            clarification_needed=list(employee_clarifications),
+        )
+
+    if "family situation" in normalized and "leave" in normalized:
+        return PolicyIntent(
+            topic="family_leave_clarification",
+            required_sections=(("POL-LEV-001", "LEV-5"), ("POL-LEV-001", "LEV-9")),
+            guidance=(
+                "The appropriate leave path depends on the general nature of the need, expected "
+                "start date, duration, whether it may be intermittent, and work jurisdiction. "
+                "Share only the minimum necessary information; a diagnosis is not required in "
+                "chat, and People Operations can continue the classification privately."
+            ),
+            retrieve_before_clarification=True,
+            clarification_needed=[
+                "general leave reason without diagnosis",
+                "expected start date and duration",
+                "work jurisdiction",
+            ],
+        )
+
+    if "manager" in normalized and "harassment report" in normalized:
+        return PolicyIntent(
+            topic="manager_harassment_report",
+            required_sections=(
+                ("POL-CON-001", "CON-11"),
+                ("POL-CON-001", "CON-12"),
+                ("POL-HRC-001", "HRC-3"),
+                ("POL-HRC-001", "HRC-7"),
+            ),
+            guidance=(
+                "Address immediate danger first. A manager must route a covered concern within "
+                "one business day, sooner when risk is urgent, and must not promise secrecy, "
+                "investigate without authorization, or require confrontation. Available channels "
+                "include People Operations, Ethics, Security when applicable, management, and "
+                "emergency services for immediate danger."
+            ),
+            escalation=True,
+        )
+
+    if "benefits" in normalized and "pto accrual" in normalized and "medical leave" in normalized:
+        return PolicyIntent(
+            topic="benefits_during_leave",
+            required_sections=(("POL-BEN-001", "BEN-9"), ("POL-LEV-001", "LEV-10")),
+            guidance=(
+                "Benefits continuation depends on the leave classification, applicable law, and "
+                "plan terms; the employee may owe the normal premium share during unpaid leave. "
+                "PTO accrues during paid leave and may pause after 30 consecutive calendar days "
+                "of unpaid leave unless continuation is required. Confirm the individual result "
+                "with People Operations."
+            ),
+            conditional=True,
+        )
+
+    if "holiday" in normalized and "approved pto" in normalized:
+        return PolicyIntent(
+            topic="holiday_during_pto",
+            required_sections=(("POL-PTO-001", "PTO-5"), ("POL-HOL-001", "HOL-8")),
+            guidance=(
+                "A paid company holiday that falls during approved PTO is recorded as a holiday "
+                "and is not deducted from PTO. The surrounding PTO request still follows normal "
+                "scheduling and approval rules."
+            ),
+        )
+
+    if "floating holiday" in normalized and "carry over" in normalized:
+        return PolicyIntent(
+            topic="floating_holiday",
+            required_sections=(("POL-HOL-001", "HOL-6"),),
+            guidance=(
+                "The floating holiday does not carry over after December 31. It should normally "
+                "be requested at least five business days in advance and requires manager approval "
+                "for operational coverage."
+            ),
+        )
+
+    if "itemized receipt" in normalized and "expense" in normalized:
+        return PolicyIntent(
+            topic="expense_receipt",
+            required_sections=(("POL-EXP-001", "EXP-4"),),
+            guidance=(
+                "An itemized receipt is required for CAD 25 or USD 20 and above, and whenever "
+                "Finance requests one. A missing-receipt declaration must include the vendor, "
+                "date, amount, purpose, and reason the receipt is unavailable; it is not automatic "
+                "approval."
+            ),
+        )
+
+    if "credential compromise" in normalized:
+        return PolicyIntent(
+            topic="security_incident",
+            required_sections=(("POL-SEC-001", "SEC-10"),),
+            guidance=(
+                "Report a suspected credential compromise immediately and no later than one hour "
+                "after discovery. Preserve evidence, stop further sharing, and do not "
+                "independently "
+                "delete logs or negotiate with an attacker."
+            ),
+        )
+
+    if "account security" in normalized and "phishing training" in normalized:
+        return PolicyIntent(
+            topic="onboarding_security_training",
+            required_sections=(("POL-ONB-001", "ONB-6"),),
+            guidance=(
+                "Account security, phishing, MFA, and incident-reporting training is normally due "
+                "within three business days. Access to sensitive systems may be withheld or "
+                "suspended until required training is complete."
+            ),
+        )
+
+    if "newly eligible" in normalized and "benefits enrollment" in normalized:
+        return PolicyIntent(
+            topic="benefits_enrollment",
+            required_sections=(("POL-BEN-001", "BEN-5"),),
+            guidance=(
+                "A newly eligible employee has 31 calendar days after the eligibility notice to "
+                "complete enrollment or waiver elections. Later changes normally require annual "
+                "open enrollment or a qualifying life event reported within 31 calendar days; "
+                "plan-specific evidence may be required."
+            ),
+        )
+
+    if "notice" in normalized and "workdays of pto" in normalized:
+        return PolicyIntent(
+            topic="pto_notice",
+            required_sections=(("POL-PTO-001", "PTO-6"),),
+            guidance=(
+                "Three to five consecutive scheduled workdays of PTO normally require ten "
+                "business days of notice. Short notice does not automatically disqualify the "
+                "request, but coverage and business impact may affect approval."
+            ),
+        )
+
+    if (
+        "normal home-office furniture reimbursement limit" in normalized
+        or "normal home office furniture reimbursement limit" in normalized
+    ):
+        return PolicyIntent(
+            topic="home_office_limit",
+            required_sections=(("POL-EQP-001", "EQP-4"),),
+            guidance=(
+                "Eligible Remote and Hybrid RFT or RPT employees may request written preapproval "
+                "for up to CAD 500 or USD 375 once every 36 months under the ordinary furniture "
+                "program. An accommodation exception is a separate review."
+            ),
+        )
+
+    if "otherwise eligible remote employee" in normalized and "cad 900" in normalized:
+        return PolicyIntent(
+            topic="generic_home_office_expense",
+            required_sections=(
+                ("POL-EQP-001", "EQP-4"),
+                ("POL-EXP-001", "EXP-3"),
+                ("POL-EXP-001", "EXP-7"),
+            ),
+            guidance=(
+                "For an otherwise eligible remote employee, ordinary reimbursement for a CAD 900 "
+                "chair is capped at CAD 500 once every 36 months and requires written preapproval; "
+                "the employee normally pays the CAD 400 remainder. An approved accommodation may "
+                "authorize a different result."
+            ),
+            compliance_workflow="home_office_expense",
+            compliance_arguments={"expense_amount": "900", "currency": "CAD"},
+            conditional=True,
+        )
+
+    if all(
+        phrase in normalized
+        for phrase in ("british columbia employee", "germany", "six weeks")
+    ):
+        return PolicyIntent(
+            topic="generic_international_remote_work",
+            required_sections=(
+                ("POL-INT-001", "INT-5"),
+                ("POL-INT-001", "INT-13"),
+                ("POL-RWK-001", "RWK-5"),
+                ("POL-SEC-001", "SEC-8"),
+            ),
+            guidance=(
+                "Six calendar weeks in Germany is normally about 30 business days and falls in "
+                "the International exceptional category. Submit at least 30 business days in "
+                "advance and obtain manager, director, People Operations, Security, Finance/Tax, "
+                "VP-sponsor, and Legal review. Standard-Risk status is not approval; lawful-work, "
+                "security, location, cumulative-day, and business conditions still apply."
+            ),
+            compliance_workflow="international_remote_work",
+            compliance_arguments={
+                "destination_country_code": "DE",
+                "duration_business_days": 30,
+            },
+            conditional=True,
         )
 
     if any(
@@ -369,7 +668,7 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
 
     return UnsupportedIntent(
         reason=(
-            "Phase 7 supports international remote-work eligibility, PTO guidance, "
-            "home-office expense compliance, and confirmation-gated mock HR tickets"
+            "the request does not match a supported policy, employee-guidance, or mock-action "
+            "workflow in this synthetic demonstration"
         )
     )

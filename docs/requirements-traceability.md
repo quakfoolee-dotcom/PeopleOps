@@ -23,7 +23,7 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Operational tool trace | Shared executor records all eight tools with sanitized arguments, status, duration, and bounded summaries | Ready |
 | Confirmation before write-like actions | Signed expiring confirmation, exact preview binding, idempotency, redaction, and safety tests | Ready |
 | Synthetic structured data | 30 employees, 6 locations, manager, PTO, benefits, and ticket seeds; strict schemas, checksums, semantic validation, SQLite build | Ready |
-| `/chat` endpoint and UI workflow | Four bounded API workflows plus typed decision summary, evidence-first workspace, real next actions, presets, employee context, citations, trace, identifiers, health, and confirmation dialog | Ready |
+| `/chat` endpoint and UI workflow | Five bounded API workflows plus typed decision summary, evidence-first workspace, real next actions, presets, employee context, citations, trace, identifiers, health, and confirmation dialog | Ready |
 | Replaceable LLM provider | `app/providers`, environment factory, OpenRouter/OpenAI-compatible adapter, deterministic CI adapter, contract and orchestration tests | Ready |
 | Grounded provider generation | Post-workflow-only summary, protected facts, exact citation allow-list, unknown identifier/number rejection, unchanged verified result, safe fallback | Ready |
 | LLM provider health | Cached authenticated model probe, sanitized `/health` state, UI component status, bounded provider-aware hosted smoke with per-attempt evidence | Ready; production OpenRouter active |
@@ -36,8 +36,9 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Evaluation set of 20-30 cases | 25 machine-readable cases with exact 7/5/6/4/3 distribution | Ready |
 | Evaluation expectations defined before implementation | Facts, policy sections, tools, outcomes, constraints, and safety per case | Ready |
 | Evaluation and API JSON Schemas | `evaluation/schemas`, drift-export script, CI check | Ready |
-| Required metrics and ablation | Phase 5 retrieval ablation and raw results; full workflow/provider metrics remain Phase 10 | Foundation: retrieval ready |
-| README and design documentation | Repository documentation plus Phase 7–9 workflow, interface, and release-operations guides | Ready through Phase 9 |
+| Required metrics and ablation | Phase 10 gold JSON/CSV plus Phase 5 retrieval ablation: groundedness 96%, citations/tools/safety 100%, workflow 96% | Ready |
+| README and design documentation | Repository documentation plus Phase 7–10 workflow, interface, release, evaluation, submission, and demo guides | Ready |
 | AI tooling disclosure | `ai-tooling.md` | Ready and maintained continuously |
 | Deployment URL and cold-start notes | `render.yaml`, `deployed.md`, verified public root and `/health` | Ready |
-| Recorded demo | Demo acceptance criteria in use cases | Planned: Phase 10 |
+| Recorded demo | Timed 8:30 script, two workflow diagrams, preflight, and rehearsal acceptance record | Ready to record; owner URL pending |
+| Risk register and known limitations | `docs/risk-register.md`, mitigations, residual risk, owners, and verification evidence | Ready |

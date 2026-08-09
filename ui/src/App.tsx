@@ -185,6 +185,7 @@ function displayName(value: string) {
 
 function workflowTitle(workflow: string) {
   const titles: Record<string, string> = {
+    policy: "Policy guidance",
     remote_work: "Remote-work eligibility",
     pto: "PTO guidance",
     expense: "Expense compliance",
@@ -613,7 +614,7 @@ export default function App() {
                     {chat.workflow === "remote_work" && chat.outcome === "conditional" && (
                       <button type="button" onClick={() => void draftPeopleOpsEmail()}>Draft PeopleOps email</button>
                     )}
-                    {["remote_work", "pto", "expense"].includes(chat.workflow) && (
+                    {["policy", "remote_work", "pto", "expense"].includes(chat.workflow) && (
                       <button type="button" onClick={() => void rerunCurrentWorkflow()}>Re-run {workflowTitle(chat.workflow).toLowerCase()}</button>
                     )}
                     {chat.pending_action && (
@@ -650,7 +651,7 @@ export default function App() {
                 rows={3}
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
-                placeholder="Ask about remote work, PTO, expenses, or prepare a mock HR ticket…"
+                placeholder="Ask about policies, benefits, remote work, PTO, expenses, or prepare a mock HR ticket…"
               />
               <button className="send-button" disabled={submitting || confirming || !message.trim()} type="submit">
                 <span className="sr-only">Send question</span><span aria-hidden="true">➤</span>

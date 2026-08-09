@@ -6,8 +6,9 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 ## Execution status
 
-Phases 1 through 9 of the [authoritative execution plan](docs/execution-plan.md) and the pre-evaluation
-LLM provider integration are complete. The repository currently provides:
+Phases 1 through 9 of the [authoritative execution plan](docs/execution-plan.md) are complete. Phase
+10 implementation and automated evaluation are complete; the owner-controlled recorded demo and
+final submission link checks remain. The repository currently provides:
 
 - a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
 - an evidence-first React/Vite product workspace with four demo tasks, employee context, live
@@ -51,7 +52,13 @@ LLM provider integration are complete. The repository currently provides:
 - a replaceable OpenAI-compatible LLM adapter with OpenRouter configuration, authenticated model
   health, grounded-summary validation, deterministic fallback, and visible generation metadata;
 - a network-free deterministic provider used by CI plus a bounded production-provider smoke gate
-  that preserves sanitized evidence for every accepted or safely-fallbacked attempt.
+  that preserves sanitized evidence for every accepted or safely-fallbacked attempt;
+- an executable 25-case gold evaluator with groundedness, citation, retrieval, tool-selection,
+  workflow, clarification/escalation, action-safety, reliability, and latency evidence;
+- a general corpus-grounded policy workflow covering benefits, onboarding, security, holidays,
+  leave, conduct, privacy refusal, and policy-only compliance without inventing employee facts;
+- a complete Phase 10 report, error analysis, submission checklist, and timed demo rehearsal;
+- a maintained risk register with explicit controls, residual risks, owners, and non-goals.
 
 See the [LLM provider guide](docs/llm-provider-integration.md),
 [Phase 8 product-interface guide](docs/phase8-product-interface.md),
@@ -59,7 +66,9 @@ See the [LLM provider guide](docs/llm-provider-integration.md),
 [Phase 6 MCP guide](docs/phase6-mcp-tools.md),
 [Phase 5 RAG guide](docs/phase5-rag.md), and
 [Phase 4 workflow guide](docs/phase4-thin-slice.md) for the exact boundary. Release operation and
-rollback are documented in the [Phase 9 CI/CD guide](docs/phase9-cicd-deployment.md).
+rollback are documented in the [Phase 9 CI/CD guide](docs/phase9-cicd-deployment.md). Complete
+metrics and submission boundaries are in the
+[Phase 10 evaluation guide](docs/phase10-evaluation-submission.md).
 
 ## Live demonstration
 
@@ -169,6 +178,17 @@ smoke. CI applies the same container contract before the release gate can pass.
 
 Individual commands are documented in [docs/developer-guide.md](docs/developer-guide.md).
 
+Run the complete committed evaluation evidence with:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\evaluate_gold.py --write
+```
+
+The current run executes all 25 cases and records 96% groundedness, 100% citation accuracy and
+coverage, 100% tool selection, 96% workflow completion, 100% clarification/escalation accuracy,
+100% action safety, and 100% primary-demo completion. See the Phase 10 guide for definitions,
+latency, reliability, ablation, and error analysis.
+
 ## Docker
 
 ```powershell
@@ -187,6 +207,10 @@ The production image builds the React application and serves it from FastAPI.
 - [Phase 7 bounded workflows](docs/phase7-workflows.md)
 - [Phase 8 product interface](docs/phase8-product-interface.md)
 - [Phase 9 CI/CD and deployment](docs/phase9-cicd-deployment.md)
+- [Phase 10 evaluation and submission](docs/phase10-evaluation-submission.md)
+- [Risk register and known limitations](docs/risk-register.md)
+- [Demo rehearsal](docs/demo-rehearsal.md)
+- [Submission checklist](docs/submission-checklist.md)
 - [LLM provider integration](docs/llm-provider-integration.md)
 - [Score-5 UI design decision](docs/ui-design-decision.md)
 - [Developer guide](docs/developer-guide.md)

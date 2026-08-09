@@ -1,4 +1,4 @@
 mode,top_k,evaluated_cases,expected_sections,retrieved_expected_sections,evidence_recall,latency_p50_ms,latency_p95_ms
-dense,5,24,48,40,0.8333,28.319,36.617
-hybrid,5,24,48,46,0.9583,30.847,43.38
-hybrid,8,24,48,48,1.0,27.951,37.0
+dense,5,24,48,40,0.8333,95.634,147.648
+hybrid,5,24,48,46,0.9583,98.037,149.049
+hybrid,8,24,48,48,1.0,102.804,145.355

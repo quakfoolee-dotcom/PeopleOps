@@ -40,6 +40,12 @@ jobs:
         run: python scripts/evaluate_mcp_tools.py
       - name: Evaluate Phase 7 bounded workflows
         run: python scripts/evaluate_workflows.py
+      - name: Evaluate Phase 10 gold-suite gates
+        run: >-
+          python scripts/evaluate_gold.py
+          --reliability-repeats 2
+          --latency-sample-count 10
+          > artifacts/phase10-gold-evaluation.json
       - name: Test
         run: >-
           python -m pytest

@@ -342,6 +342,7 @@
     },
     "WorkflowKind": {
       "enum": [
+        "policy",
         "remote_work",
         "pto",
         "expense",

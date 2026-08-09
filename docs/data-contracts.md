@@ -25,7 +25,8 @@ runs must record the suite date and must not silently substitute the wall-clock 
   answer.
 - `PendingActionPreview`: a confirmation-gated preview with confirmation ID and expiry for synthetic
   ticket creation.
-- `ChatResponse`: selected workflow, terminal workflow state, final status and outcome, answer,
+- `ChatResponse`: selected remote-work, PTO, expense, mock-ticket, policy-guidance, or unsupported
+  workflow; terminal workflow state; final status and outcome; answer;
   optional decision summary, citations, tool trace, and optional pending action.
 - `ConfirmMockTicketRequest` and `ConfirmMockTicketResponse`: explicit-true confirmation and the
   signed proof returned to the unchanged follow-up request.
@@ -55,7 +56,9 @@ all eight tools.
 
 Read tools return `found=false` rather than inventing missing records. Compliance results include
 the applicable policy-section references, calculations, conditions, clarification fields, and
-`decision_is_approval=false`. Drafts require `sent=false` and `persisted=false`.
+`decision_is_approval=false`. Policy-only hypothetical remote-work and expense checks may omit an
+employee ID; employee-specific and PTO checks require one. Drafts require `sent=false` and
+`persisted=false`.
 
 The action contract separates a pre-tool preview from the post-confirmation create call. A signed
 token binds confirmation ID, expiry, and the exact preview fingerprint. The create result declares
@@ -110,6 +113,10 @@ Semantic validation additionally checks:
 - at least two policies for multi-document cases;
 - an employee ID for employee/tool workflows;
 - the confirmation boundary for synthetic ticket creation.
+
+Phase 10 then executes all 25 versioned cases against the real orchestrator and MCP boundary. Its
+committed JSON/CSV report records every response, citation, trace, outcome, metric, latency sample,
+reliability run, safety check, and error-analysis item.
 
 ## Adding or changing a case
 

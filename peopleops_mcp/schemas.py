@@ -167,7 +167,7 @@ class ComplianceCalculation(MCPModel):
 
 class ComplianceCheckResult(MCPModel):
     workflow: Literal["international_remote_work", "pto_request", "home_office_expense"]
-    employee_id: str = Field(pattern=r"^E-\d{4}$")
+    employee_id: str | None = Field(default=None, pattern=r"^E-\d{4}$")
     as_of_date: date
     status: Literal[
         "conditionally_eligible", "not_eligible", "needs_clarification", "not_found"

@@ -32,6 +32,7 @@ class WorkflowOutcome(StrEnum):
 
 
 class WorkflowKind(StrEnum):
+    POLICY = "policy"
     REMOTE_WORK = "remote_work"
     PTO = "pto"
     EXPENSE = "expense"

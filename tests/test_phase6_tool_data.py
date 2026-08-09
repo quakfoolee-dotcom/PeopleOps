@@ -120,6 +120,15 @@ def test_compliance_tool_covers_remote_pto_and_expense_rules() -> None:
     assert expense.calculation.employee_paid_remainder == Decimal("400")
     assert expense.required_approvals == ["Manager", "Director or designated budget owner"]
 
+    generic_expense = check_policy_compliance_data(
+        "home_office_expense",
+        None,
+        expense_amount=Decimal("900"),
+        currency="CAD",
+    )
+    assert generic_expense.employee_id is None
+    assert generic_expense.status == "conditionally_eligible"
+
 
 def test_compliance_tool_requires_missing_inputs_and_known_employee() -> None:
     incomplete = check_policy_compliance_data(

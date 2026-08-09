@@ -38,11 +38,18 @@ Each case identifies expected facts, policy sections, required, forbidden, and p
 - warm latency p50 and p95;
 - cold-start latency reported separately.
 
-The Phase 5 retrieval ablation compares dense-only retrieval at `k=5`, hybrid retrieval at `k=5`,
+The Phase 5/10 retrieval ablation compares dense-only retrieval at `k=5`, hybrid retrieval at `k=5`,
 and hybrid retrieval at `k=8`. Across the 24 cases with policy evidence and 48 exact expected
 sections, the measured recalls were 83.33%, 95.83%, and 100.00%, respectively. Hybrid `k=8` is the
-selected configuration. Full groundedness, tool, workflow, safety, and deployed latency metrics
-remain Phase 10 work.
+selected configuration.
+
+The complete Phase 10 run executes all 25 cases through the real orchestrator and MCP boundary. It
+records 96% groundedness, 100% citation accuracy and coverage, 100% retrieval evidence recall,
+100% tool-selection accuracy, 96% workflow completion, 100% clarification/escalation accuracy,
+100% action safety, and 100% primary-demo completion. Both primary workflows completed ten
+consecutive warm runs with repeatable verified results. Local deterministic-provider latency was
+1,045 ms for the first-process primary request and 226 ms p50 / 363 ms p95 across 20 warm cases.
+See `docs/phase10-evaluation-submission.md` for definitions and error analysis.
 
 The Phase 6 machine-readable tool validation discovered all eight tools, found input and output
 schemas for all eight, completed one traced call per tool, rejected an unsigned ticket action,
@@ -78,4 +85,9 @@ draft-only email behavior, confirmation-gated idempotent mock actions, and typed
 expense, and ticket workflows with clarification, retry, evidence, conflict, citation, escalation,
 and confirmation gates. Phase 8 adds the responsive evidence-first product workspace and interactive
 confirmation experience. The provider integration adds bounded grounded synthesis and safe fallback.
-The complete gold-suite evaluation is not yet complete.
+Phase 10 completes the automated gold-suite evaluation and submission evidence. One deliberately
+reported case misses its expected confirmation outcome because its prompt omits the affected
+employee ID; the assistant cites the confirmation rule and requests the missing identifier rather
+than inventing a person. This keeps action safety at 100% and workflow completion at 96%, above the
+predeclared internal target. The human-recorded presentation and final link/access checks remain
+owner-controlled submission steps.

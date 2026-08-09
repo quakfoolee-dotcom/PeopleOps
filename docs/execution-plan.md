@@ -13,7 +13,7 @@ This ten-phase plan controls implementation order. A phase is complete only when
 | 7. Agent workflows and safety | Bounded remote-work, PTO, and expense workflows with safety gates | Primary workflows and failure/safety cases pass repeatedly | Typed bounded workflows provide testable and safer behavior. | Ready |
 | 8. Product interface | Chat, demo tasks, citations, traces, status, and confirmation experience | Grader can reproduce both workflows and inspect evidence | Expose operational evidence without exposing hidden chain-of-thought. | Ready |
 | 9. CI/CD and deployment | Complete checks, deterministic CI substitutes, and gated hosting | Hosted application and health smoke tests pass after required checks | Deploy from the vertical slice onward and gate releases on verification. | Ready |
-| 10. Evaluation and submission | Gold-suite run, ablations, metrics, documents, access, and demo | Every Score-5 gate passes | Evaluation and demo evidence are graded deliverables. | Planned |
+| 10. Evaluation and submission | Gold-suite run, ablations, metrics, documents, access, and demo | Every Score-5 gate passes | Evaluation and demo evidence are graded deliverables. | Automated gates ready; recording pending |
 
 ## GitHub planning map
 
@@ -32,9 +32,6 @@ This ten-phase plan controls implementation order. A phase is complete only when
 
 ## Next action
 
-The production OpenRouter adapter, deterministic CI substitute, grounding validation, health,
-fallback, UI metadata, and bounded provider-aware smoke contract are implemented and activated.
-Begin Phase 10 evaluation and submission.
-Run all 25 gold cases, full groundedness, citation,
-tool-selection, workflow, safety, retrieval-ablation, and warm/cold latency measurements; complete
-the submission evidence; grant grader access; and rehearse the 7–10 minute demo.
+Record the owner-presented 7–10 minute demonstration using `docs/demo-rehearsal.md`, add the video
+URL to `docs/submission-checklist.md`, confirm required grader access, and verify all submission links
+signed out. The complete automated Phase 10 evaluation and internal Score-5 gates are ready.

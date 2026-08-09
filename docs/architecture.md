@@ -16,7 +16,7 @@ FastAPI application
     |
     v
 Bounded typed workflow orchestrator
-    |-- remote-work, PTO, expense, and mock-ticket state machines
+    |-- policy, remote-work, PTO, expense, and mock-ticket state machines
     |-- classification, evidence, conflict, and confirmation gates
     |-- ten logical calls maximum; one bounded retry
     |-- typed response and citations
@@ -58,8 +58,8 @@ Official MCP client -> MCP server
 - `policy_corpus`: authoritative runtime sources and human-review artifacts.
 - `mock_data`: deterministic synthetic structured records and validation fixtures.
 - `app/evaluation`: gold-suite schemas, loading, and semantic validation.
-- `evaluation`: 25 gold cases, generated JSON Schemas, retrieval/tool artifacts, and the Phase 7
-  workflow/safety evaluation; full gold-suite metrics remain Phase 10.
+- `evaluation`: 25 gold cases, generated JSON Schemas, retrieval/tool artifacts, focused Phase 7
+  workflow evidence, and complete Phase 10 JSON/CSV metrics and error analysis.
 - `ui`: evidence-first React application built into static production assets; consumes only the
   public health, chat, and action-confirmation contracts.
 

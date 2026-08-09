@@ -190,6 +190,20 @@ The JSON artifact records wake time, endpoint latencies, request ID, trace ID, e
 and outcome. See `docs/phase9-cicd-deployment.md` for release, manual-dispatch, failure triage, and
 rollback procedures.
 
+## Phase 10 gold evaluation
+
+Run all 25 cases, ten-repeat primary reliability, local cold/warm latency, groundedness, citations,
+tool selection, workflow completion, clarification/escalation, and action safety:
+
+```powershell
+python scripts/evaluate_gold.py --write
+```
+
+The command writes `evaluation/results/phase10_gold_evaluation.json` and `.csv` and exits nonzero
+when fewer than 25 cases execute or any internal Score-5 target fails. CI uses two reliability
+repeats and ten latency samples for a faster deterministic gate; committed evidence uses ten
+repeats and twenty warm samples.
+
 ## LLM provider verification
 
 Run the network-free adapter, grounding-gate, retry, health-cache, authentication-redaction,

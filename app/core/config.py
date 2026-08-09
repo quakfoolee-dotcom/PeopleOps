@@ -12,7 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 class Settings(BaseSettings):
     app_name: str = "PeopleOps Assistant"
-    app_version: str = "0.8.0"
+    app_version: str = "1.0.0"
     app_env: str = "development"
     app_release_sha: str = Field(
         default="local",

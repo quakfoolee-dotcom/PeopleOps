@@ -13,8 +13,8 @@ repository permissions, concurrency cancellation for superseded candidates, job 
 immutable full-SHA pins for third-party Actions.
 
 1. **Backend quality and contracts** runs lint, schema drift, corpus/data validation, RAG index
-   drift, MCP and workflow evaluations, all tests, and the 85% coverage floor. JUnit and coverage XML
-   are retained for 14 days.
+   drift, MCP and workflow evaluations, the Phase 10 gold-suite gate, all tests, and the 85%
+   coverage floor. JUnit, coverage XML, and the Phase 10 JSON report are retained for 14 days.
 2. **Frontend test and production build** uses the lockfile with `npm ci`, runs the component suite,
    performs strict TypeScript validation, and creates the Vite production bundle.
 3. **Container startup and workflow smoke** builds the actual Dockerfile, injects the candidate SHA,

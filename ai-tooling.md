@@ -2,7 +2,7 @@
 
 ## Tools used
 
-OpenAI Codex was used during Phases 1 through 9 to:
+OpenAI Codex was used during Phases 1 through 10 to:
 
 - review the assignment requirements and Score 5 delivery plan;
 - inspect the GitHub repository and local policy-corpus package;
@@ -52,6 +52,9 @@ OpenAI Codex was used during Phases 1 through 9 to:
 - review the assignment's LLM requirement and implement a replaceable OpenRouter/OpenAI-compatible
   provider boundary, deterministic CI adapter, grounded-output validator, provider health, visible
   generation metadata, safe fallback behavior, tests, and operating documentation.
+- implement and run the complete 25-case evaluation harness, calculate groundedness, citation,
+  retrieval, tool-selection, workflow, safety, reliability, and latency metrics, analyze the one
+  outcome mismatch, and prepare the submission checklist and timed demo rehearsal.
 
 ## Human responsibility and review
 
@@ -70,8 +73,8 @@ has less open-domain semantic capacity than a neural model and is paired with bo
 query decomposition. The confirmation service and mock tickets are intentionally single-process
 demonstration state, not durable workflow infrastructure. Phase 7 classification is deterministic
 and limited to the documented workflow language rather than general natural-language coverage.
-Provider integration is deliberately constrained to post-workflow synthesis and still requires the
-owner to configure the hosted secret and review the production smoke evidence. Final full-suite
-evaluation and human review remain in the final milestone.
+Provider integration is deliberately constrained to post-workflow synthesis and the production
+credential remains owner-controlled. The full automated evaluation cannot replace human review,
+the narrated presentation, repository-access verification, or signed-out link checks.
 
 This document will be updated throughout the project.

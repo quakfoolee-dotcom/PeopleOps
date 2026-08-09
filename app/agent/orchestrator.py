@@ -6,6 +6,7 @@ from typing import Any
 
 from app.agent.workflows import (
     ExpenseIntent,
+    PolicyIntent,
     PTOIntent,
     RemoteWorkIntent,
     TicketActionCoordinator,
@@ -33,6 +34,7 @@ from app.core.config import get_settings
 from app.mcp_client import MCPGateway, MCPToolExecutor
 from app.providers import GroundedSynthesisRequest, LLMProvider, get_llm_provider
 from peopleops_mcp.schemas import (
+    BenefitsStatusResult,
     ComplianceCheckResult,
     EmployeeProfileResult,
     HREmailDraftResult,
@@ -99,6 +101,19 @@ REQUIRED_TOOLS = {
         }
     ),
 }
+
+
+def _required_tools(intent: WorkflowIntent) -> frozenset[str]:
+    if not isinstance(intent, PolicyIntent):
+        return REQUIRED_TOOLS[intent.kind]
+    required = {"search_policy_documents", "get_policy_section"}
+    if intent.requires_profile:
+        required.add("lookup_employee_profile")
+    if intent.requires_benefits:
+        required.add("lookup_benefits_status")
+    if intent.compliance_workflow:
+        required.add("check_policy_compliance")
+    return frozenset(required)
 
 
 class EvidenceGateError(RuntimeError):
@@ -174,7 +189,9 @@ class PeopleOpsOrchestrator:
                 ),
             )
 
-        if intent.clarification_needed:
+        if intent.clarification_needed and not (
+            isinstance(intent, PolicyIntent) and intent.retrieve_before_clarification
+        ):
             machine.transition(WorkflowStage.CLARIFY)
             return self._finish(
                 request,
@@ -217,7 +234,7 @@ class PeopleOpsOrchestrator:
             machine.transition(WorkflowStage.DISCOVER)
             async with self.gateway.connect() as client:
                 tool_names = await self.executor.discover_with_retry(client, trace)
-                required = REQUIRED_TOOLS[intent.kind]
+                required = _required_tools(intent)
                 if missing := sorted(required - tool_names):
                     trace[-1] = trace[-1].model_copy(
                         update={
@@ -230,6 +247,28 @@ class PeopleOpsOrchestrator:
                     )
                     raise ToolAvailabilityError(
                         f"required workflow tools are unavailable: {', '.join(missing)}"
+                    )
+
+                profile: EmployeeProfileResult | None = None
+                if isinstance(intent, PolicyIntent):
+                    if intent.requires_profile:
+                        machine.transition(WorkflowStage.PROFILE)
+                        profile = await self._profile(client, trace, machine, intent.employee_id)
+                        if not profile.found or profile.profile is None:
+                            machine.transition(WorkflowStage.CLARIFY)
+                            return self._finish(
+                                request,
+                                machine,
+                                status=WorkflowStatus.NEEDS_CLARIFICATION,
+                                outcome=WorkflowOutcome.CLARIFICATION_REQUIRED,
+                                answer=(
+                                    f"Synthetic employee {intent.employee_id} was not found. "
+                                    "Check the employee selector and try again."
+                                ),
+                                tool_trace=trace,
+                            )
+                    return await self._run_policy(
+                        request, intent, profile, client, trace, machine
                     )
 
                 machine.transition(WorkflowStage.PROFILE)
@@ -330,7 +369,12 @@ class PeopleOpsOrchestrator:
             response.status is WorkflowStatus.COMPLETED
             and response.outcome in {WorkflowOutcome.ANSWERED, WorkflowOutcome.CONDITIONAL}
             and response.workflow
-            in {WorkflowKind.REMOTE_WORK, WorkflowKind.PTO, WorkflowKind.EXPENSE}
+            in {
+                WorkflowKind.POLICY,
+                WorkflowKind.REMOTE_WORK,
+                WorkflowKind.PTO,
+                WorkflowKind.EXPENSE,
+            }
             and response.decision_summary is not None
             and bool(response.citations)
             and response.pending_action is None
@@ -485,6 +529,154 @@ class PeopleOpsOrchestrator:
                 citations[citation.chunk_id] = citation
         machine.transition(WorkflowStage.EVIDENCE)
         return list(citations.values())
+
+    async def _run_policy(
+        self,
+        request: ChatRequest,
+        intent: PolicyIntent,
+        profile: EmployeeProfileResult | None,
+        client: Any,
+        trace: list[ToolTraceEntry],
+        machine: WorkflowMachine,
+    ) -> ChatResponse:
+        benefits: BenefitsStatusResult | None = None
+        if intent.requires_benefits:
+            assert intent.employee_id is not None
+            benefits_payload = await self._call(
+                client,
+                trace,
+                machine,
+                "lookup_benefits_status",
+                {"employee_id": intent.employee_id},
+            )
+            benefits = BenefitsStatusResult.model_validate(benefits_payload)
+            if not benefits.found:
+                raise EvidenceGateError(
+                    "No synthetic benefits record was available, so enrollment was not inferred."
+                )
+
+        citations = await self._collect_evidence(
+            client, trace, machine, request.message, intent.required_sections
+        )
+
+        compliance: ComplianceCheckResult | None = None
+        if intent.compliance_workflow:
+            machine.transition(WorkflowStage.COMPLIANCE)
+            compliance_payload = await self._call(
+                client,
+                trace,
+                machine,
+                "check_policy_compliance",
+                {
+                    "workflow": intent.compliance_workflow,
+                    **intent.compliance_arguments,
+                },
+            )
+            compliance = ComplianceCheckResult.model_validate(compliance_payload)
+
+        answer = intent.guidance
+        if profile is not None and profile.profile is not None:
+            employee = profile.profile
+            answer = (
+                f"For {employee.synthetic_name} ({employee.employee_id}), {employee.role}, "
+                f"hired {employee.hire_date.isoformat()}: {answer}"
+            )
+        if benefits is not None:
+            answer += (
+                " The read-only synthetic benefits record reports eligibility "
+                f"'{benefits.eligibility_status}' and enrollment "
+                f"'{benefits.enrollment_status}'"
+                + (
+                    f" effective {benefits.effective_date.isoformat()}."
+                    if benefits.effective_date
+                    else "."
+                )
+                + " Only the requested minimum-necessary status was retrieved."
+            )
+
+        if intent.clarification_needed:
+            machine.transition(WorkflowStage.CLARIFY)
+            return self._finish(
+                request,
+                machine,
+                status=WorkflowStatus.NEEDS_CLARIFICATION,
+                outcome=WorkflowOutcome.CLARIFICATION_REQUIRED,
+                answer=answer,
+                citations=citations,
+                tool_trace=trace,
+                decision_summary=DecisionSummary(
+                    status_label="Clarification needed",
+                    category_label=_label(intent.topic),
+                    clarification_needed=intent.clarification_needed,
+                    next_steps=[
+                        "Provide only the minimum details needed to identify the policy path.",
+                        "Continue privately with People Operations if preferred.",
+                    ],
+                ),
+            )
+
+        if intent.refusal:
+            return self._finish(
+                request,
+                machine,
+                status=WorkflowStatus.OUT_OF_SCOPE,
+                outcome=WorkflowOutcome.REFUSED,
+                answer=answer,
+                citations=citations,
+                tool_trace=trace,
+                decision_summary=DecisionSummary(
+                    status_label="Disclosure refused",
+                    category_label=_label(intent.topic),
+                    next_steps=["Use an authorized People Operations support channel."],
+                ),
+            )
+
+        if intent.escalation:
+            machine.transition(WorkflowStage.ESCALATE)
+            return self._finish(
+                request,
+                machine,
+                status=WorkflowStatus.ESCALATED,
+                outcome=WorkflowOutcome.ESCALATION_REQUIRED,
+                answer=answer,
+                citations=citations,
+                tool_trace=trace,
+                decision_summary=DecisionSummary(
+                    status_label="Prompt escalation required",
+                    category_label=_label(intent.topic),
+                    next_steps=[
+                        "Address immediate safety first.",
+                        "Route the report through a controlled intake channel.",
+                        "Preserve confidentiality and do not investigate without authorization.",
+                    ],
+                ),
+            )
+
+        outcome = WorkflowOutcome.CONDITIONAL if intent.conditional else WorkflowOutcome.ANSWERED
+        approvals = compliance.required_approvals if compliance else []
+        category = compliance.category if compliance else intent.topic
+        return self._finish(
+            request,
+            machine,
+            status=WorkflowStatus.COMPLETED,
+            outcome=outcome,
+            answer=answer,
+            citations=citations,
+            tool_trace=trace,
+            decision_summary=DecisionSummary(
+                status_label=(
+                    "Conditional policy guidance"
+                    if intent.conditional
+                    else "Policy guidance ready"
+                ),
+                category_label=_label(category),
+                required_approvals=approvals,
+                next_steps=[
+                    "Review the cited policy sections.",
+                    "Confirm employee-specific exceptions with People Operations before acting.",
+                ],
+            ),
+        )
 
     async def _run_remote(
         self,

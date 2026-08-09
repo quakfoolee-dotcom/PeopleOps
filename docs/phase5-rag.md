@@ -58,7 +58,7 @@ expected policy sections. The Phase 5 warm local ablation selected hybrid retrie
 | Hybrid, k=8 | 100.00% | 27.95 ms | 37.00 ms |
 
 The latency values are one deterministic Windows development run, not hosted-service latency. Raw
-case results and the CSV summary are committed under `evaluation/results`. Phase 10 will repeat the
+case results and the CSV summary are committed under `evaluation/results`. Phase 10 repeats the
 measurement across cold and warm deployed runs.
 
 Regenerate the artifacts with:

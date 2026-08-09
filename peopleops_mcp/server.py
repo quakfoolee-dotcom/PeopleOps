@@ -54,7 +54,7 @@ mcp_server = MCPServer(
         "Typed tools over synthetic PeopleOps policy and employee data, including one "
         "confirmation-gated in-memory mock action."
     ),
-    version="0.4.0",
+    version="1.0.0",
 )
 
 
@@ -97,7 +97,7 @@ def lookup_benefits_status(employee_id: EmployeeId) -> BenefitsStatusResult:
 @mcp_server.tool(structured_output=True)
 def check_policy_compliance(
     workflow: Literal["international_remote_work", "pto_request", "home_office_expense"],
-    employee_id: EmployeeId,
+    employee_id: EmployeeId | None = None,
     destination_country_code: Annotated[
         str | None,
         Field(default=None, pattern=r"^[A-Za-z]{2}$"),

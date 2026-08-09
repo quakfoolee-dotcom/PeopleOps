@@ -146,3 +146,22 @@ workflow result. The provider has no tool, RAG, data-store, or action access.
 unknown citation, omitted protected fact, or introduced identifier/number results in
 `deterministic_fallback`; no partial model output is shown and the verified workflow answer remains
 available.
+
+## UC-10: Answer a general policy question
+
+**Actor:** Employee, developer, or grader
+
+**Prompt:** “How long does a newly eligible employee have to complete benefits enrollment?”
+
+**Workflow:** Classify the bounded policy topic, discover MCP tools, run hybrid policy search,
+retrieve exact section `POL-BEN-001 BEN-5`, validate the citation, and optionally synthesize a
+provider summary above the unchanged verified answer. Do not retrieve an employee profile or
+benefits record for a general question.
+
+**Acceptance:** The response says 31 calendar days, distinguishes later open-enrollment or
+qualifying-life-event changes, cites only `BEN-5`, and traces only discovery, policy search, and the
+exact-section call.
+
+The same policy workflow handles the other gold-suite policy topics, employee-specific benefits and
+onboarding lookups, cited leave clarification, manager escalation, and cited privacy refusal without
+adding MCP tools or allowing direct agent access to RAG or synthetic data.

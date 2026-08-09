@@ -10,8 +10,8 @@
       "retrieved_expected_sections": 40,
       "evidence_recall": 0.8333,
       "latency_ms": {
-        "p50": 28.319,
-        "p95": 36.617
+        "p50": 95.634,
+        "p95": 147.648
       },
       "case_results": [
         {
@@ -407,8 +407,8 @@
       "retrieved_expected_sections": 46,
       "evidence_recall": 0.9583,
       "latency_ms": {
-        "p50": 30.847,
-        "p95": 43.38
+        "p50": 98.037,
+        "p95": 149.049
       },
       "case_results": [
         {
@@ -805,8 +805,8 @@
       "retrieved_expected_sections": 48,
       "evidence_recall": 1.0,
       "latency_ms": {
-        "p50": 27.951,
-        "p95": 37.0
+        "p50": 102.804,
+        "p95": 145.355
       },
       "case_results": [
         {

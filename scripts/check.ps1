@@ -23,6 +23,11 @@ Invoke-NativeCommand -FilePath $python -Arguments @("scripts/build_rag_index.py"
 Invoke-NativeCommand -FilePath $python -Arguments @("scripts/evaluate_mcp_tools.py")
 Invoke-NativeCommand -FilePath $python -Arguments @("scripts/evaluate_workflows.py")
 Invoke-NativeCommand -FilePath $python -Arguments @(
+    "scripts/evaluate_gold.py",
+    "--reliability-repeats", "2",
+    "--latency-sample-count", "10"
+)
+Invoke-NativeCommand -FilePath $python -Arguments @(
     "-m", "pytest",
     "--cov=app", "--cov=peopleops_mcp", "--cov-report=term-missing", "--cov-fail-under=85"
 )

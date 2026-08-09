@@ -233,7 +233,7 @@ def _section_refs(*values: tuple[str, str]) -> list[PolicySectionReference]:
 
 def check_policy_compliance_data(
     workflow: str,
-    employee_id: str,
+    employee_id: str | None,
     *,
     destination_country_code: str | None = None,
     duration_business_days: int | None = None,
@@ -243,8 +243,11 @@ def check_policy_compliance_data(
     currency: str | None = None,
 ) -> ComplianceCheckResult:
     bundle = load_seed_bundle()
-    employee = next((item for item in bundle.employees if item.employee_id == employee_id), None)
-    if employee is None:
+    employee = next(
+        (item for item in bundle.employees if item.employee_id == employee_id),
+        None,
+    )
+    if employee_id is not None and employee is None:
         return ComplianceCheckResult(
             workflow=workflow,
             employee_id=employee_id,
@@ -303,7 +306,7 @@ def check_policy_compliance_data(
                     "screen is not an approval."
                 ),
             )
-        baseline_eligible = (
+        baseline_eligible = employee is None or (
             employee.status.value == "active"
             and employee.employment_type.value in {"RFT", "RPT"}
             and (bundle.manifest.as_of_date - employee.hire_date).days >= 90
@@ -358,6 +361,8 @@ def check_policy_compliance_data(
         )
 
     if workflow == "pto_request":
+        if employee_id is None:
+            raise ValueError("pto_request compliance requires employee_id")
         refs = _section_refs(("POL-PTO-001", "PTO-6"), ("POL-PTO-001", "PTO-7"))
         if request_start is None or request_end is None:
             missing = []
@@ -439,7 +444,7 @@ def check_policy_compliance_data(
             approvals.extend(["VP", "Finance"])
         elif amount >= cap:
             approvals.append("Director or designated budget owner")
-        eligible = (
+        eligible = employee is None or (
             employee.employment_type.value in {"RFT", "RPT"}
             and employee.remote_work_classification.value in {"hybrid", "remote"}
         )
