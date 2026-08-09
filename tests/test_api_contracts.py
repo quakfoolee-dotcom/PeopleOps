@@ -104,6 +104,7 @@ def test_pending_action_and_response_require_confirmation_together() -> None:
     )
 
     assert response.pending_action is not None
+    assert response.trace_id
 
     with pytest.raises(ValidationError, match="pending_action"):
         ChatResponse(

@@ -6,10 +6,11 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 ## Execution status
 
-Phases 1 through 7 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
+Phases 1 through 8 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
 
 - a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
-- a React and Vite demonstration interface with citations and an MCP trace;
+- an evidence-first React/Vite product workspace with four demo tasks, employee context, live
+  health, citations, complete MCP trace, request/trace IDs, and explicit action confirmation;
 - a validated 12-policy corpus in Markdown and PDF formats;
 - typed configuration, policy-corpus validation, and MCP tool contracts;
 - backend, frontend, corpus, and tool-contract tests;
@@ -43,8 +44,9 @@ Phases 1 through 7 of the [authoritative execution plan](docs/execution-plan.md)
   preview/confirm/idempotent mock-ticket API sequence;
 - a live Render deployment whose Blueprint waits for passing GitHub checks.
 
-The final product workspace and provider-backed generation remain deliberately deferred to later
-phases. See the [Phase 7 workflow guide](docs/phase7-workflows.md),
+Provider-backed generation remains deliberately deferred to a later phase. See the
+[Phase 8 product-interface guide](docs/phase8-product-interface.md),
+[Phase 7 workflow guide](docs/phase7-workflows.md),
 [Phase 6 MCP guide](docs/phase6-mcp-tools.md),
 [Phase 5 RAG guide](docs/phase5-rag.md), and
 [Phase 4 workflow guide](docs/phase4-thin-slice.md) for the exact boundary.
@@ -128,12 +130,13 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. Vite proxies `/health` and `/chat` to the backend during development.
+Open `http://127.0.0.1:5173`. Vite proxies `/health`, `/chat`, and `/actions` to the backend during
+development.
 
-The page includes a preset E-1007 Germany request and employee selectors for the PTO, expense, and
-ticket examples. Select **Run cited workflow** to see the result, exact policy citations, request ID,
-and complete MCP discovery/call trace. The interactive confirmation card remains Phase 8 work; the
-confirmation API sequence is documented in the Phase 7 guide.
+The workspace includes remote-work, PTO, expense, and mock-ticket tasks. Select **Run task** to see
+the bounded result, exact policy citations, request and trace IDs, employee context, and complete MCP
+discovery/call trace. The ticket task exposes an exact action preview and remains blocked until the
+user selects **Confirm mock ticket**. See the Phase 8 guide for the complete grader walkthrough.
 
 ## Automated validation
 
@@ -161,6 +164,7 @@ The production image builds the React application and serves it from FastAPI.
 - [Phase 5 hybrid RAG](docs/phase5-rag.md)
 - [Phase 6 MCP tool suite](docs/phase6-mcp-tools.md)
 - [Phase 7 bounded workflows](docs/phase7-workflows.md)
+- [Phase 8 product interface](docs/phase8-product-interface.md)
 - [Score-5 UI design decision](docs/ui-design-decision.md)
 - [Developer guide](docs/developer-guide.md)
 - [Architecture](docs/architecture.md)

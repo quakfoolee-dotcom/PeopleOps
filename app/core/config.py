@@ -12,7 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 class Settings(BaseSettings):
     app_name: str = "PeopleOps Assistant"
-    app_version: str = "0.4.0"
+    app_version: str = "0.5.0"
     app_env: str = "development"
     log_level: str = "INFO"
     policy_corpus_directory: Path = PROJECT_ROOT / "policy_corpus"

@@ -2,7 +2,7 @@
 
 ## Tools used
 
-OpenAI Codex was used during Phases 1 through 7 to:
+OpenAI Codex was used during Phases 1 through 8 to:
 
 - review the assignment requirements and Score 5 delivery plan;
 - inspect the GitHub repository and local policy-corpus package;
@@ -40,6 +40,11 @@ OpenAI Codex was used during Phases 1 through 7 to:
   exact-citation, escalation, draft, and confirmation gates;
 - create the Phase 7 workflow/safety test suite, focused machine-readable evaluation, manual API
   guide, and deployment verification plan.
+- implement the approved evidence-first product workspace, including functional demo tasks,
+  employee context, live health, citation and trace inspectors, request/trace identifiers, responsive
+  layout, and the explicit-confirmation dialog;
+- add frontend interaction and accessibility coverage, perform desktop/mobile visual QA, exercise
+  the real local MCP flows, and document the grader walkthrough.
 
 ## Human responsibility and review
 
@@ -58,7 +63,7 @@ has less open-domain semantic capacity than a neural model and is paired with bo
 query decomposition. The confirmation service and mock tickets are intentionally single-process
 demonstration state, not durable workflow infrastructure. Phase 7 classification is deterministic
 and limited to the documented workflow language rather than general natural-language coverage.
-Provider integration, product-interface completion, hosted reliability hardening, and final
+Provider integration, hosted reliability hardening, and final
 evaluation still require implementation-specific tests and human review in later milestones.
 
 This document will be updated throughout the project.

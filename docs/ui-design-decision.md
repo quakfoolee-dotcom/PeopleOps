@@ -2,11 +2,11 @@
 
 ## Decision
 
-The new evidence-first wireframe is the target information architecture for Phase 8. The deployed
-Phase 4 interface remains the working product until the RAG, tool, and workflow contracts needed by
-the new workspace are complete.
+The evidence-first wireframe is implemented as the Phase 8 product workspace. Its information
+architecture is backed by the completed RAG, MCP, workflow, safety, and action contracts rather than
+static demonstration placeholders.
 
-The final implementation will combine:
+The implementation combines:
 
 - the wireframe's demo tasks, employee context, compliance result, citation inspector, MCP trace,
   request/trace identifiers, real service status, and confirmation panel; and
@@ -32,3 +32,11 @@ Phase 5 citations now provide the panel-ready policy ID, section ID, title, snip
 effective date, source format/path, PDF page when applicable, stable chunk ID, and retrieval score.
 This prevents the Phase 8 interface from inventing presentation metadata or re-querying the corpus
 directly.
+
+## Phase 8 verification
+
+The interface provides four reproducible tasks, truthful `/health` state, request and trace IDs,
+employee context, exact citation metadata, the full sanitized MCP trace, responsive disclosure
+panels, and a keyboard-accessible confirmation dialog. Five frontend interaction tests cover the
+shell, task loading, grounded output, confirmed creation, and cancel-without-create behavior. See
+`docs/phase8-product-interface.md` for the grader walkthrough.

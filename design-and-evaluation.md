@@ -54,9 +54,13 @@ also proves no-tool clarification for missing identity and ambiguous dates, fail
 service behavior, policy-conflict escalation, preview-before-create confirmation, idempotency,
 token redaction, and unchanged fixtures.
 
+The Phase 8 interface suite verifies the grader-visible evidence path: live health, preset loading,
+employee selection and context, cited results, complete operational trace, request and trace IDs,
+explicit confirmation, request-bound creation, token non-rendering, and cancel-without-create.
+
 ## Current evidence
 
-Phases 1 through 7 validate startup and health reporting; the 12-policy/45-page corpus; deterministic
+Phases 1 through 8 validate startup and health reporting; the 12-policy/45-page corpus; deterministic
 structured data; API and evaluation contracts; live MCP discovery and calls; the bounded deployed
 workflow; direct Markdown and PDF ingestion; a persisted 169-section hybrid index; evidence
 sufficiency and conflict behavior; citation allow-listing; and 100% retrieval evidence recall for
@@ -64,5 +68,6 @@ the selected Phase 5 configuration. Phase 6 additionally proves eight schema-val
 timeouts and sanitized traces, read-only structured-data operations, deterministic compliance,
 draft-only email behavior, confirmation-gated idempotent mock actions, and typed remote-work, PTO,
 expense, and ticket workflows with clarification, retry, evidence, conflict, citation, escalation,
-and confirmation gates. The final product workspace, provider generation, and complete gold-suite
-evaluation are not yet complete.
+and confirmation gates. Phase 8 adds the responsive evidence-first product workspace and interactive
+confirmation experience. Provider generation and the complete gold-suite evaluation are not yet
+complete.

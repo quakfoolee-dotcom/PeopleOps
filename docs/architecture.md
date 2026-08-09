@@ -56,7 +56,16 @@ Official MCP client -> MCP server
 - `app/evaluation`: gold-suite schemas, loading, and semantic validation.
 - `evaluation`: 25 gold cases, generated JSON Schemas, retrieval/tool artifacts, and the Phase 7
   workflow/safety evaluation; full gold-suite metrics remain Phase 10.
-- `ui`: React application built into static production assets.
+- `ui`: evidence-first React application built into static production assets; consumes only the
+  public health, chat, and action-confirmation contracts.
+
+## Phase 8 presentation boundary
+
+The browser selects a synthetic employee, loads or runs a versioned task, and renders the typed
+response. Citation and tool-trace inspectors are projections of API objects; the browser never reads
+policy or data stores directly. A pending mock action is rendered from its sanitized preview. Only
+the explicit confirm control calls the confirmation endpoint, after which the unchanged request ID,
+employee, and message are resubmitted with proof that is neither displayed nor traced.
 
 ## Phase 7 bounded request sequence
 

@@ -149,6 +149,20 @@ fixtures, exercises the confirmation API, proves idempotency and token redaction
 IDs, relative dates, unavailable tools, retry, insufficient evidence, and policy conflicts. See
 `docs/phase7-workflows.md` for request bodies and the manual confirmation sequence.
 
+## Phase 8 product-interface verification
+
+Run the five component and interaction tests plus the strict TypeScript production build:
+
+```powershell
+Set-Location ui
+npm run test
+npm run build
+```
+
+The suite covers task loading, employee context, live health rendering, citations, sanitized MCP
+trace, request/trace identifiers, confirmation focus and creation, and cancellation without action.
+For manual verification, follow `docs/phase8-product-interface.md` at desktop and mobile widths.
+
 ## Evaluation contracts
 
 The runtime Pydantic contracts live in `app/api/contracts.py`; gold-case models and semantic validation live in `app/evaluation`. The committed suite is `evaluation/gold_cases.json`.

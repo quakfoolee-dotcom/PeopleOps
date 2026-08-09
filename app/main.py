@@ -50,7 +50,7 @@ def create_app() -> FastAPI:
         return {
             "name": settings.app_name,
             "version": settings.app_version,
-            "status": "phase-7-ready",
+            "status": "phase-8-ready",
             "health": "/health",
             "chat": "/chat",
             "mcp": "/mcp",

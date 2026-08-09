@@ -58,7 +58,8 @@ async def health() -> HealthResponse:
                 status="ready",
                 detail=(
                     "Streamable HTTP transport is mounted at /mcp with "
-                    f"{len(PHASE6_TOOL_NAMES)} discoverable tools serving Phase 7 workflows."
+                    f"{len(PHASE6_TOOL_NAMES)} discoverable tools serving the "
+                    "Phase 8 product interface."
                 ),
             ),
             "mock_database": ComponentStatus(

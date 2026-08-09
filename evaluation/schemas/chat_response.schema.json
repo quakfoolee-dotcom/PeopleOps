@@ -320,6 +320,11 @@
       "title": "Tool Trace",
       "type": "array"
     },
+    "trace_id": {
+      "format": "uuid",
+      "title": "Trace Id",
+      "type": "string"
+    },
     "workflow": {
       "$ref": "#/$defs/WorkflowKind",
       "default": "unsupported"

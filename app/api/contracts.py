@@ -159,6 +159,7 @@ class ChatRequest(ContractModel):
 
 class ChatResponse(ContractModel):
     request_id: UUID
+    trace_id: UUID = Field(default_factory=uuid4)
     as_of_date: date
     status: WorkflowStatus
     outcome: WorkflowOutcome

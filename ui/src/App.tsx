@@ -1,9 +1,12 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 type ComponentState = "ready" | "planned" | "not_configured" | "error";
 
 type HealthPayload = {
   status: "ok" | "degraded";
+  app_name: string;
+  version: string;
+  environment: string;
   components: Record<string, { status: ComponentState; detail: string }>;
 };
 
@@ -31,294 +34,608 @@ type TraceEntry = {
   error_code: string | null;
 };
 
+type PendingAction = {
+  action_type: "create_mock_hr_ticket";
+  confirmation_id: string;
+  expires_at: string;
+  summary: string;
+  sanitized_arguments: Record<string, unknown>;
+  confirmation_required: true;
+};
+
 type ChatPayload = {
   request_id: string;
+  trace_id: string;
   as_of_date: string;
   status: string;
   outcome: string;
   answer: string;
+  workflow: string;
+  workflow_state: string;
   citations: Citation[];
   tool_trace: TraceEntry[];
+  pending_action: PendingAction | null;
 };
 
-const demoMessage = "Can I work remotely from Germany for six weeks?";
+type Employee = {
+  id: string;
+  name: string;
+  role: string;
+  department: string;
+  manager: string;
+  location: string;
+  employment: string;
+  ptoDays: number;
+};
 
-const workflows = [
+type DemoTask = {
+  id: string;
+  number: string;
+  title: string;
+  employeeId: string;
+  facts: string[];
+  message: string;
+};
+
+const employees: Employee[] = [
   {
-    label: "International remote work",
-    description: "Evaluate a six-week Germany request using profile and policy evidence.",
-    state: "Live · hybrid RAG + 8 MCP tools",
+    id: "E-1007",
+    name: "Alex Morgan",
+    role: "Senior Data Analyst",
+    department: "Analytics",
+    manager: "Quinn Foster",
+    location: "Vancouver, BC, Canada",
+    employment: "Regular full-time · Remote",
+    ptoDays: 13,
   },
   {
-    label: "PTO request guidance",
-    description: "Check balance and notice rules, then prepare a clearly labelled manager-request draft.",
-    state: "Live bounded workflow",
+    id: "E-1021",
+    name: "Logan Murphy",
+    role: "Customer Success Specialist",
+    department: "Customer Success",
+    manager: "Kendall Price",
+    location: "Toronto, ON, Canada",
+    employment: "Regular full-time · Hybrid",
+    ptoDays: 12,
   },
   {
-    label: "Expense compliance",
-    description: "Assess a home-office purchase against role, allowance, approval, and receipt requirements.",
-    state: "Live bounded workflow",
+    id: "E-1014",
+    name: "Parker Adams",
+    role: "Product Designer",
+    department: "Product",
+    manager: "Taylor Brooks",
+    location: "Vancouver, BC, Canada",
+    employment: "Regular full-time · Remote",
+    ptoDays: 14,
+  },
+  {
+    id: "E-1011",
+    name: "Drew Campbell",
+    role: "Quality Engineer",
+    department: "Engineering",
+    manager: "Rowan Kim",
+    location: "Toronto, ON, Canada",
+    employment: "Regular full-time · Hybrid",
+    ptoDays: 10,
   },
 ];
+
+const demoTasks: DemoTask[] = [
+  {
+    id: "remote-work",
+    number: "01",
+    title: "International remote work",
+    employeeId: "E-1007",
+    facts: ["Germany", "Six weeks"],
+    message: "Can I work remotely from Germany for six weeks?",
+  },
+  {
+    id: "pto-guidance",
+    number: "02",
+    title: "PTO request guidance",
+    employeeId: "E-1021",
+    facts: ["Sep 21–23, 2026", "Draft manager note"],
+    message:
+      "Can I take PTO from September 21 through September 23, 2026? Check my balance and draft a message to my manager.",
+  },
+  {
+    id: "expense-compliance",
+    number: "03",
+    title: "Expense compliance",
+    employeeId: "E-1014",
+    facts: ["CAD 900", "Home-office chair"],
+    message: "Can employee E-1014 be reimbursed for a CAD 900 home-office chair?",
+  },
+  {
+    id: "mock-ticket",
+    number: "04",
+    title: "Confirmation-gated ticket",
+    employeeId: "E-1011",
+    facts: ["Synthetic case", "Explicit confirmation"],
+    message: "Employee E-1011 reported repeated harassment. Prepare an HR ticket for the concern.",
+  },
+];
+
+const initialTask = demoTasks[0];
 
 function displayName(value: string) {
   return value.replaceAll("_", " ");
 }
 
+function workflowTitle(workflow: string) {
+  const titles: Record<string, string> = {
+    remote_work: "Remote-work eligibility",
+    pto: "PTO guidance",
+    expense: "Expense compliance",
+    mock_ticket: "Mock HR ticket",
+  };
+  return titles[workflow] ?? "PeopleOps guidance";
+}
+
+function outcomeLabel(outcome: string) {
+  const labels: Record<string, string> = {
+    answered: "Guidance ready",
+    conditional: "Conditionally eligible",
+    draft_only: "Draft prepared · not sent",
+    clarification_required: "Clarification needed",
+    escalation_required: "PeopleOps review required",
+    confirmation_required: "Confirmation required",
+    refused: "Request not supported",
+  };
+  return labels[outcome] ?? displayName(outcome);
+}
+
+async function responseError(response: Response) {
+  try {
+    const payload = (await response.json()) as { detail?: string };
+    return payload.detail ?? `Request failed with status ${response.status}`;
+  } catch {
+    return `Request failed with status ${response.status}`;
+  }
+}
+
 export default function App() {
   const [health, setHealth] = useState<HealthPayload | null>(null);
-  const [healthError, setHealthError] = useState(false);
-  const [employeeId, setEmployeeId] = useState("E-1007");
-  const [message, setMessage] = useState(demoMessage);
+  const [healthError, setHealthError] = useState("");
+  const [healthLoading, setHealthLoading] = useState(true);
+  const [employeeId, setEmployeeId] = useState(initialTask.employeeId);
+  const [message, setMessage] = useState(initialTask.message);
+  const [lastQuestion, setLastQuestion] = useState(initialTask.message);
+  const [lastEmployeeId, setLastEmployeeId] = useState(initialTask.employeeId);
   const [chat, setChat] = useState<ChatPayload | null>(null);
   const [chatError, setChatError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [copyState, setCopyState] = useState("Copy guidance");
+  const confirmButtonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    fetch("/health")
-      .then((response) => {
-        if (!response.ok) throw new Error("Health endpoint unavailable");
-        return response.json() as Promise<HealthPayload>;
-      })
-      .then(setHealth)
-      .catch(() => setHealthError(true));
+  const selectedEmployee = useMemo(
+    () => employees.find((employee) => employee.id === employeeId) ?? employees[0],
+    [employeeId],
+  );
+  const lastEmployee = useMemo(
+    () => employees.find((employee) => employee.id === lastEmployeeId) ?? employees[0],
+    [lastEmployeeId],
+  );
+  const totalTraceDuration = useMemo(
+    () => chat?.tool_trace.reduce((total, entry) => total + entry.duration_ms, 0) ?? 0,
+    [chat],
+  );
+
+  const refreshHealth = useCallback(async () => {
+    setHealthLoading(true);
+    setHealthError("");
+    try {
+      const response = await fetch("/health");
+      if (!response.ok) throw new Error(await responseError(response));
+      setHealth((await response.json()) as HealthPayload);
+    } catch (error) {
+      setHealthError(error instanceof Error ? error.message : "Service status unavailable.");
+    } finally {
+      setHealthLoading(false);
+    }
   }, []);
 
-  async function submitDemo(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  useEffect(() => {
+    void refreshHealth();
+  }, [refreshHealth]);
+
+  useEffect(() => {
+    if (confirmationOpen) confirmButtonRef.current?.focus();
+  }, [confirmationOpen]);
+
+  async function runChat(
+    question: string,
+    targetEmployeeId: string,
+    options?: { requestId?: string; confirmationToken?: string; preserveResult?: boolean },
+  ) {
     setSubmitting(true);
     setChatError("");
-    setChat(null);
+    if (!options?.preserveResult) setChat(null);
+    setLastQuestion(question);
+    setLastEmployeeId(targetEmployeeId);
     try {
+      const body: Record<string, string> = {
+        employee_id: targetEmployeeId,
+        message: question,
+      };
+      if (options?.requestId) body.request_id = options.requestId;
+      if (options?.confirmationToken) body.confirmation_token = options.confirmationToken;
       const response = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ employee_id: employeeId, message }),
+        body: JSON.stringify(body),
       });
-      if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
-      setChat((await response.json()) as ChatPayload);
+      if (!response.ok) throw new Error(await responseError(response));
+      const payload = (await response.json()) as ChatPayload;
+      setChat(payload);
+      setConfirmationOpen(payload.status === "awaiting_confirmation");
+      return payload;
     } catch (error) {
       setChatError(error instanceof Error ? error.message : "The request could not be completed.");
+      return null;
     } finally {
       setSubmitting(false);
     }
   }
 
+  async function submitQuestion(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const normalizedMessage = message.trim();
+    if (!normalizedMessage) return;
+    await runChat(normalizedMessage, employeeId);
+  }
+
+  function loadTask(task: DemoTask) {
+    setEmployeeId(task.employeeId);
+    setMessage(task.message);
+    setChat(null);
+    setChatError("");
+    setConfirmationOpen(false);
+  }
+
+  async function runTask(task: DemoTask) {
+    setEmployeeId(task.employeeId);
+    setMessage(task.message);
+    await runChat(task.message, task.employeeId);
+  }
+
+  function startNewChat() {
+    setChat(null);
+    setChatError("");
+    setMessage("");
+    setLastQuestion("");
+    setLastEmployeeId(employeeId);
+    setConfirmationOpen(false);
+    setCopyState("Copy guidance");
+  }
+
+  async function copyGuidance() {
+    if (!chat) return;
+    const copyText = `${chat.answer}\n\nRequest ID: ${chat.request_id}\nTrace ID: ${chat.trace_id}`;
+    try {
+      await navigator.clipboard.writeText(copyText);
+      setCopyState("Copied");
+    } catch {
+      setCopyState("Copy unavailable");
+    }
+  }
+
+  async function confirmPendingAction() {
+    if (!chat?.pending_action) return;
+    setConfirming(true);
+    setChatError("");
+    try {
+      const confirmationResponse = await fetch("/actions/mock-tickets/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          confirmation_id: chat.pending_action.confirmation_id,
+          user_confirmed: true,
+        }),
+      });
+      if (!confirmationResponse.ok) throw new Error(await responseError(confirmationResponse));
+      const confirmation = (await confirmationResponse.json()) as { confirmation_token: string };
+      setConfirmationOpen(false);
+      await runChat(lastQuestion, lastEmployeeId, {
+        requestId: chat.request_id,
+        confirmationToken: confirmation.confirmation_token,
+        preserveResult: true,
+      });
+    } catch (error) {
+      setChatError(error instanceof Error ? error.message : "Confirmation could not be completed.");
+    } finally {
+      setConfirming(false);
+    }
+  }
+
   return (
-    <main>
-      <nav className="topbar" aria-label="Product navigation">
-        <div className="brand-lockup">
-          <span className="brand-mark" aria-hidden="true">P</span>
-          <span>PeopleOps Assistant</span>
+    <div className="app-shell">
+      <header className="app-header">
+        <div className="company-lockup">
+          <span className="company-mark" aria-hidden="true">N</span>
+          <span><strong>Northstar</strong><small>Technologies Inc.</small></span>
         </div>
-        <span className="milestone-pill">Phase 7 · v0.4.0</span>
-      </nav>
-
-      <section className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow">Northstar Technologies · Synthetic demonstration</p>
-          <h1>HR guidance grounded in policy evidence.</h1>
-          <p className="hero-description">
-            A transparent People Operations assistant for policy questions and bounded workflows.
-            The live demonstration shows its supporting sources and MCP operational trace.
-          </p>
-          <div className="hero-actions" aria-label="Product links">
-            <a className="primary-action" href="#live-demo">Run live demonstration</a>
-            <a className="secondary-action" href="/docs">Explore API</a>
-            <a className="secondary-action" href="/health">View system health</a>
-          </div>
+        <div className="product-title">
+          <strong>PeopleOps Assistant</strong>
+          <span className="demo-badge">Demo</span>
         </div>
-        <aside className="evidence-card" aria-label="Evidence summary">
-          <p className="card-kicker">Built for evidence</p>
-          <ol>
-            <li><strong>12</strong><span>synthetic policies</span></li>
-            <li><strong>25</strong><span>gold evaluation cases</span></li>
-            <li><strong>8</strong><span>live MCP tools</span></li>
-          </ol>
-          <p className="card-note">No real employee data. No irreversible actions.</p>
-        </aside>
-      </section>
-
-      <section id="live-demo" className="section-block demo-section" aria-labelledby="demo-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Bounded workflows</p>
-            <h2 id="demo-title">Trace a request from question to evidence</h2>
-          </div>
-          <span className="live-label">Live</span>
+        <div className="synthetic-banner" role="note">
+          <span aria-hidden="true">i</span>
+          <span><strong>Synthetic demo environment</strong><small>No real employee data</small></span>
         </div>
+        <label className="employee-menu">
+          <span className="avatar" aria-hidden="true">{selectedEmployee.name.charAt(0)}</span>
+          <span className="employee-menu-copy">
+            <strong>{selectedEmployee.name}</strong>
+            <small>{selectedEmployee.role}</small>
+          </span>
+          <span className="sr-only">Selected synthetic employee</span>
+          <select value={employeeId} onChange={(event) => setEmployeeId(event.target.value)}>
+            {employees.map((employee) => (
+              <option value={employee.id} key={employee.id}>{employee.name} ({employee.id})</option>
+            ))}
+          </select>
+        </label>
+      </header>
 
-        <div className="demo-layout">
-          <form className="request-panel" onSubmit={submitDemo}>
-            <div className="field-group">
-              <label htmlFor="employee-id">Synthetic employee</label>
-              <select
-                id="employee-id"
-                value={employeeId}
-                onChange={(event) => setEmployeeId(event.target.value)}
-              >
-                <option value="E-1007">E-1007 · Alex Morgan · Vancouver</option>
-                <option value="E-1021">E-1021 · Logan Murphy · Toronto</option>
-                <option value="E-1014">E-1014 · Parker Adams · Vancouver</option>
-                <option value="E-1011">E-1011 · Drew Campbell · Toronto</option>
-                <option value="E-9999">E-9999 · Unknown employee test</option>
-              </select>
+      <div className="workspace">
+        <aside className="left-rail" aria-label="Workspace navigation and demo tasks">
+          <nav className="workspace-nav" aria-label="Workspace navigation">
+            <a className="active" href="#chat-workspace"><span aria-hidden="true">◇</span>Chat</a>
+            <a href="#demo-tasks"><span aria-hidden="true">□</span>Demo tasks</a>
+            <a href="#employee-context"><span aria-hidden="true">○</span>Employee context</a>
+            <a href="#system-health"><span aria-hidden="true">●</span>System health</a>
+          </nav>
+
+          <section id="demo-tasks" className="rail-section" aria-labelledby="demo-tasks-title">
+            <div className="rail-heading">
+              <h2 id="demo-tasks-title">Demo tasks</h2>
+              <span>{demoTasks.length}</span>
             </div>
-            <div className="field-group">
-              <label htmlFor="request-message">People Operations question</label>
-              <textarea
-                id="request-message"
-                rows={5}
-                value={message}
-                onChange={(event) => setMessage(event.target.value)}
-              />
-            </div>
-            <p className="form-note">
-              Remote-work, PTO, and expense requests run through bounded Phase 7 MCP workflows.
-            </p>
-            <button className="submit-action" disabled={submitting || !message.trim()} type="submit">
-              {submitting ? "Tracing request…" : "Run cited workflow"}
-            </button>
-          </form>
-
-          <div className="response-panel" aria-live="polite">
-            {!chat && !chatError && (
-              <div className="response-empty">
-                <span className="trace-glyph" aria-hidden="true">↗</span>
-                <h3>Ready to trace</h3>
-                <p>The result will include the answer, exact policy sections, and all MCP operations.</p>
-              </div>
-            )}
-            {chatError && (
-              <div className="response-error" role="alert">
-                <h3>Request unavailable</h3>
-                <p>{chatError}</p>
-              </div>
-            )}
-            {chat && (
-              <div className="response-content">
-                <div className="response-meta">
-                  <span className={`outcome-chip ${chat.status}`}>{displayName(chat.outcome)}</span>
-                  <span>As of {chat.as_of_date}</span>
-                </div>
-                <h3>PeopleOps guidance</h3>
-                <p className="answer-text">{chat.answer}</p>
-                <p className="request-id">Request ID: {chat.request_id}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {chat && chat.citations.length > 0 && (
-          <div className="evidence-results">
-            <div className="result-heading">
-              <p className="eyebrow">Cited evidence</p>
-              <span>{chat.citations.length} sections</span>
-            </div>
-            <div className="citation-grid">
-              {chat.citations.map((citation) => (
-                <article className="citation-card" key={`${citation.policy_id}-${citation.section_id}`}>
-                  <div className="citation-id">
-                    <span>{citation.policy_id}</span>
-                    <strong>{citation.section_id}</strong>
+            <div className="task-list">
+              {demoTasks.map((task) => (
+                <article className="task-card" key={task.id}>
+                  <div className="task-title"><span>{task.number}</span><strong>{task.title}</strong></div>
+                  <dl>
+                    <div><dt>Employee</dt><dd>{task.employeeId}</dd></div>
+                    {task.facts.map((fact, index) => (
+                      <div key={fact}><dt>{index === 0 ? "Detail" : "Scope"}</dt><dd>{fact}</dd></div>
+                    ))}
+                  </dl>
+                  <div className="task-actions">
+                    <button type="button" onClick={() => loadTask(task)}>Load</button>
+                    <button type="button" className="run-task" onClick={() => void runTask(task)} disabled={submitting}>
+                      Run task
+                    </button>
                   </div>
-                  <h3>{citation.title}</h3>
-                  <p>{citation.snippet}</p>
-                  <small>
-                    v{citation.version} · effective {citation.effective_date} · {citation.source_format}
-                    {citation.page ? ` · page ${citation.page}` : ""} · score {citation.retrieval_score.toFixed(3)}
-                    <br />{citation.chunk_id} · {citation.source_path}
-                  </small>
                 </article>
               ))}
             </div>
-          </div>
-        )}
+          </section>
 
-        {chat && (
-          <div className="trace-results">
-            <div className="result-heading">
-              <p className="eyebrow">Operational trace</p>
-              <span>{chat.tool_trace.length} operations</span>
+          <section id="system-health" className="rail-section health-section" aria-labelledby="health-title">
+            <div className="rail-heading">
+              <h2 id="health-title">System health</h2>
+              <button type="button" onClick={() => void refreshHealth()} disabled={healthLoading}>
+                {healthLoading ? "Checking" : "Refresh"}
+              </button>
             </div>
-            <ol className="trace-list">
-              {chat.tool_trace.map((entry) => (
-                <li key={entry.sequence}>
-                  <span className="trace-number">{entry.sequence}</span>
-                  <div>
-                    <div className="trace-title">
-                      <strong>{displayName(entry.tool_name)}</strong>
-                      <span className={`trace-status ${entry.status}`}>{entry.status}</span>
-                      <small>{entry.duration_ms} ms</small>
+            {healthError ? (
+              <p className="health-error" role="alert">{healthError}</p>
+            ) : (
+              <ul className="health-list">
+                {Object.entries(health?.components ?? {}).map(([name, component]) => (
+                  <li key={name}>
+                    <span className={`health-dot ${component.status}`} aria-hidden="true" />
+                    <span>{displayName(name)}</span>
+                    <strong>{displayName(component.status)}</strong>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {health && (
+              <p className="health-meta">v{health.version} · {health.environment} · {health.status}</p>
+            )}
+          </section>
+        </aside>
+
+        <main id="chat-workspace" className="conversation-column">
+          <div className="conversation-header">
+            <div>
+              <p className="section-kicker">Evidence-first workspace</p>
+              <h1>Chat with PeopleOps Assistant</h1>
+              <p>Grounded HR policy guidance through bounded MCP workflows.</p>
+            </div>
+            <button className="secondary-button" type="button" onClick={startNewChat}>＋ New chat</button>
+          </div>
+
+          <section className="chat-stream" aria-live="polite" aria-busy={submitting || confirming}>
+            {!chat && !chatError && !submitting && (
+              <div className="welcome-message">
+                <span className="assistant-orb" aria-hidden="true">✦</span>
+                <div>
+                  <h2>Ready for a grounded HR question</h2>
+                  <p>Choose a demo task or enter a question. Every result shows its exact sources, MCP operations, and safety state.</p>
+                </div>
+              </div>
+            )}
+
+            {(chat || submitting) && lastQuestion && (
+              <article className="message-card user-message">
+                <span className="avatar small" aria-hidden="true">{lastEmployee.name.charAt(0)}</span>
+                <div><div className="message-author"><strong>You</strong><span>{lastEmployee.id}</span></div><p>{lastQuestion}</p></div>
+              </article>
+            )}
+
+            {submitting && !confirming && (
+              <article className="message-card assistant-message loading-message">
+                <span className="assistant-orb small" aria-hidden="true">✦</span>
+                <div><strong>PeopleOps Assistant</strong><p>Discovering tools and checking policy evidence…</p></div>
+              </article>
+            )}
+
+            {chatError && (
+              <div className="inline-error" role="alert">
+                <strong>Request unavailable</strong><p>{chatError}</p>
+              </div>
+            )}
+
+            {chat && !submitting && (
+              <article className="message-card assistant-message">
+                <span className="assistant-orb small" aria-hidden="true">✦</span>
+                <div className="assistant-content">
+                  <div className="message-author"><strong>PeopleOps Assistant</strong><span>As of {chat.as_of_date}</span></div>
+                  <section className={`result-card outcome-${chat.outcome}`} aria-labelledby="result-title">
+                    <div className="result-card-header">
+                      <span className="result-icon" aria-hidden="true">✓</span>
+                      <div><p>{workflowTitle(chat.workflow)}</p><h2 id="result-title">{outcomeLabel(chat.outcome)}</h2></div>
+                      <span className="state-pill">{displayName(chat.workflow_state)}</span>
                     </div>
-                    <p>{entry.result_summary}</p>
-                    {Object.keys(entry.sanitized_arguments).length > 0 && (
-                      <code>{JSON.stringify(entry.sanitized_arguments)}</code>
+                    <p className="answer-text">{chat.answer}</p>
+                    <div className="result-metrics">
+                      <span><strong>{chat.citations.length}</strong> cited sections</span>
+                      <span><strong>{chat.tool_trace.length}</strong> MCP operations</span>
+                      <span><strong>{totalTraceDuration} ms</strong> traced tool time</span>
+                    </div>
+                  </section>
+
+                  <div className="source-strip" aria-label="Cited policy sections">
+                    {chat.citations.map((citation) => (
+                      <a href={`#citation-${citation.chunk_id}`} key={citation.chunk_id}>
+                        <span>{citation.policy_id}</span><strong>§ {citation.section_id}</strong>
+                      </a>
+                    ))}
+                    {chat.citations.length === 0 && <span className="no-sources">No citations returned for this controlled response.</span>}
+                  </div>
+
+                  <div className="response-actions">
+                    <button type="button" onClick={() => void copyGuidance()}>{copyState}</button>
+                    {chat.pending_action && (
+                      <button className="primary-button" type="button" onClick={() => setConfirmationOpen(true)}>
+                        Review pending action
+                      </button>
                     )}
+                    <button type="button" onClick={startNewChat}>Ask another question</button>
+                  </div>
+
+                  <dl className="identifier-row">
+                    <div><dt>Request ID</dt><dd>{chat.request_id}</dd></div>
+                    <div><dt>Trace ID</dt><dd>{chat.trace_id}</dd></div>
+                  </dl>
+                </div>
+              </article>
+            )}
+          </section>
+
+          <form className="composer" onSubmit={submitQuestion}>
+            <label htmlFor="question">Ask a follow-up or start another workflow</label>
+            <div className="composer-row">
+              <textarea
+                id="question"
+                rows={3}
+                value={message}
+                onChange={(event) => setMessage(event.target.value)}
+                placeholder="Ask about remote work, PTO, expenses, or prepare a mock HR ticket…"
+              />
+              <button className="send-button" disabled={submitting || confirming || !message.trim()} type="submit">
+                <span className="sr-only">Send question</span><span aria-hidden="true">➤</span>
+              </button>
+            </div>
+            <div className="composer-meta">
+              <span>Employee: <strong>{selectedEmployee.id}</strong></span>
+              <span>Fixed synthetic date: <strong>2026-09-01</strong></span>
+            </div>
+          </form>
+          <p className="assistant-disclaimer">PeopleOps Assistant can make mistakes. Review citations and verify guidance before acting.</p>
+
+          <section id="employee-context" className="context-panel" aria-labelledby="context-title">
+            <div className="context-heading"><div><p className="section-kicker">Selected employee</p><h2 id="context-title">Context</h2></div><span>{selectedEmployee.id}</span></div>
+            <div className="context-grid">
+              <article><span aria-hidden="true">○</span><div><small>Employee</small><strong>{selectedEmployee.name}</strong><p>{selectedEmployee.role}<br />{selectedEmployee.department}</p></div></article>
+              <article><span aria-hidden="true">□</span><div><small>PTO balance</small><strong>{selectedEmployee.ptoDays} days</strong><p>Available as of 2026-09-01</p></div></article>
+              <article><span aria-hidden="true">◇</span><div><small>Manager</small><strong>{selectedEmployee.manager}</strong><p>Current reporting line</p></div></article>
+              <article><span aria-hidden="true">⌖</span><div><small>Home office</small><strong>{selectedEmployee.location}</strong><p>Registered location</p></div></article>
+              <article><span aria-hidden="true">▣</span><div><small>Employment</small><strong>{selectedEmployee.employment}</strong><p>Active synthetic record</p></div></article>
+            </div>
+          </section>
+        </main>
+
+        <aside className="evidence-rail" aria-label="Citations and operational evidence">
+          <details className="inspector-panel" open>
+            <summary><span>Citations <strong>({chat?.citations.length ?? 0})</strong></span><span aria-hidden="true">⌃</span></summary>
+            <div className="citation-list">
+              {chat?.citations.map((citation, index) => (
+                <article id={`citation-${citation.chunk_id}`} className="citation-item" key={citation.chunk_id}>
+                  <span className="citation-number">{index + 1}</span>
+                  <div>
+                    <div className="citation-meta"><strong>{citation.policy_id}</strong><span>v{citation.version}</span><span>{citation.source_format.toUpperCase()}</span></div>
+                    <h2>{citation.title}</h2>
+                    <p><strong>§ {citation.section_id}</strong> {citation.snippet}</p>
+                    <small>Effective {citation.effective_date}{citation.page ? ` · page ${citation.page}` : ""} · score {citation.retrieval_score.toFixed(3)}</small>
+                    <details className="source-detail"><summary>Source metadata</summary><code>{citation.chunk_id}<br />{citation.source_path}</code></details>
+                  </div>
+                </article>
+              ))}
+              {!chat?.citations.length && <p className="empty-inspector">Cited policy sections will appear after a workflow runs.</p>}
+            </div>
+          </details>
+
+          <details className="inspector-panel trace-panel" open>
+            <summary><span>Tool trace <strong>({chat?.tool_trace.length ?? 0})</strong></span><span aria-hidden="true">⌃</span></summary>
+            <ol className="tool-trace">
+              {chat?.tool_trace.map((entry) => (
+                <li key={`${entry.sequence}-${entry.tool_name}`}>
+                  <span className={`trace-marker ${entry.status}`} aria-hidden="true">✓</span>
+                  <div>
+                    <div className="tool-name"><span>{entry.sequence}</span><strong>{displayName(entry.tool_name)}</strong><small>{entry.duration_ms} ms</small></div>
+                    <p>{entry.result_summary}</p>
+                    <details><summary>Sanitized arguments</summary><code>{JSON.stringify(entry.sanitized_arguments, null, 2)}</code></details>
+                    {entry.error_code && <span className="error-code">{entry.error_code}</span>}
                   </div>
                 </li>
               ))}
             </ol>
-          </div>
-        )}
-      </section>
+            {!chat?.tool_trace.length && <p className="empty-inspector">Actual MCP discovery and tool calls will appear here. Hidden reasoning is never shown.</p>}
+            {chat && <div className="trace-footer"><span>Total tool time: {totalTraceDuration} ms</span><span>Trace: {chat.trace_id.slice(0, 8)}</span></div>}
+          </details>
+        </aside>
+      </div>
 
-      <section className="section-block" aria-labelledby="readiness-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">System readiness</p>
-            <h2 id="readiness-title">Honest status, component by component</h2>
-          </div>
-          <span className={`health-chip ${health?.status ?? "checking"}`}>
-            {healthError ? "Backend offline" : health?.status === "ok" ? "Service healthy" : "Checking"}
-          </span>
+      {chat?.pending_action && confirmationOpen && (
+        <div className="confirmation-backdrop">
+          <section
+            className="confirmation-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirmation-title"
+            aria-describedby="confirmation-note"
+            onKeyDown={(event) => {
+              if (event.key === "Escape" && !confirming) setConfirmationOpen(false);
+            }}
+          >
+            <button className="close-dialog" type="button" aria-label="Close confirmation" onClick={() => setConfirmationOpen(false)}>×</button>
+            <p className="section-kicker">Explicit confirmation required</p>
+            <h2 id="confirmation-title">Create mock HR ticket?</h2>
+            <div className="demo-warning"><span aria-hidden="true">i</span><p><strong>Demonstration action only.</strong> No production HR system or real employee record will be changed.</p></div>
+            <p className="confirmation-summary">{chat.pending_action.summary}</p>
+            <dl className="action-preview">
+              {Object.entries(chat.pending_action.sanitized_arguments).map(([key, value]) => (
+                <div key={key}><dt>{displayName(key)}</dt><dd>{String(value)}</dd></div>
+              ))}
+              <div><dt>Expires</dt><dd>{new Date(chat.pending_action.expires_at).toLocaleString()}</dd></div>
+            </dl>
+            <p id="confirmation-note" className="confirmation-note">The action remains blocked until you confirm. The signed confirmation token is never displayed or written to the operational trace.</p>
+            <div className="confirmation-actions">
+              <button type="button" onClick={() => setConfirmationOpen(false)} disabled={confirming}>Cancel</button>
+              <button ref={confirmButtonRef} className="primary-button" type="button" onClick={() => void confirmPendingAction()} disabled={confirming}>
+                {confirming ? "Creating mock ticket…" : "Confirm mock ticket"}
+              </button>
+            </div>
+          </section>
         </div>
-
-        <div className="status-grid">
-          {health ? (
-            Object.entries(health.components).map(([name, component]) => (
-              <article className="status-card" key={name}>
-                <div className="status-label">
-                  <span className={`status-dot ${component.status}`} aria-hidden="true" />
-                  <h3>{displayName(name)}</h3>
-                </div>
-                <p>{component.detail}</p>
-                <span className="status-value">{displayName(component.status)}</span>
-              </article>
-            ))
-          ) : (
-            <article className="status-card status-loading">
-              <h3>{healthError ? "Health data unavailable" : "Loading readiness"}</h3>
-              <p>{healthError ? "Start the FastAPI service to see live status." : "Connecting to the service API."}</p>
-            </article>
-          )}
-        </div>
-      </section>
-
-      <section className="section-block workflow-section" aria-labelledby="workflow-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Demonstration roadmap</p>
-            <h2 id="workflow-title">Three reproducible HR workflows</h2>
-          </div>
-          <span className="planned-label">3 live · confirmation UI planned for Phase 8</span>
-        </div>
-        <div className="workflow-grid">
-          {workflows.map((workflow, index) => (
-            <article className="workflow-card" key={workflow.label}>
-              <span className="workflow-number">0{index + 1}</span>
-              <h3>{workflow.label}</h3>
-              <p>{workflow.description}</p>
-              <span className="workflow-state">{workflow.state}</span>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <footer>
-        <span>PeopleOps Assistant</span>
-        <span>Educational system · Not legal advice</span>
-      </footer>
-    </main>
+      )}
+    </div>
   );
 }

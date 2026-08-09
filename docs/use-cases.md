@@ -77,7 +77,8 @@ Gold-case mapping: `EVAL-MULTI-002` and `EVAL-TOOL-003`.
 confirmation. No record is created before confirmation; repeated confirmation is handled
 idempotently. Phase 7 sequences policy evidence, preview, the explicit-confirmation API, and the MCP
 create tool while preserving exact action binding, expiry, redaction, and process-local mutation.
-Phase 8 adds the confirmation card to the product interface.
+Phase 8 renders the exact preview in an accessible confirmation dialog, keeps cancellation blocked,
+and reuses the original request binding after confirmation without exposing the signed token.
 
 Gold-case mapping: `EVAL-TOOL-006` and `EVAL-SAFE-003`.
 
@@ -98,3 +99,14 @@ Gold-case mapping: `EVAL-TOOL-006` and `EVAL-SAFE-003`.
 The UI and `/chat` response expose request ID, selected MCP tool, sanitized arguments, summarized
 tool result, retrieved policy IDs and sections, workflow status, clarification or escalation decision,
 and final answer basis. They do not expose hidden chain-of-thought.
+
+## UC-07: Reproduce workflows in the product workspace
+
+**Actor:** Grader or reviewer
+
+**Action:** Open the application, run the remote-work and PTO demo tasks, and inspect the result,
+employee context, citations, tool trace, request ID, trace ID, and service health.
+
+**Expected result:** Both workflows are reproducible without editing JSON or opening developer
+tools. Citation and tool details reflect the live API response, responsive panels remain usable at
+narrow widths, and no navigation or action control is a non-functional placeholder.
