@@ -62,7 +62,19 @@ ephemeral filesystem is safe for this phase. Phase 10 will measure cold and warm
 
 ## Release procedure
 
-Pushes to `main` deploy only after the linked GitHub checks pass because `render.yaml` sets
-`autoDeployTrigger: checksPass`. After each runtime change, verify the public root, `/health`, and the
-remote-work, PTO, expense, and confirmation-gated action paths. Record cold and warm response times
-separately when a free instance has spun down.
+Phase 9 replaces the former manual-only smoke procedure with two automated controls:
+
+1. `CI / Release gate` accepts a candidate only after backend, frontend, and production-container
+   startup/workflow checks pass. Render's `autoDeployTrigger: checksPass` then permits deployment.
+2. A successful Render `deployment_status` event starts `Hosted smoke` against the exact deployment
+   SHA. It verifies release identity, component health, the root interface, exact citations, and a
+   real read-only MCP workflow while retaining JSON evidence.
+
+`/health.release_sha` comes from Render's runtime commit metadata and must equal the GitHub deployment
+SHA. The smoke runner allows a bounded 240 seconds for a free-tier cold start and records the actual
+wake time separately from endpoint latencies.
+
+Rollback targets the last immutable commit with both a successful release gate and hosted-smoke
+artifact. Use Render's rollback control, rerun `Hosted smoke` with that SHA, and use a normal
+`git revert` for a source rollback. Do not force-deploy a failed commit or rewrite `main`. The full
+operator procedure is in `docs/phase9-cicd-deployment.md`.
