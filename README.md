@@ -50,7 +50,8 @@ LLM provider integration are complete. The repository currently provides:
   release commit through `/health`;
 - a replaceable OpenAI-compatible LLM adapter with OpenRouter configuration, authenticated model
   health, grounded-summary validation, deterministic fallback, and visible generation metadata;
-- a network-free deterministic provider used by CI plus an opt-in production-provider smoke gate.
+- a network-free deterministic provider used by CI plus a bounded production-provider smoke gate
+  that preserves sanitized evidence for every accepted or safely-fallbacked attempt.
 
 See the [LLM provider guide](docs/llm-provider-integration.md),
 [Phase 8 product-interface guide](docs/phase8-product-interface.md),

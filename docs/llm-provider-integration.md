@@ -41,6 +41,8 @@ For Render:
 6. Confirm `/health.components.llm_provider.status` is `ready` without exposing the key.
 7. Run **Actions > Hosted smoke > Run workflow** with `expected_llm_provider=openrouter` and the
    deployed SHA.
+8. Set the GitHub repository variable `PRODUCTION_LLM_PROVIDER=openrouter` so every later
+   deployment-triggered smoke requires the configured provider automatically.
 
 The corpus and all employee records are synthetic. Even so, only the minimum completed workflow
 answer, decision fields, question, and cited snippets are sent to the provider. Free provider routes
@@ -77,4 +79,8 @@ python -m ruff check app/providers app/agent/orchestrator.py app/api/health.py
 
 Routine CI runs `LLM_PROVIDER=deterministic`, so pull requests do not depend on credentials, network
 availability, rate limits, or paid inference. The production-provider smoke is a separate explicit
-release check.
+release check. It makes up to three fresh read-only workflow requests and succeeds only when one
+provider response passes every grounding gate. Only a verified deterministic fallback is retried;
+citations, decision fields, MCP trace, provider identity, and model metadata must remain exact on
+every attempt. The retained JSON artifact records sanitized evidence for each attempt and preserves
+all fallback reasons if the bounded attempts are exhausted.

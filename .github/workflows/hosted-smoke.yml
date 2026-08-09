@@ -47,6 +47,7 @@ jobs:
           --expected-environment production
           --expected-release-sha "${DEPLOY_SHA}"
           --expected-llm-provider "${EXPECTED_LLM_PROVIDER}"
+          --provider-attempts 3
           --deadline-seconds 240
           --output artifacts/hosted-smoke.json
       - name: Upload hosted evidence

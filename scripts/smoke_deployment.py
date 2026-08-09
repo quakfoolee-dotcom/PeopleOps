@@ -28,6 +28,18 @@ class SmokeFailure(RuntimeError):
     """Raised when a deployment does not satisfy the public release contract."""
 
 
+class ProviderGenerationUnavailable(SmokeFailure):
+    """Raised when a structurally valid response used the verified provider fallback."""
+
+
+class ProviderAttemptsExhausted(SmokeFailure):
+    """Raised when no bounded provider attempt produced an accepted grounded summary."""
+
+    def __init__(self, message: str, attempts: list[dict[str, Any]]) -> None:
+        super().__init__(message)
+        self.attempts = attempts
+
+
 def project_version() -> str:
     with (PROJECT_ROOT / "pyproject.toml").open("rb") as project_file:
         return str(tomllib.load(project_file)["project"]["version"])
@@ -135,7 +147,11 @@ def validate_chat(
         raise SmokeFailure("response generation metadata is missing")
     if expected_llm_provider:
         if generation.get("mode") != "provider":
-            raise SmokeFailure("configured provider did not generate the grounded summary")
+            detail = str(generation.get("detail") or "no fallback detail returned")[:500]
+            raise ProviderGenerationUnavailable(
+                "configured provider did not generate the grounded summary; "
+                f"mode={generation.get('mode')!r}; detail={detail!r}"
+            )
         if generation.get("provider") != expected_llm_provider:
             raise SmokeFailure(
                 f"response provider is {generation.get('provider')!r}, "
@@ -143,6 +159,77 @@ def validate_chat(
             )
         if not generation.get("resolved_model"):
             raise SmokeFailure("provider response did not report the resolved model")
+
+
+def _attempt_evidence(
+    payload: dict[str, Any], *, attempt: int, duration_ms: int
+) -> dict[str, Any]:
+    generation = payload.get("generation")
+    if not isinstance(generation, dict):
+        generation = {}
+    detail = generation.get("detail")
+    return {
+        "attempt": attempt,
+        "duration_ms": duration_ms,
+        "request_id": payload.get("request_id"),
+        "trace_id": payload.get("trace_id"),
+        "mode": generation.get("mode"),
+        "provider": generation.get("provider"),
+        "model": generation.get("model"),
+        "resolved_model": generation.get("resolved_model"),
+        "detail": str(detail)[:500] if detail is not None else None,
+    }
+
+
+def run_chat_smoke(
+    base_url: str,
+    *,
+    expected_llm_provider: str | None,
+    provider_attempts: int,
+) -> tuple[dict[str, Any], int, list[dict[str, Any]]]:
+    max_attempts = provider_attempts if expected_llm_provider else 1
+    attempts: list[dict[str, Any]] = []
+    total_duration_ms = 0
+    last_fallback: ProviderGenerationUnavailable | None = None
+
+    for attempt_number in range(1, max_attempts + 1):
+        chat, chat_ms = _request(
+            base_url,
+            "/chat",
+            payload={"employee_id": "E-1007", "message": REMOTE_PROMPT},
+            timeout_seconds=90,
+        )
+        total_duration_ms += chat_ms
+        if not isinstance(chat, dict):
+            raise SmokeFailure("chat endpoint did not return a JSON object")
+
+        evidence = _attempt_evidence(
+            chat,
+            attempt=attempt_number,
+            duration_ms=chat_ms,
+        )
+        attempts.append(evidence)
+        try:
+            validate_chat(chat, expected_llm_provider=expected_llm_provider)
+        except ProviderGenerationUnavailable as error:
+            evidence["result"] = "verified_fallback"
+            last_fallback = error
+            if attempt_number < max_attempts:
+                time.sleep(2)
+                continue
+            raise ProviderAttemptsExhausted(
+                f"provider generation remained unavailable after {max_attempts} "
+                f"bounded attempts: {last_fallback}",
+                attempts,
+            ) from error
+
+        evidence["result"] = "accepted"
+        return chat, total_duration_ms, attempts
+
+    raise ProviderAttemptsExhausted(
+        f"provider generation did not complete after {max_attempts} bounded attempts",
+        attempts,
+    )
 
 
 def _request(
@@ -243,15 +330,11 @@ def run_smoke(args: argparse.Namespace) -> dict[str, Any]:
     elif "PeopleOps Assistant" not in root:
         raise SmokeFailure("root HTML does not identify PeopleOps Assistant")
 
-    chat, chat_ms = _request(
+    chat, chat_ms, provider_attempts = run_chat_smoke(
         args.base_url,
-        "/chat",
-        payload={"employee_id": "E-1007", "message": REMOTE_PROMPT},
-        timeout_seconds=90,
+        expected_llm_provider=args.expected_llm_provider,
+        provider_attempts=args.provider_attempts,
     )
-    if not isinstance(chat, dict):
-        raise SmokeFailure("chat endpoint did not return a JSON object")
-    validate_chat(chat, expected_llm_provider=args.expected_llm_provider)
 
     return {
         "passed": True,
@@ -271,6 +354,7 @@ def run_smoke(args: argparse.Namespace) -> dict[str, Any]:
             "tool_call_count": len(chat["tool_trace"]),
             "outcome": chat["outcome"],
             "generation": chat["generation"],
+            "provider_attempts": provider_attempts,
         },
     }
 
@@ -284,6 +368,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--expected-environment")
     parser.add_argument("--expected-release-sha")
     parser.add_argument("--expected-llm-provider")
+    parser.add_argument("--provider-attempts", type=int, choices=range(1, 6), default=3)
     parser.add_argument("--deadline-seconds", type=int, default=180)
     parser.add_argument("--output", type=Path)
     return parser.parse_args()
@@ -301,6 +386,8 @@ def main() -> None:
             "error_type": type(error).__name__,
             "error": str(error),
         }
+        if isinstance(error, ProviderAttemptsExhausted):
+            result["provider_attempts"] = error.attempts
         rendered = json.dumps(result, indent=2, sort_keys=True)
         if args.output:
             args.output.parent.mkdir(parents=True, exist_ok=True)

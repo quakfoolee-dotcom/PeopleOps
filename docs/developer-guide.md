@@ -203,6 +203,10 @@ CI starts the production container with `LLM_PROVIDER=deterministic` and require
 `generation.mode=provider`, so the adapter boundary is exercised without a secret. After configuring
 OpenRouter in Render, add `-ExpectedLlmProvider openrouter` to the hosted smoke command. This requires
 ready authenticated provider health, a provider-generated grounded summary, and a resolved model.
+The provider-specific smoke permits up to three fresh read-only attempts because a free route can
+temporarily return the application's verified fallback. It retries only that safe fallback state;
+citation, tool-trace, decision, provider-identity, and resolved-model drift fail immediately. JSON
+evidence records every attempt and its sanitized generation detail.
 
 ## Evaluation contracts
 

@@ -5,7 +5,14 @@ from http.client import RemoteDisconnected
 
 import pytest
 
-from scripts.smoke_deployment import SmokeFailure, _request, validate_chat, validate_health
+from scripts.smoke_deployment import (
+    ProviderAttemptsExhausted,
+    SmokeFailure,
+    _request,
+    run_chat_smoke,
+    validate_chat,
+    validate_health,
+)
 
 
 def health_payload() -> dict[str, object]:
@@ -70,6 +77,22 @@ def chat_payload() -> dict[str, object]:
     }
 
 
+def fallback_chat_payload() -> dict[str, object]:
+    payload = deepcopy(chat_payload())
+    payload["generation"] = {
+        "mode": "deterministic_fallback",
+        "provider": "openrouter",
+        "model": "openrouter/free",
+        "resolved_model": None,
+        "duration_ms": None,
+        "detail": (
+            "Provider output was unavailable or rejected by the grounding gate "
+            "(ProviderResponseError); the verified workflow response was returned unchanged."
+        ),
+    }
+    return payload
+
+
 def test_health_smoke_contract_accepts_matching_release() -> None:
     validate_health(
         health_payload(),
@@ -103,14 +126,112 @@ def test_chat_smoke_contract_rejects_citation_drift() -> None:
 
 
 def test_chat_smoke_contract_rejects_missing_provider_generation() -> None:
-    payload = deepcopy(chat_payload())
-    payload["generation"] = {
-        "mode": "deterministic_fallback",
-        "provider": "deterministic",
-    }
+    payload = fallback_chat_payload()
 
     with pytest.raises(SmokeFailure, match="did not generate"):
-        validate_chat(payload, expected_llm_provider="deterministic")
+        validate_chat(payload, expected_llm_provider="openrouter")
+
+
+def test_provider_smoke_accepts_success_after_verified_fallback(monkeypatch) -> None:
+    responses = [(fallback_chat_payload(), 120), (chat_payload(), 210)]
+
+    def request(*_args, **_kwargs):
+        return responses.pop(0)
+
+    monkeypatch.setattr("scripts.smoke_deployment._request", request)
+    monkeypatch.setattr("scripts.smoke_deployment.time.sleep", lambda _seconds: None)
+
+    chat, duration_ms, attempts = run_chat_smoke(
+        "https://example.test",
+        expected_llm_provider="deterministic",
+        provider_attempts=3,
+    )
+
+    assert chat["generation"]["mode"] == "provider"
+    assert duration_ms == 330
+    assert [attempt["result"] for attempt in attempts] == [
+        "verified_fallback",
+        "accepted",
+    ]
+    assert "ProviderResponseError" in attempts[0]["detail"]
+    assert attempts[1]["resolved_model"] == "deterministic-grounded-v1"
+
+
+def test_provider_smoke_preserves_all_fallback_evidence_when_exhausted(
+    monkeypatch,
+) -> None:
+    request_count = 0
+
+    def request(*_args, **_kwargs):
+        nonlocal request_count
+        request_count += 1
+        return fallback_chat_payload(), 100 + request_count
+
+    monkeypatch.setattr("scripts.smoke_deployment._request", request)
+    monkeypatch.setattr("scripts.smoke_deployment.time.sleep", lambda _seconds: None)
+
+    with pytest.raises(ProviderAttemptsExhausted, match="3 bounded attempts") as error:
+        run_chat_smoke(
+            "https://example.test",
+            expected_llm_provider="openrouter",
+            provider_attempts=3,
+        )
+
+    assert request_count == 3
+    assert len(error.value.attempts) == 3
+    assert all(
+        attempt["result"] == "verified_fallback"
+        for attempt in error.value.attempts
+    )
+    assert [attempt["attempt"] for attempt in error.value.attempts] == [1, 2, 3]
+
+
+def test_provider_smoke_does_not_retry_structural_contract_failure(monkeypatch) -> None:
+    request_count = 0
+    invalid = deepcopy(chat_payload())
+    invalid["citations"] = [{"section_id": "INT-5"}]
+
+    def request(*_args, **_kwargs):
+        nonlocal request_count
+        request_count += 1
+        return invalid, 100
+
+    monkeypatch.setattr("scripts.smoke_deployment._request", request)
+
+    with pytest.raises(SmokeFailure, match="citations"):
+        run_chat_smoke(
+            "https://example.test",
+            expected_llm_provider="deterministic",
+            provider_attempts=3,
+        )
+
+    assert request_count == 1
+
+
+def test_smoke_without_expected_provider_uses_one_request(monkeypatch) -> None:
+    request_count = 0
+    deterministic = fallback_chat_payload()
+    deterministic["generation"] = {
+        "mode": "deterministic",
+        "provider": "not-configured",
+        "detail": "Verified deterministic workflow response.",
+    }
+
+    def request(*_args, **_kwargs):
+        nonlocal request_count
+        request_count += 1
+        return deterministic, 75
+
+    monkeypatch.setattr("scripts.smoke_deployment._request", request)
+
+    _, _, attempts = run_chat_smoke(
+        "https://example.test",
+        expected_llm_provider=None,
+        provider_attempts=5,
+    )
+
+    assert request_count == 1
+    assert attempts[0]["result"] == "accepted"
 
 
 def test_request_translates_transient_disconnect_for_startup_retry(monkeypatch) -> None:

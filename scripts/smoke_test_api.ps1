@@ -4,6 +4,8 @@ param(
     [string]$ExpectedEnvironment,
     [string]$ExpectedReleaseSha,
     [string]$ExpectedLlmProvider,
+    [ValidateRange(1, 5)]
+    [int]$ProviderAttempts = 3,
     [int]$DeadlineSeconds = 180,
     [string]$Output = "artifacts/deployment-smoke.json"
 )
@@ -13,6 +15,7 @@ $python = if (Test-Path ".venv\Scripts\python.exe") { ".venv\Scripts\python.exe"
 $arguments = @(
     "scripts/smoke_deployment.py",
     "--base-url", $BaseUrl,
+    "--provider-attempts", $ProviderAttempts,
     "--deadline-seconds", $DeadlineSeconds,
     "--output", $Output
 )

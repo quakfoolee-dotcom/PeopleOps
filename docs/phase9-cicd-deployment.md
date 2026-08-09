@@ -19,8 +19,8 @@ immutable full-SHA pins for third-party Actions.
    performs strict TypeScript validation, and creates the Vite production bundle.
 3. **Container startup and workflow smoke** builds the actual Dockerfile, injects the candidate SHA,
    starts the container with the deterministic CI provider, waits for health, and runs the E-1007
-   Germany workflow. It requires ready provider health and provider-mode grounded synthesis. Its JSON evidence is
-   retained for 14 days; container logs are emitted on failure.
+   Germany workflow. It requires ready provider health and provider-mode grounded synthesis. Its
+   JSON evidence is retained for 14 days; container logs are emitted on failure.
 4. **Release gate** fails unless every prerequisite job succeeded. Render's Blueprint uses
    `autoDeployTrigger: checksPass`, so a failed candidate is not deployed.
 
@@ -38,10 +38,14 @@ references remain pinned to immutable full SHAs even when the readable version c
 2. verify `/` identifies PeopleOps Assistant;
 3. submit a read-only E-1007 six-week Germany question to `/chat`;
 4. require the conditional decision, sections `INT-5`, `INT-13`, `RWK-5`, `SEC-8`, eight traced MCP
-   operations from discovery through compliance, generation metadata, and no pending write action.
+   operations from discovery through compliance, generation metadata, and no pending write action;
+5. when a production provider is required, allow at most three fresh read-only requests to obtain one
+   accepted grounded summary, retrying only `deterministic_fallback` and recording every sanitized
+   attempt. Any other contract failure stops immediately.
 
 The emitted JSON records timestamps, wake and request latency, request/trace IDs, citations, tool
-count, and outcome. Validation functions are unit tested, including commit and citation drift.
+count, outcome, and provider-attempt evidence. Validation functions are unit tested, including
+commit/citation drift, success after fallback, retry exhaustion, and no-retry structural failure.
 
 ## Hosted verification
 
@@ -52,8 +56,9 @@ the same smoke contract to `https://peopleops-assistant-demo.onrender.com`. Evid
 
 For a manual recheck, open **Actions → Hosted smoke → Run workflow**. Normally leave `expected_sha`
 blank to check the selected branch commit; enter an exact 40-character SHA when auditing a known
-deployment. After the production secret is configured, enter `openrouter` under
-`expected_llm_provider` to require authenticated health and actual provider synthesis. Locally, use:
+deployment. The repository variable `PRODUCTION_LLM_PROVIDER=openrouter` makes deployment-triggered
+checks require authenticated health and actual provider synthesis. A manual dispatch may override it
+through `expected_llm_provider`. Locally, use:
 
 ```powershell
 .\scripts\smoke_test_api.ps1 `
@@ -71,7 +76,11 @@ deployment. After the production secret is configured, enter `openrouter` under
 4. If hosted smoke reports a SHA mismatch, compare `/health.release_sha`, the GitHub deployment SHA,
    and the Render event before retrying. Never accept a response from a previous release.
 5. If only cold start timed out, inspect Render events/logs and retry after the service is healthy.
-6. If contract assertions failed, treat the release as unverified even when `/health` is HTTP 200.
+6. If provider attempts were exhausted, inspect `workflow.provider_attempts` or the top-level failure
+   evidence. Each item distinguishes an accepted response from the application's safe verified
+   fallback without exposing provider content or credentials.
+7. If any other contract assertion failed, treat the release as unverified even when `/health` is
+   HTTP 200. Structural failures are deliberately not retried.
 
 ## Rollback
 
