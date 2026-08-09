@@ -1,4 +1,4 @@
-FROM node:22-alpine AS ui-build
+FROM node:26-alpine AS ui-build
 
 ARG NPM_CONFIG_STRICT_SSL=true
 
@@ -8,7 +8,7 @@ RUN npm config set strict-ssl "${NPM_CONFIG_STRICT_SSL}" && npm ci
 COPY ui/ ./
 RUN npm run build
 
-FROM python:3.12-slim AS runtime
+FROM python:3.14-slim AS runtime
 
 ARG PIP_TRUSTED_HOST=""
 
