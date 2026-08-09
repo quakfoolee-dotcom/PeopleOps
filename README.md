@@ -6,7 +6,7 @@ PeopleOps Assistant is an agentic HR policy and operations application for the f
 
 ## Execution status
 
-Phases 1 through 5 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
+Phases 1 through 6 of the [authoritative execution plan](docs/execution-plan.md) are complete. The repository currently provides:
 
 - a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
 - a React and Vite demonstration interface with citations and an MCP trace;
@@ -22,7 +22,13 @@ Phases 1 through 5 of the [authoritative execution plan](docs/execution-plan.md)
 - 25 schema-valid gold evaluation cases and committed JSON Schemas;
 - deterministic employee, manager, location, PTO, benefits, and historical ticket fixtures;
 - strict mock-data schemas, checksums, semantic validation, and a reproducible SQLite build;
-- a bounded orchestrator that discovers and invokes two read-only tools through the official MCP client;
+- a bounded orchestrator that discovers the complete eight-tool suite and invokes tools only through
+  the official MCP client;
+- exact policy-section, employee-profile, PTO, benefits, deterministic compliance, draft-email,
+  and confirmation-gated mock-ticket capabilities alongside hybrid policy search;
+- one shared timeout-controlled MCP executor with sanitized result traces for every tool;
+- signed and expiring explicit-confirmation proof, exact action binding, idempotency, and an
+  in-memory-only synthetic ticket store;
 - direct ingestion of the authoritative ten Markdown and two PDF runtime policies;
 - 169 heading-aware, metadata-enriched chunks and a persisted deterministic local embedding index;
 - BM25-style keyword retrieval, local embedding similarity, hybrid ranking, query decomposition,
@@ -33,10 +39,10 @@ Phases 1 through 5 of the [authoritative execution plan](docs/execution-plan.md)
   fail-closed behavior;
 - a live Render deployment whose Blueprint waits for passing GitHub checks.
 
-The other six MCP tools, broader workflows, confirmation-gated writes, final product workspace, and
-provider-backed generation remain deliberately deferred to later phases. See the
-[Phase 5 RAG guide](docs/phase5-rag.md) and [Phase 4 workflow guide](docs/phase4-thin-slice.md) for
-the exact boundary.
+Broader agent workflows, the final product workspace, and provider-backed generation remain
+deliberately deferred to later phases. See the [Phase 6 MCP guide](docs/phase6-mcp-tools.md),
+[Phase 5 RAG guide](docs/phase5-rag.md), and
+[Phase 4 workflow guide](docs/phase4-thin-slice.md) for the exact boundary.
 
 ## Live demonstration
 
@@ -61,9 +67,12 @@ FastAPI (/health, /chat, /mcp)
         |     Official MCP client discovery
         |          |
         |          v
-        |     PeopleOps MCP server
-        |          |-- lookup_employee_profile
-        |          `-- search_policy_documents
+        |     PeopleOps MCP server (8 tools)
+        |          |-- policy search + exact section
+        |          |-- employee + PTO + benefits
+        |          |-- deterministic compliance
+        |          |-- draft-only HR email
+        |          `-- confirmed in-memory mock ticket
         |
         +--> Hybrid RAG index (ready)
                    |
@@ -143,6 +152,7 @@ The production image builds the React application and serves it from FastAPI.
 - [Use cases](docs/use-cases.md)
 - [Phase 4 thin vertical slice](docs/phase4-thin-slice.md)
 - [Phase 5 hybrid RAG](docs/phase5-rag.md)
+- [Phase 6 MCP tool suite](docs/phase6-mcp-tools.md)
 - [Score-5 UI design decision](docs/ui-design-decision.md)
 - [Developer guide](docs/developer-guide.md)
 - [Architecture](docs/architecture.md)

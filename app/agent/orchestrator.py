@@ -1,8 +1,4 @@
-import asyncio
 from time import perf_counter
-from typing import Any
-
-from mcp import Client
 
 from app.api.contracts import (
     ChatRequest,
@@ -14,9 +10,9 @@ from app.api.contracts import (
     WorkflowStatus,
 )
 from app.core.config import get_settings
-from app.mcp_client import MCPGateway
+from app.mcp_client import MCPGateway, MCPToolExecutor
 from peopleops_mcp.schemas import EmployeeProfileResult, PolicySearchResult
-from peopleops_mcp.server import PHASE5_TOOL_NAMES
+from peopleops_mcp.server import PHASE6_TOOL_NAMES
 
 
 def _elapsed_ms(started: float) -> int:
@@ -36,6 +32,7 @@ class PeopleOpsOrchestrator:
     def __init__(self, gateway: MCPGateway | None = None) -> None:
         self.gateway = gateway or MCPGateway()
         self.timeout_seconds = self.gateway.timeout_seconds
+        self.executor = MCPToolExecutor(self.timeout_seconds)
 
     async def run(self, request: ChatRequest) -> ChatResponse:
         settings = get_settings()
@@ -73,9 +70,9 @@ class PeopleOpsOrchestrator:
         connection_started = perf_counter()
         try:
             async with self.gateway.connect() as client:
-                tool_names = await self._discover_tools(client, trace, connection_started)
-                if not PHASE5_TOOL_NAMES.issubset(tool_names):
-                    missing = sorted(PHASE5_TOOL_NAMES - tool_names)
+                tool_names = await self.executor.discover(client, trace)
+                if not PHASE6_TOOL_NAMES.issubset(tool_names):
+                    missing = sorted(PHASE6_TOOL_NAMES - tool_names)
                     trace[-1] = trace[-1].model_copy(
                         update={
                             "status": ToolCallStatus.FAILED,
@@ -87,7 +84,7 @@ class PeopleOpsOrchestrator:
                     )
                     return self._service_error(request, trace)
 
-                profile_payload = await self._call_tool(
+                profile_payload = await self.executor.call(
                     client,
                     trace,
                     "lookup_employee_profile",
@@ -106,7 +103,7 @@ class PeopleOpsOrchestrator:
                         tool_trace=trace,
                     )
 
-                policy_payload = await self._call_tool(
+                policy_payload = await self.executor.call(
                     client,
                     trace,
                     "search_policy_documents",
@@ -170,102 +167,13 @@ class PeopleOpsOrchestrator:
                 )
             return self._service_error(request, trace)
 
-    async def _discover_tools(
-        self,
-        client: Client,
-        trace: list[ToolTraceEntry],
-        started: float,
-    ) -> set[str]:
-        result = await asyncio.wait_for(client.list_tools(), timeout=self.timeout_seconds)
-        tool_names = {tool.name for tool in result.tools}
-        trace.append(
-            ToolTraceEntry(
-                sequence=len(trace) + 1,
-                tool_name="mcp_discover_tools",
-                sanitized_arguments={},
-                status=ToolCallStatus.SUCCEEDED,
-                result_summary=(
-                    f"Discovered {len(tool_names)} tools: "
-                    f"{', '.join(sorted(tool_names))}."
-                ),
-                duration_ms=_elapsed_ms(started),
-            )
-        )
-        return tool_names
-
-    async def _call_tool(
-        self,
-        client: Client,
-        trace: list[ToolTraceEntry],
-        tool_name: str,
-        arguments: dict[str, Any],
-    ) -> dict[str, Any]:
-        started = perf_counter()
-        try:
-            result = await asyncio.wait_for(
-                client.call_tool(
-                    tool_name,
-                    arguments,
-                    read_timeout_seconds=self.timeout_seconds,
-                ),
-                timeout=self.timeout_seconds,
-            )
-            if result.is_error or result.structured_content is None:
-                raise RuntimeError(f"MCP tool {tool_name} returned an error")
-            payload = dict(result.structured_content)
-            trace.append(
-                ToolTraceEntry(
-                    sequence=len(trace) + 1,
-                    tool_name=tool_name,
-                    sanitized_arguments=arguments,
-                    status=ToolCallStatus.SUCCEEDED,
-                    result_summary=self._result_summary(tool_name, payload),
-                    duration_ms=_elapsed_ms(started),
-                )
-            )
-            return payload
-        except TimeoutError:
-            trace.append(
-                ToolTraceEntry(
-                    sequence=len(trace) + 1,
-                    tool_name=tool_name,
-                    sanitized_arguments=arguments,
-                    status=ToolCallStatus.TIMED_OUT,
-                    result_summary=f"{tool_name} timed out.",
-                    duration_ms=_elapsed_ms(started),
-                    error_code="tool_timeout",
-                )
-            )
-            raise
-        except Exception as error:
-            trace.append(
-                ToolTraceEntry(
-                    sequence=len(trace) + 1,
-                    tool_name=tool_name,
-                    sanitized_arguments=arguments,
-                    status=ToolCallStatus.FAILED,
-                    result_summary=f"{tool_name} failed without returning trusted data.",
-                    duration_ms=_elapsed_ms(started),
-                    error_code=type(error).__name__.casefold(),
-                )
-            )
-            raise
-
-    @staticmethod
-    def _result_summary(tool_name: str, payload: dict[str, Any]) -> str:
-        if tool_name == "lookup_employee_profile":
-            return f"Synthetic employee lookup found={payload.get('found', False)}."
-        matches = payload.get("matches", [])
-        section_ids = [match["section_id"] for match in matches]
-        return f"Returned {len(matches)} cited policy sections: {', '.join(section_ids)}."
-
     @staticmethod
     def _international_remote_answer(profile_result: EmployeeProfileResult) -> str:
         profile = profile_result.profile
         assert profile is not None
         location = profile.home_office
         return (
-            "Conditional guidance — this request is not automatically approved. "
+            "Conditional guidance - this request is not automatically approved. "
             f"{profile.synthetic_name} ({profile.employee_id}) is an active "
             f"{profile.employment_type} {profile.role} with a {profile.remote_work_classification} "
             f"designation and a registered home office in {location.city}, "

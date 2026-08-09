@@ -12,3 +12,5 @@ services:
         value: production
       - key: MCP_SERVER_URL
         value: http://127.0.0.1:8000/mcp
+      - key: MCP_CONFIRMATION_SECRET
+        generateValue: true

@@ -1,3 +1,6 @@
 # MCP client package
 
-This boundary will own MCP tool discovery, schema validation, invocation, timeout handling, retries, and operational trace capture. The orchestrator must not bypass it to access policy or employee data directly.
+This boundary owns official MCP sessions plus shared discovery, invocation, timeout handling,
+argument sanitization, bounded result summaries, and operational trace capture for all eight tools.
+Phase 7 adds workflow-level retries. The orchestrator must not bypass this package to access policy,
+employee data, or mock actions directly.

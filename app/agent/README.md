@@ -1,3 +1,7 @@
 # Agent package
 
-The bounded agent state machine will be implemented after the MCP and retrieval vertical slice. It must use the MCP client for policy and structured-data access, enforce a tool-call budget, validate citations, and expose operational traces rather than hidden chain-of-thought.
+The current bounded international-work workflow uses the official MCP client and requires discovery
+of the complete eight-tool suite. Phase 7 expands it into typed remote-work, PTO, and expense state
+machines. Agent code must not import data stores, RAG, tool implementations, or the action store;
+the Phase 6 architecture test enforces that boundary. Workflows expose sanitized operational traces,
+not hidden chain-of-thought.

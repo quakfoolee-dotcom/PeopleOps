@@ -47,7 +47,7 @@ const workflows = [
   {
     label: "International remote work",
     description: "Evaluate a six-week Germany request using profile and policy evidence.",
-    state: "Live · hybrid RAG",
+    state: "Live · hybrid RAG + 8 MCP tools",
   },
   {
     label: "PTO request guidance",
@@ -111,7 +111,7 @@ export default function App() {
           <span className="brand-mark" aria-hidden="true">P</span>
           <span>PeopleOps Assistant</span>
         </div>
-        <span className="milestone-pill">Phase 5 · v0.2.0</span>
+        <span className="milestone-pill">Phase 6 · v0.3.0</span>
       </nav>
 
       <section className="hero">
@@ -171,7 +171,7 @@ export default function App() {
               />
             </div>
             <p className="form-note">
-              The current workflow is intentionally bounded; policy evidence now uses Phase 5 hybrid retrieval.
+              The current workflow is intentionally bounded; all eight Phase 6 MCP tools are now available.
             </p>
             <button className="submit-action" disabled={submitting || !message.trim()} type="submit">
               {submitting ? "Tracing request…" : "Run cited workflow"}

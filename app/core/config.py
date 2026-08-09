@@ -12,7 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 class Settings(BaseSettings):
     app_name: str = "PeopleOps Assistant"
-    app_version: str = "0.2.0"
+    app_version: str = "0.3.0"
     app_env: str = "development"
     log_level: str = "INFO"
     policy_corpus_directory: Path = PROJECT_ROOT / "policy_corpus"
@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     llm_model: str = "not-configured"
     max_tool_calls: int = Field(default=8, ge=1, le=20)
     tool_timeout_seconds: int = Field(default=20, ge=1, le=120)
+    mcp_confirmation_secret: str = Field(
+        default="peopleops-local-demo-confirmation-secret",
+        min_length=32,
+    )
+    mcp_confirmation_ttl_seconds: int = Field(default=900, ge=60, le=3600)
     synthetic_as_of_date: date = SYNTHETIC_AS_OF_DATE
 
     def model_post_init(self, __context: object) -> None:

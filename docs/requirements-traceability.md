@@ -17,22 +17,22 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Stable citation metadata | Policy manifest, section identifiers, `Citation` schema | Ready |
 | RAG ingestion, chunking, index, retrieval | `app/rag`, persisted index, Markdown/PDF ingestion, hybrid retrieval, index drift check | Ready |
 | Grounded answers and citation validation | Evidence coverage/conflict checks, exact retrieved-chunk allow-list, citation tests | Ready: bounded workflow |
-| At least five MCP tools | Eight typed tool contracts | Foundation |
-| Actual MCP discovery and invocation | Official `mcp` client, Streamable HTTP server, Phase 4 integration test | Ready: 2-tool slice |
+| At least five MCP tools | Eight implemented typed MCP tools with input/output schemas | Ready |
+| Actual MCP discovery and invocation | Official `mcp` client, Streamable HTTP server, eight-tool integration test | Ready |
 | Two multi-step workflows | Remote-work and PTO use cases; expense backup | Planned: Phase 7 |
-| Operational tool trace | `/chat` response and UI show discovery/call summaries, sanitized arguments, status, and duration | Ready: Phase 4 slice |
-| Confirmation before write-like actions | `create_mock_hr_ticket` contract and test | Foundation |
+| Operational tool trace | Shared executor records all eight tools with sanitized arguments, status, duration, and bounded summaries | Ready |
+| Confirmation before write-like actions | Signed expiring confirmation, exact preview binding, idempotency, redaction, and safety tests | Ready |
 | Synthetic structured data | 30 employees, 6 locations, manager, PTO, benefits, and ticket seeds; strict schemas, checksums, semantic validation, SQLite build | Ready |
 | `/chat` endpoint and UI workflow | Bounded API path and E-1007 live demonstration; broader product work remains | Ready: Phase 4 slice |
 | Automated startup test | FastAPI TestClient health and root tests | Ready |
-| MCP discovery/call test | `tests/test_phase4_mcp.py`, `tests/test_phase4_chat.py` | Ready |
+| MCP discovery/call test | `tests/test_phase4_mcp.py`, `tests/test_phase4_chat.py`, `tests/test_phase6_mcp.py` | Ready |
 | CI on push and pull request | `.github/workflows/ci.yml` | Ready |
 | Deployment gated on passing tests | CI container depends on backend/frontend jobs; Render uses `autoDeployTrigger: checksPass` | Ready: initial service |
 | Evaluation set of 20-30 cases | 25 machine-readable cases with exact 7/5/6/4/3 distribution | Ready |
 | Evaluation expectations defined before implementation | Facts, policy sections, tools, outcomes, constraints, and safety per case | Ready |
 | Evaluation and API JSON Schemas | `evaluation/schemas`, drift-export script, CI check | Ready |
 | Required metrics and ablation | Phase 5 retrieval ablation and raw results; full workflow metrics remain Phase 10 | Foundation: retrieval ready |
-| README and design documentation | Repository documentation | Ready through Phase 5 |
+| README and design documentation | Repository documentation | Ready through Phase 6 |
 | AI tooling disclosure | `ai-tooling.md` | Ready and maintained continuously |
 | Deployment URL and cold-start notes | `render.yaml`, `deployed.md`, verified public root and `/health` | Ready |
 | Recorded demo | Demo acceptance criteria in use cases | Planned: Phase 10 |

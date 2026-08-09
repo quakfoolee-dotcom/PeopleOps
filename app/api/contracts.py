@@ -55,7 +55,15 @@ class Citation(ContractModel):
 
 
 SENSITIVE_TRACE_KEYS = frozenset(
-    {"authorization", "password", "secret", "token", "api_key", "access_token"}
+    {
+        "authorization",
+        "password",
+        "secret",
+        "token",
+        "confirmation_token",
+        "api_key",
+        "access_token",
+    }
 )
 
 
@@ -118,7 +126,7 @@ class ChatRequest(ContractModel):
     message: str = Field(min_length=1, max_length=4000)
     employee_id: str | None = Field(default=None, pattern=r"^E-\d{4}$")
     as_of_date: date = SYNTHETIC_AS_OF_DATE
-    confirmation_token: str | None = Field(default=None, min_length=16, max_length=200)
+    confirmation_token: str | None = Field(default=None, min_length=16, max_length=500)
 
 
 class ChatResponse(ContractModel):

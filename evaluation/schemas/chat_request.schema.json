@@ -10,7 +10,7 @@
     "confirmation_token": {
       "anyOf": [
         {
-          "maxLength": 200,
+          "maxLength": 500,
           "minLength": 16,
           "type": "string"
         },

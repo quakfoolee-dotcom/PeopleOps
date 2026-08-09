@@ -3,7 +3,7 @@ import asyncio
 from mcp import Client
 
 from peopleops_mcp.schemas import EmployeeProfileResult, PolicySearchResult
-from peopleops_mcp.server import PHASE5_TOOL_NAMES, mcp_server
+from peopleops_mcp.server import PHASE6_TOOL_NAMES, mcp_server
 
 
 def test_official_mcp_client_discovers_and_invokes_phase4_tools() -> None:
@@ -28,7 +28,7 @@ def test_official_mcp_client_discovers_and_invokes_phase4_tools() -> None:
 
     tool_names, profile, policy = asyncio.run(exercise_tools())
 
-    assert tool_names == PHASE5_TOOL_NAMES
+    assert tool_names == PHASE6_TOOL_NAMES
     assert profile.found is True
     assert profile.profile is not None
     assert profile.profile.employee_id == "E-1007"

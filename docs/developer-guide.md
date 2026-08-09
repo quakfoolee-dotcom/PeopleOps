@@ -95,7 +95,27 @@ Copy `.env.example` to `.env`. Provider keys are intentionally absent from the e
 MCP Streamable HTTP application at that path, so `/chat` exercises a real client/server boundary
 without a second container. Do not point the orchestrator at a data store or corpus path.
 
-## Phase 5 API smoke test
+`MCP_CONFIRMATION_SECRET` signs the Phase 6 mock-action confirmation proof and must be at least 32
+characters. Render generates the production value. The `.env.example` value is local-demo-only.
+`MCP_CONFIRMATION_TTL_SECONDS` defaults to 900 seconds. Never log or add the token to an operational
+trace.
+
+## Phase 6 MCP verification
+
+Run the complete tool-layer tests:
+
+```powershell
+python -m pytest tests/test_phase6_tool_data.py `
+  tests/test_phase6_action_safety.py tests/test_phase6_mcp.py
+```
+
+The integration test discovers eight tools from the official MCP client, verifies each input and
+output schema, invokes all eight through `MCPToolExecutor`, and validates the nine trace entries
+(discovery plus eight calls). The safety suite proves refusal without confirmation, signature and
+expiry checks, exact action binding, idempotency, trace redaction, and no seed-file mutation. See
+`docs/phase6-mcp-tools.md` for the tool catalog and manual behavior.
+
+## Current API smoke test
 
 With the backend running, execute:
 

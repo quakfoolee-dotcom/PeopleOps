@@ -1,0 +1,68 @@
+{
+  "all_input_schemas_present": true,
+  "all_output_schemas_present": true,
+  "confirmation_gate_rejected_unsigned": true,
+  "confirmation_token_present_in_trace": false,
+  "created_ticket_id": "TKT-9001",
+  "discovered_tool_count": 8,
+  "discovered_tools": [
+    "check_policy_compliance",
+    "check_pto_balance",
+    "create_mock_hr_ticket",
+    "draft_hr_email",
+    "get_policy_section",
+    "lookup_benefits_status",
+    "lookup_employee_profile",
+    "search_policy_documents"
+  ],
+  "evaluated_at": "2026-08-09T02:59:54.050127+00:00",
+  "expected_tool_count": 8,
+  "idempotent_repeat_status": "already_created",
+  "passed": true,
+  "phase": 6,
+  "successful_tool_calls": 8,
+  "synthetic_as_of_date": "2026-09-01",
+  "ticket_seed_unchanged": true,
+  "tool_results": [
+    {
+      "duration_ms": 186,
+      "status": "succeeded",
+      "tool_name": "search_policy_documents"
+    },
+    {
+      "duration_ms": 11,
+      "status": "succeeded",
+      "tool_name": "get_policy_section"
+    },
+    {
+      "duration_ms": 17,
+      "status": "succeeded",
+      "tool_name": "lookup_employee_profile"
+    },
+    {
+      "duration_ms": 17,
+      "status": "succeeded",
+      "tool_name": "check_pto_balance"
+    },
+    {
+      "duration_ms": 13,
+      "status": "succeeded",
+      "tool_name": "lookup_benefits_status"
+    },
+    {
+      "duration_ms": 21,
+      "status": "succeeded",
+      "tool_name": "check_policy_compliance"
+    },
+    {
+      "duration_ms": 12,
+      "status": "succeeded",
+      "tool_name": "draft_hr_email"
+    },
+    {
+      "duration_ms": 7,
+      "status": "succeeded",
+      "tool_name": "create_mock_hr_ticket"
+    }
+  ]
+}

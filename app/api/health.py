@@ -5,7 +5,7 @@ from app.core.config import get_settings
 from app.data.store import load_seed_bundle, validate_seed_directory
 from app.rag.corpus import validate_corpus
 from app.rag.index import cached_index
-from peopleops_mcp.server import PHASE5_TOOL_NAMES
+from peopleops_mcp.server import PHASE6_TOOL_NAMES
 
 router = APIRouter(tags=["system"])
 
@@ -58,7 +58,7 @@ async def health() -> HealthResponse:
                 status="ready",
                 detail=(
                     "Streamable HTTP transport is mounted at /mcp with "
-                    f"{len(PHASE5_TOOL_NAMES)} discoverable Phase 5 tools."
+                    f"{len(PHASE6_TOOL_NAMES)} discoverable Phase 6 tools."
                 ),
             ),
             "mock_database": ComponentStatus(

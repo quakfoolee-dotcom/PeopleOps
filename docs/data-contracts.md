@@ -1,6 +1,8 @@
 # Data contracts and evaluation guide
 
-Phase 2 freezes the interfaces and expected behavior that later runtime phases must satisfy. These contracts do not claim that `/chat`, retrieval, or live MCP transport is implemented yet.
+Phase 2 froze the interfaces and expected behavior. Phases 3 through 6 now implement the structured
+data, retrieval, bounded `/chat` path, live MCP transport, and complete tool suite against those
+predefined expectations.
 
 ## Fixed synthetic date
 
@@ -33,6 +35,22 @@ Verify that committed schemas match the Pydantic source:
 ```
 
 CI performs the drift check.
+
+## MCP tool contracts
+
+`peopleops_mcp/schemas.py` defines strict structured results for policy search, exact-section
+retrieval, employee profile, PTO balance and calculation, benefits status, compliance, email draft,
+ticket preview, and mock-ticket action. MCP discovery exposes both input and output JSON Schemas for
+all eight tools.
+
+Read tools return `found=false` rather than inventing missing records. Compliance results include
+the applicable policy-section references, calculations, conditions, clarification fields, and
+`decision_is_approval=false`. Drafts require `sent=false` and `persisted=false`.
+
+The action contract separates a pre-tool preview from the post-confirmation create call. A signed
+token binds confirmation ID, expiry, and the exact preview fingerprint. The create result declares
+that it is synthetic and process-local. Confirmation tokens and sensitive free text are excluded or
+redacted from `ToolTraceEntry.sanitized_arguments`.
 
 ## Synthetic operational-data contracts
 

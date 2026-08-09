@@ -9,7 +9,7 @@ const healthPayload = {
     application: { status: "ready", detail: "FastAPI is serving requests." },
     policy_corpus: { status: "ready", detail: "12 synthetic policies validated." },
     rag_index: { status: "ready", detail: "169 sections indexed." },
-    mcp: { status: "ready", detail: "2 Phase 5 tools are discoverable." },
+    mcp: { status: "ready", detail: "8 Phase 6 tools are discoverable." },
   },
 };
 
@@ -47,7 +47,7 @@ const chatPayload = {
   ],
 };
 
-describe("PeopleOps Assistant Phase 5 interface", () => {
+describe("PeopleOps Assistant Phase 6 interface", () => {
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
@@ -62,7 +62,7 @@ describe("PeopleOps Assistant Phase 5 interface", () => {
     render(<App />);
 
     expect(screen.getAllByText("PeopleOps Assistant").length).toBeGreaterThan(0);
-    expect(screen.getByText(/Phase 5 · v0.2.0/i)).toBeInTheDocument();
+    expect(screen.getByText(/Phase 6 · v0.3.0/i)).toBeInTheDocument();
     expect(await screen.findByText("Service healthy")).toBeInTheDocument();
     expect(screen.getByText("live MCP tools")).toBeInTheDocument();
     expect(screen.getByText("Trace a request from question to evidence")).toBeInTheDocument();

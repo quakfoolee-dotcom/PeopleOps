@@ -5,7 +5,7 @@
 - **Deployment:** one container with logically separated modules to reduce free-tier operational risk.
 - **API:** FastAPI for typed schemas, health checks, and asynchronous integration points.
 - **Web:** React and Vite compiled to static assets served by FastAPI in production.
-- **MCP:** eight tool contracts with future discovery and invocation through a dedicated client/server boundary.
+- **MCP:** eight implemented tools discovered and invoked through a dedicated client/server boundary.
 - **Corpus:** 12 coherent synthetic policies with 10 Markdown and 2 PDF authoritative runtime sources.
 - **Structured data:** deterministic synthetic records; no real personal information.
 - **Safety:** bounded tool calls, evidence sufficiency, citation allow-listing, explicit confirmation for persistent mock actions, and controlled degraded-mode responses.
@@ -42,11 +42,19 @@ sections, the measured recalls were 83.33%, 95.83%, and 100.00%, respectively. H
 selected configuration. Full groundedness, tool, workflow, safety, and deployed latency metrics
 remain Phase 10 work.
 
+The Phase 6 machine-readable tool validation discovered all eight tools, found input and output
+schemas for all eight, completed one traced call per tool, rejected an unsigned ticket action,
+returned the same mock ticket for an idempotent repeat, omitted the confirmation token from traces,
+and verified the committed ticket seed was unchanged. These are tool-layer results, not full
+workflow-selection metrics.
+
 ## Current evidence
 
-Phases 1 through 5 validate startup and health reporting; the 12-policy/45-page corpus; deterministic
+Phases 1 through 6 validate startup and health reporting; the 12-policy/45-page corpus; deterministic
 structured data; API and evaluation contracts; live MCP discovery and calls; the bounded deployed
 workflow; direct Markdown and PDF ingestion; a persisted 169-section hybrid index; evidence
 sufficiency and conflict behavior; citation allow-listing; and 100% retrieval evidence recall for
-the selected Phase 5 configuration. This retrieval result does not claim that the still-planned
-eight-tool suite, broader workflows, provider generation, or final product evaluation is complete.
+the selected Phase 5 configuration. Phase 6 additionally proves eight schema-valid tools, shared
+timeouts and sanitized traces, read-only structured-data operations, deterministic compliance,
+draft-only email behavior, and confirmation-gated idempotent mock actions. Broader agent workflows,
+provider generation, and final product evaluation are not yet complete.

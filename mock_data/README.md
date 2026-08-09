@@ -53,3 +53,10 @@ Example read-only inspection:
 5. Run `python scripts/validate_phase3_assets.py` and the complete `scripts/check.ps1` gate.
 
 Never add actual employee records, personal contact details, secrets, medical details, investigation findings, or production ticket content.
+
+## Phase 6 mock actions
+
+`create_mock_hr_ticket` never writes this directory or a production service. After explicit signed
+confirmation it creates a process-local synthetic record with IDs starting at `TKT-9001`. Repeated
+use of the same idempotency key returns the original record. Restarting the service clears previews,
+tokens, and created mock tickets; the six committed historical fixtures remain authoritative.
