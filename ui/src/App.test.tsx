@@ -87,6 +87,26 @@ const chatPayload = {
   pending_action: null,
 };
 
+const attachmentPayload = {
+  filename: "travel-details.txt",
+  media_type: "text/plain",
+  extracted_text: "Destination: Germany. Duration: six weeks.",
+  original_size_bytes: 44,
+  truncated: false,
+};
+
+const structuredProviderPayload = {
+  ...chatPayload,
+  answer:
+    "AI-generated grounded summary\nThis request is conditionally eligible, but it is not approval. Manager and People Operations review are required. Provide exact travel and working dates before final review.\n\nVerified workflow result\nThe 42-day request is classified as international exceptional. Submit it at least 30 business days in advance. Confirm lawful work status and the required security controls.",
+};
+
+const terseProviderPayload = {
+  ...chatPayload,
+  answer:
+    "AI-generated grounded summary\nConditionally eligible. 42 calendar days / 30 business days. International exceptional. Manager. People Operations. Security. Legal. not approval. Verified sources: [POL-INT-001 § INT-5]\n\nVerified workflow result\nThe request exceeds the standard duration and requires additional review.",
+};
+
 const previewPayload = {
   ...chatPayload,
   request_id: "79928d70-989a-4c5e-b603-9d99fa5be522",
@@ -203,7 +223,13 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getByText("Synthetic demo environment")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Chat with PeopleOps Assistant" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Demo tasks" })).toBeInTheDocument();
-    expect(screen.getByText("International remote work")).toBeInTheDocument();
+    expect(screen.getAllByText("International remote work").length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "My Requests" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "My Profile" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "PTO Balance" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Benefits" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Help" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Settings" })).toBeInTheDocument();
     const taskRegion = screen.getByRole("region", { name: "Demo tasks" });
     expect(within(taskRegion).getByText("5")).toBeInTheDocument();
     expect(within(taskRegion).getByText("Policy and benefits guidance")).toBeInTheDocument();
@@ -288,17 +314,86 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getByRole("heading", { name: "Next steps" })).toBeInTheDocument();
     expect(screen.getByText("Guidance complete")).toBeInTheDocument();
     expect(screen.getAllByText(/INT-5/).length).toBeGreaterThan(0);
-    expect(screen.getByText("Full cited snippet")).toBeInTheDocument();
+    expect(screen.getByText("View complete excerpt")).toBeInTheDocument();
     expect(screen.getByText("mcp discover tools")).toBeInTheDocument();
     expect(screen.getByText(chatPayload.request_id)).toBeInTheDocument();
     expect(screen.getByText(chatPayload.trace_id)).toBeInTheDocument();
     expect(screen.getByText(/openrouter · nvidia\/example:free/i)).toBeInTheDocument();
-    expect(screen.getByText("240 ms")).toBeInTheDocument();
+    expect(screen.getByText(/240 ms synthesis/i)).toBeInTheDocument();
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     expect(fetchMock).toHaveBeenLastCalledWith(
       "/chat",
       expect.objectContaining({ method: "POST" }),
     );
+  });
+
+  it("extracts an attachment and submits it with the selected use case", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => healthPayload })
+      .mockResolvedValueOnce({ ok: true, json: async () => attachmentPayload })
+      .mockResolvedValueOnce({ ok: true, json: async () => chatPayload });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: /New chat/i }));
+    fireEvent.change(screen.getByRole("combobox", { name: "Use case:" }), {
+      target: { value: "remote_work" },
+    });
+    fireEvent.change(screen.getByRole("textbox", { name: "Ask a follow-up or start another workflow" }), {
+      target: { value: "What do I need to do for the attached travel details?" },
+    });
+
+    const file = new File(["Destination: Germany"], "travel-details.txt", { type: "text/plain" });
+    Object.defineProperty(file, "arrayBuffer", {
+      value: async () => Uint8Array.from([68, 101, 109, 111]).buffer,
+    });
+    const fileInput = document.querySelector<HTMLInputElement>("#attachment-input");
+    expect(fileInput).not.toBeNull();
+    fireEvent.change(fileInput!, { target: { files: [file] } });
+
+    expect(await screen.findByText("travel-details.txt")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Send question" }));
+
+    await screen.findByRole("heading", { name: "Conditionally eligible" });
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    expect(fetchMock.mock.calls[1][0]).toBe("/attachments/extract");
+    const chatBody = JSON.parse(String(fetchMock.mock.calls[2][1]?.body));
+    expect(chatBody.use_case).toBe("remote_work");
+    expect(chatBody.attachment).toEqual(attachmentPayload);
+  });
+
+  it("turns a provider response into scannable guidance and progressive verified detail", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => healthPayload })
+      .mockResolvedValueOnce({ ok: true, json: async () => structuredProviderPayload });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Send question" }));
+
+    expect(await screen.findByRole("heading", { name: "Plain-language summary" })).toBeInTheDocument();
+    expect(screen.getByText("AI summarized")).toBeInTheDocument();
+    expect(screen.getByText(/Manager and People Operations review are required/i)).toBeInTheDocument();
+    expect(screen.getByText("Why this result")).toBeInTheDocument();
+    expect(screen.getByText(/42-day request is classified as international exceptional/i)).toBeInTheDocument();
+  });
+
+  it("does not repeat structured result facts in a terse generated summary", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => healthPayload })
+      .mockResolvedValueOnce({ ok: true, json: async () => terseProviderPayload });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Send question" }));
+
+    expect(await screen.findByText("This result is guidance, not approval.")).toBeInTheDocument();
+    expect(screen.getAllByText("42 calendar days / 30 business days")).toHaveLength(1);
+    expect(screen.getAllByText("International exceptional")).toHaveLength(1);
+    expect(screen.queryByText(/Verified sources:/i)).not.toBeInTheDocument();
   });
 
   it("runs the real remote-work email-draft action through chat", async () => {
@@ -380,7 +475,7 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     fireEvent.click(within(dialog).getByRole("button", { name: "Cancel" }));
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Review pending action" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Review mock request" })).toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });

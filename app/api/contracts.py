@@ -40,6 +40,15 @@ class WorkflowKind(StrEnum):
     UNSUPPORTED = "unsupported"
 
 
+class UseCaseHint(StrEnum):
+    AUTO = "auto"
+    REMOTE_WORK = "remote_work"
+    PTO = "pto"
+    EXPENSE = "expense"
+    BENEFITS_POLICY = "benefits_policy"
+    WORKPLACE_CONCERN = "workplace_concern"
+
+
 class WorkflowStage(StrEnum):
     CLASSIFY = "classify"
     CLARIFY = "clarify"
@@ -172,10 +181,34 @@ class GenerationMetadata(ContractModel):
     )
 
 
+class AttachmentContext(ContractModel):
+    filename: str = Field(
+        min_length=1,
+        max_length=120,
+        pattern=r"^[^/\\\x00-\x1f]+$",
+    )
+    media_type: Literal["text/plain", "text/markdown", "application/pdf"]
+    extracted_text: str = Field(min_length=1, max_length=6000)
+    original_size_bytes: int = Field(ge=1, le=2_000_000)
+    truncated: bool = False
+
+
+class AttachmentUploadRequest(ContractModel):
+    filename: str = Field(
+        min_length=1,
+        max_length=120,
+        pattern=r"^[^/\\\x00-\x1f]+$",
+    )
+    media_type: Literal["text/plain", "text/markdown", "application/pdf"]
+    content_base64: str = Field(min_length=4, max_length=2_700_000)
+
+
 class ChatRequest(ContractModel):
     request_id: UUID = Field(default_factory=uuid4)
     message: str = Field(min_length=1, max_length=4000)
     employee_id: str | None = Field(default=None, pattern=r"^E-\d{4}$")
+    use_case: UseCaseHint = UseCaseHint.AUTO
+    attachment: AttachmentContext | None = None
     as_of_date: date = SYNTHETIC_AS_OF_DATE
     confirmation_token: str | None = Field(default=None, min_length=16, max_length=500)
 

@@ -48,6 +48,35 @@ def test_orchestrator_completes_cited_mcp_workflow_with_operational_trace() -> N
     assert response.tool_trace[1].sanitized_arguments == {"employee_id": "E-1007"}
 
 
+def test_use_case_hint_and_attachment_feed_the_bounded_workflow() -> None:
+    orchestrator = PeopleOpsOrchestrator(MCPGateway(target=mcp_server, timeout_seconds=2))
+
+    response = asyncio.run(
+        orchestrator.run(
+            ChatRequest(
+                message="Please evaluate the attached travel request.",
+                employee_id="E-1007",
+                use_case="remote_work",
+                attachment={
+                    "filename": "travel-details.txt",
+                    "media_type": "text/plain",
+                    "extracted_text": "I plan to work from Germany for six weeks.",
+                    "original_size_bytes": 46,
+                    "truncated": False,
+                },
+            )
+        )
+    )
+
+    assert response.status == "completed"
+    assert response.workflow == "remote_work"
+    assert response.outcome == "conditional"
+    search_trace = next(
+        entry for entry in response.tool_trace if entry.tool_name == "search_policy_documents"
+    )
+    assert "travel-details.txt" not in str(search_trace.sanitized_arguments)
+
+
 def test_chat_api_returns_contract_validated_response_from_mcp_workflow() -> None:
     orchestrator = PeopleOpsOrchestrator(MCPGateway(target=mcp_server, timeout_seconds=2))
     app.dependency_overrides[get_orchestrator] = lambda: orchestrator

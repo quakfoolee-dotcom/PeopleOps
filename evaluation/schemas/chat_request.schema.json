@@ -1,4 +1,64 @@
 {
+  "$defs": {
+    "AttachmentContext": {
+      "additionalProperties": false,
+      "properties": {
+        "extracted_text": {
+          "maxLength": 6000,
+          "minLength": 1,
+          "title": "Extracted Text",
+          "type": "string"
+        },
+        "filename": {
+          "maxLength": 120,
+          "minLength": 1,
+          "pattern": "^[^/\\\\\\x00-\\x1f]+$",
+          "title": "Filename",
+          "type": "string"
+        },
+        "media_type": {
+          "enum": [
+            "text/plain",
+            "text/markdown",
+            "application/pdf"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "original_size_bytes": {
+          "maximum": 2000000,
+          "minimum": 1,
+          "title": "Original Size Bytes",
+          "type": "integer"
+        },
+        "truncated": {
+          "default": false,
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "filename",
+        "media_type",
+        "extracted_text",
+        "original_size_bytes"
+      ],
+      "title": "AttachmentContext",
+      "type": "object"
+    },
+    "UseCaseHint": {
+      "enum": [
+        "auto",
+        "remote_work",
+        "pto",
+        "expense",
+        "benefits_policy",
+        "workplace_concern"
+      ],
+      "title": "UseCaseHint",
+      "type": "string"
+    }
+  },
   "additionalProperties": false,
   "properties": {
     "as_of_date": {
@@ -6,6 +66,17 @@
       "format": "date",
       "title": "As Of Date",
       "type": "string"
+    },
+    "attachment": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AttachmentContext"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "confirmation_token": {
       "anyOf": [
@@ -44,6 +115,10 @@
       "format": "uuid",
       "title": "Request Id",
       "type": "string"
+    },
+    "use_case": {
+      "$ref": "#/$defs/UseCaseHint",
+      "default": "auto"
     }
   },
   "required": [
