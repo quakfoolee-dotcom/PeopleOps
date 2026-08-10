@@ -1,0 +1,119 @@
+{
+  "$defs": {
+    "IntentRobustnessCase": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "pattern": "^INTENT-\\d{3}$",
+          "title": "Case Id",
+          "type": "string"
+        },
+        "clarification_contains": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Clarification Contains",
+          "type": "array"
+        },
+        "expected_fields": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Expected Fields",
+          "type": "object"
+        },
+        "expected_kind": {
+          "$ref": "#/$defs/WorkflowKind"
+        },
+        "prompt": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "supplied_employee_id": {
+          "anyOf": [
+            {
+              "pattern": "^E-\\d{4}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplied Employee Id"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id",
+        "title",
+        "prompt",
+        "expected_kind"
+      ],
+      "title": "IntentRobustnessCase",
+      "type": "object"
+    },
+    "WorkflowKind": {
+      "enum": [
+        "policy",
+        "remote_work",
+        "pto",
+        "expense",
+        "mock_ticket",
+        "unsupported"
+      ],
+      "title": "WorkflowKind",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/IntentRobustnessCase"
+      },
+      "maxItems": 15,
+      "minItems": 15,
+      "title": "Cases",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "cases"
+  ],
+  "title": "IntentRobustnessSuite",
+  "type": "object"
+}

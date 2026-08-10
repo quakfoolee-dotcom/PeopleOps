@@ -16,7 +16,7 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | At least two source formats | 10 Markdown and 2 PDF runtime sources | Ready |
 | Stable citation metadata | Policy manifest, section identifiers, `Citation` schema | Ready |
 | RAG ingestion, chunking, index, retrieval | `app/rag`, persisted index, Markdown/PDF ingestion, hybrid retrieval, index drift check | Ready |
-| Grounded answers and citation validation | Evidence coverage/conflict checks, exact retrieved-chunk allow-list, citation tests | Ready: bounded workflow |
+| Grounded answers and citation validation | Evidence coverage/conflict checks, exact retrieved-chunk allow-list, executable expected-fact/constraint assertions, and claim-to-citation/tool support | Ready: 100% gold gate |
 | At least five MCP tools | Eight implemented typed MCP tools with input/output schemas | Ready |
 | Actual MCP discovery and invocation | Official `mcp` client, Streamable HTTP server, eight-tool integration test | Ready |
 | Two multi-step workflows | Repeatable remote-work and PTO state machines plus expense backup; Phase 7 evaluation | Ready |
@@ -36,8 +36,10 @@ Status values: **Ready** means implemented and tested; **Foundation** means its 
 | Evaluation set of 20-30 cases | 25 machine-readable cases with exact 7/5/6/4/3 distribution | Ready |
 | Evaluation expectations defined before implementation | Facts, policy sections, tools, outcomes, constraints, and safety per case | Ready |
 | Evaluation and API JSON Schemas | `evaluation/schemas`, drift-export script, CI check | Ready |
-| Required metrics and ablation | Phase 10 gold JSON/CSV plus Phase 5 retrieval ablation: groundedness 96%, citations/tools/safety 100%, workflow 96% | Ready |
-| README and design documentation | Repository documentation plus Phase 7–10 workflow, interface, release, evaluation, submission, and demo guides | Ready |
+| Required metrics and ablation | Phase 10 gold JSON/CSV: facts, constraints, claim support, groundedness, citations, tools, workflow, and safety 100%; hash/neural comparison plus Phase 5 retrieval ablation | Ready |
+| Intent robustness | 15 versioned paraphrase, typo, country/date alias, mixed-intent, adversarial confirmation-bypass, and unsupported-scope cases | Ready: 100% |
+| Production-provider evaluation | Three generic read-only hosted workflows; provider acceptance/fallback, latency, exact workflow/citation/tool integrity, and no-write checks | Ready: 100% integrity |
+| README and design documentation | Root `README.md` and `design-and-evaluation.md` plus Phase 7–10 workflow, interface, release, evaluation, and submission guides | Ready |
 | AI tooling disclosure | `ai-tooling.md` | Ready and maintained continuously |
 | Deployment URL and cold-start notes | `render.yaml`, `deployed.md`, verified public root and `/health` | Ready |
 | Recorded demo | Timed 8:30 script, two workflow diagrams, preflight, and rehearsal acceptance record | Ready to record; owner URL pending |

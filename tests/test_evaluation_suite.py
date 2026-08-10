@@ -2,6 +2,7 @@ from collections import Counter
 from datetime import date
 
 from app.api.contracts import WorkflowOutcome
+from app.evaluation.answer_quality import load_answer_check_suite
 from app.evaluation.contracts import EvaluationCategory, PolicySectionTarget
 from app.evaluation.gold import (
     EXPECTED_CATEGORY_COUNTS,
@@ -24,12 +25,17 @@ def test_gold_suite_meets_phase_two_exit_criterion() -> None:
 
 def test_every_case_defines_facts_tools_outcome_and_safety() -> None:
     suite = load_gold_suite()
+    checks = {case.case_id: case for case in load_answer_check_suite().cases}
 
     for case in suite.cases:
         assert case.expected_facts
         assert case.answer_constraints
         assert case.safety_behavior
         assert case.expected_outcome in WorkflowOutcome
+        assert len(checks[case.case_id].fact_checks) == len(case.expected_facts)
+        assert len(checks[case.case_id].constraint_checks) == len(
+            case.answer_constraints
+        )
         declared_tools = case.tools.required + case.tools.forbidden + case.tools.after_confirmation
         assert len(declared_tools) == len(set(declared_tools))
 

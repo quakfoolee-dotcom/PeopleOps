@@ -7,6 +7,10 @@ from pydantic import ValidationError
 
 from app.core.config import PROJECT_ROOT
 from app.core.constants import SYNTHETIC_AS_OF_DATE
+from app.evaluation.answer_quality import (
+    load_answer_check_suite,
+    validate_answer_check_suite,
+)
 from app.evaluation.contracts import EvaluationCategory, GoldEvaluationSuite
 from peopleops_mcp.contracts import REQUIRED_TOOL_CONTRACTS
 
@@ -62,6 +66,14 @@ def validate_gold_suite(suite: GoldEvaluationSuite) -> list[str]:
 
     known_sections = load_policy_section_catalog()
     known_tools = {contract.name for contract in REQUIRED_TOOL_CONTRACTS}
+    errors.extend(
+        validate_answer_check_suite(
+            suite,
+            load_answer_check_suite(),
+            known_sections=known_sections,
+            known_tools=known_tools,
+        )
+    )
 
     for case in suite.cases:
         for section in case.expected_policy_sections:

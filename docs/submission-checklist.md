@@ -13,12 +13,16 @@
 - [x] Twenty-five gold cases executed with machine-readable JSON and CSV.
 - [x] Every internal Score-5 metric threshold passes.
 - [x] Retrieval ablation and error analysis are documented.
+- [x] Every expected fact and answer constraint is executable; claim-to-citation/tool support is measured.
+- [x] Intent robustness, neural embedding comparison, and production-provider behavior are measured.
 - [x] Both primary workflows complete ten consecutive warm runs.
 - [x] Backend, frontend, startup, Docker, MCP, safety, and provider tests are automated.
 - [x] Hosted application, health, and exact-release smoke automation exist.
 - [x] Synthetic-only data, environment-based secrets, and AI-tooling disclosure are documented.
+- [x] Root `design-and-evaluation.md` documents architecture, RAG, MCP, safety, metrics, reproduction, and limitations.
+- [x] `deployed.md`, evaluation guides, reproduction commands, and AI disclosure match the current evidence.
 - [x] Risk controls, residual risks, owners, and explicit non-goals are documented.
-- [x] Production release `ad65bee` passed CI and deployment-triggered plus warm hosted smoke.
+- [x] Production release `2300463` reports healthy OpenRouter and passed generic read-only provider integrity checks.
 
 ## Owner-controlled submission steps
 

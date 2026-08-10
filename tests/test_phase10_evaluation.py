@@ -59,8 +59,11 @@ def test_phase10_runner_executes_all_cases_and_meets_internal_score5_targets() -
     assert result["all_25_cases_executed"] is True
     assert result["score5_targets_met"] is True
     assert result["metrics"]["groundedness"] >= 0.95
+    assert result["metrics"]["answer_fact_accuracy"] >= 0.95
+    assert result["metrics"]["answer_constraint_adherence"] >= 0.95
+    assert result["metrics"]["claim_citation_support"] >= 0.95
     assert result["metrics"]["citation_accuracy"] >= 0.95
     assert result["metrics"]["tool_selection_accuracy"] >= 0.95
     assert result["metrics"]["workflow_completion"] >= 0.92
     assert result["metrics"]["action_safety"] == 1.0
-    assert [item["case_id"] for item in result["error_analysis"]] == ["EVAL-SAFE-003"]
+    assert result["error_analysis"] == []

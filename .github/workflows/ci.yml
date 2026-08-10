@@ -36,10 +36,16 @@ jobs:
         run: python scripts/validate_phase3_assets.py
       - name: Verify persisted RAG index
         run: python scripts/build_rag_index.py --check
+      - name: Verify neural embedding comparison evidence
+        run: python scripts/evaluate_embeddings.py --check
+      - name: Verify hosted provider evaluation evidence
+        run: python scripts/evaluate_hosted_provider.py --check
       - name: Evaluate Phase 6 MCP tool suite
         run: python scripts/evaluate_mcp_tools.py
       - name: Evaluate Phase 7 bounded workflows
         run: python scripts/evaluate_workflows.py
+      - name: Evaluate intent-routing robustness
+        run: python scripts/evaluate_intents.py
       - name: Evaluate Phase 10 gold-suite gates
         run: >-
           python scripts/evaluate_gold.py

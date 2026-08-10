@@ -13,8 +13,9 @@ from peopleops_mcp.schemas import MockTicketPreview
 EMPLOYEE_PATTERN = re.compile(r"\bE-\d{4}\b", re.IGNORECASE)
 ISO_DATE_PATTERN = re.compile(r"\b(20\d{2})-(\d{2})-(\d{2})\b")
 MONTH_DATE_PATTERN = re.compile(
-    r"\b(January|February|March|April|May|June|July|August|September|October|"
-    r"November|December)\s+(\d{1,2})(?:,?\s+(20\d{2}))?\b",
+    r"\b(January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|"
+    r"August|Aug|September|Sep|Sept|October|Oct|November|Nov|December|Dec)"
+    r"\.?\s+(\d{1,2})(?:,?\s+(20\d{2}))?\b",
     re.IGNORECASE,
 )
 AMOUNT_PATTERN = re.compile(
@@ -36,6 +37,18 @@ MONTHS = {
     "october": 10,
     "november": 11,
     "december": 12,
+    "jan": 1,
+    "feb": 2,
+    "mar": 3,
+    "apr": 4,
+    "jun": 6,
+    "jul": 7,
+    "aug": 8,
+    "sep": 9,
+    "sept": 9,
+    "oct": 10,
+    "nov": 11,
+    "dec": 12,
 }
 NUMBER_WORDS = {
     "one": 1,
@@ -57,7 +70,23 @@ COUNTRIES = {
     "canada": ("CA", "Canada"),
     "united states": ("US", "the United States"),
     "usa": ("US", "the United States"),
+    "u.s.": ("US", "the United States"),
+    "america": ("US", "the United States"),
+    "deutschland": ("DE", "Germany"),
 }
+
+TYPO_CORRECTIONS = {
+    "remotly": "remotely",
+    "vacaton": "vacation",
+    "reimbursment": "reimbursement",
+}
+
+
+def _normalized_message(message: str) -> str:
+    normalized = message.casefold()
+    for typo, replacement in TYPO_CORRECTIONS.items():
+        normalized = re.sub(rf"\b{typo}\b", replacement, normalized)
+    return normalized
 
 
 class RemoteWorkIntent(ContractModel):
@@ -290,13 +319,15 @@ def _duration_calendar_days(message: str) -> int | None:
 def _destination(message: str) -> tuple[str | None, str | None]:
     normalized = message.casefold()
     for name, result in COUNTRIES.items():
-        if re.search(rf"\b{re.escape(name)}\b", normalized):
+        if ("." in name and name in normalized) or re.search(
+            rf"\b{re.escape(name)}\b", normalized
+        ):
             return result
     return None, None
 
 
 def classify_request(message: str, supplied_employee_id: str | None) -> WorkflowIntent:
-    normalized = message.casefold()
+    normalized = _normalized_message(message)
     employee_id, employee_clarifications = _employee_id(message, supplied_employee_id)
 
     if ("diagnose" in normalized or "diagnosis" in normalized) and any(
@@ -309,7 +340,29 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
             ),
         )
 
-    if "ticket" in normalized and "do not ask me to confirm" in normalized:
+    bypass_confirmation = any(
+        phrase in normalized
+        for phrase in (
+            "do not ask me to confirm",
+            "don't ask me to confirm",
+            "skip confirmation",
+            "without confirmation",
+            "bypass confirmation",
+        )
+    )
+    ticket_request = any(
+        phrase in normalized
+        for phrase in (
+            "ticket",
+            "hr case",
+            "peopleops case",
+            "people ops case",
+            "raise a case",
+            "open a case",
+            "file a case",
+        )
+    )
+    if ticket_request and bypass_confirmation:
         return PolicyIntent(
             topic="ticket_confirmation_guard",
             required_sections=(("POL-HRC-001", "HRC-8"),),
@@ -320,7 +373,10 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
                 "reviewed and explicitly confirmed."
             ),
             retrieve_before_clarification=True,
-            clarification_needed=["affected synthetic employee ID"],
+            clarification_needed=[
+                "affected synthetic employee ID",
+                "minimum-necessary summary",
+            ],
         )
 
     if (
@@ -340,7 +396,7 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
             refusal=True,
         )
 
-    if "ticket" in normalized or "hr case" in normalized:
+    if ticket_request:
         priority: Literal["normal", "high", "urgent"]
         if "urgent" in normalized or "immediate danger" in normalized:
             priority = "urgent"
@@ -359,8 +415,18 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
             clarification_needed=employee_clarifications,
         )
 
-    if "benefits" in normalized and any(
-        phrase in normalized for phrase in ("currently enrolled", "benefits active", "my benefits")
+    benefits_request = any(
+        phrase in normalized for phrase in ("benefits", "health coverage", "health plan")
+    )
+    if benefits_request and any(
+        phrase in normalized
+        for phrase in (
+            "currently enrolled",
+            "benefits active",
+            "my benefits",
+            "coverage active",
+            "enrolled in",
+        )
     ):
         clarification = list(employee_clarifications)
         return PolicyIntent(
@@ -382,7 +448,10 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
             clarification_needed=clarification,
         )
 
-    if "onboarding" in normalized and "employee" in normalized and "first week" in normalized:
+    onboarding_request = any(
+        phrase in normalized for phrase in ("onboarding", "new employee", "new starter")
+    )
+    if onboarding_request and "first week" in normalized:
         return PolicyIntent(
             topic="employee_onboarding",
             employee_id=employee_id,
@@ -419,7 +488,11 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
             ],
         )
 
-    if "manager" in normalized and "harassment report" in normalized:
+    manager_report = any(role in normalized for role in ("manager", "supervisor")) and any(
+        phrase in normalized
+        for phrase in ("harassment report", "harassment complaint", "conduct complaint")
+    )
+    if manager_report:
         return PolicyIntent(
             topic="manager_harassment_report",
             required_sections=(
@@ -592,10 +665,67 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
             conditional=True,
         )
 
-    if any(
+    pto_request = any(
         phrase in normalized
-        for phrase in ("pto", "vacation", "time off", "take next week off")
-    ):
+        for phrase in (
+            "pto",
+            "vacation",
+            "time off",
+            "take next week off",
+            "annual leave",
+            "vacay",
+        )
+    )
+    expense_request = any(
+        phrase in normalized
+        for phrase in (
+            "reimburs",
+            "home-office",
+            "home office",
+            "expense",
+            "chair",
+            "claim back",
+            "repay",
+            "ergonomic",
+        )
+    )
+    remote_request = any(
+        phrase in normalized
+        for phrase in (
+            "work remotely",
+            "working remotely",
+            "remote work",
+            "work from",
+            "work overseas",
+            "overseas",
+            "telework",
+            "work abroad",
+            "working abroad",
+            "do my job from",
+        )
+    )
+    requested_domains = [
+        name
+        for name, requested in (
+            ("PTO", pto_request),
+            ("expense", expense_request),
+            ("remote-work", remote_request),
+        )
+        if requested
+    ]
+    if len(requested_domains) > 1:
+        return UnsupportedIntent(
+            reason=(
+                "the request combines multiple workflows: "
+                + ", ".join(requested_domains)
+            ),
+            clarification_needed=[
+                "one request at a time",
+                "which workflow to handle first",
+            ],
+        )
+
+    if pto_request:
         request_start, request_end = _parse_dates(message)
         clarification = list(employee_clarifications)
         if request_start is None:
@@ -612,10 +742,7 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
             clarification_needed=clarification,
         )
 
-    if any(
-        phrase in normalized
-        for phrase in ("reimburs", "home-office", "home office", "expense", "chair")
-    ):
+    if expense_request:
         match = AMOUNT_PATTERN.search(message)
         amount: Decimal | None = None
         currency: Literal["CAD", "USD"] | None = None
@@ -640,10 +767,7 @@ def classify_request(message: str, supplied_employee_id: str | None) -> Workflow
             clarification_needed=clarification,
         )
 
-    if any(
-        phrase in normalized
-        for phrase in ("work remotely", "remote work", "work from", "work overseas", "overseas")
-    ):
+    if remote_request:
         country_code, destination_name = _destination(message)
         duration = _duration_business_days(message)
         clarification = list(employee_clarifications)

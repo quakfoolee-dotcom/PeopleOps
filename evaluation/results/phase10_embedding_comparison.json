@@ -1,0 +1,289 @@
+{
+  "corpus_fingerprint": "c2660df62105f35bc614264e78768aeeb29f1e12f99f4b6f1bfa23e25c1313b5",
+  "dense_comparison": {
+    "feature_hash": {
+      "case_results": [
+        {
+          "case_id": "EVAL-POL-001",
+          "expected_count": 1,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-POL-002",
+          "expected_count": 1,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-POL-003",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-POL-004",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-POL-005",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-POL-006",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-POL-007",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-MULTI-001",
+          "expected_count": 4,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-MULTI-002",
+          "expected_count": 3,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-MULTI-003",
+          "expected_count": 2,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-MULTI-004",
+          "expected_count": 2,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-MULTI-005",
+          "expected_count": 4,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-TOOL-001",
+          "expected_count": 4,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-TOOL-002",
+          "expected_count": 2,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-TOOL-003",
+          "expected_count": 3,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-TOOL-004",
+          "expected_count": 3,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-TOOL-005",
+          "expected_count": 3,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-TOOL-006",
+          "expected_count": 3,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-AMB-001",
+          "expected_count": 1,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-AMB-002",
+          "expected_count": 1,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-AMB-003",
+          "expected_count": 1,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-AMB-004",
+          "expected_count": 2,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-SAFE-002",
+          "expected_count": 2,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-SAFE-003",
+          "expected_count": 1,
+          "matched_count": 1
+        }
+      ],
+      "dimensions": 384,
+      "evaluated_cases": 24,
+      "evidence_recall": 0.375,
+      "expected_sections": 48,
+      "index_build_seconds": 0.0,
+      "model": "peopleops-local-hash-v2",
+      "query_latency_ms": {
+        "p50": 10.809,
+        "p95": 11.945
+      },
+      "retrieved_expected_sections": 18,
+      "top_k": 5
+    },
+    "neural": {
+      "case_results": [
+        {
+          "case_id": "EVAL-POL-001",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-POL-002",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-POL-003",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-POL-004",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-POL-005",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-POL-006",
+          "expected_count": 1,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-POL-007",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-MULTI-001",
+          "expected_count": 4,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-MULTI-002",
+          "expected_count": 3,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-MULTI-003",
+          "expected_count": 2,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-MULTI-004",
+          "expected_count": 2,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-MULTI-005",
+          "expected_count": 4,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-TOOL-001",
+          "expected_count": 4,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-TOOL-002",
+          "expected_count": 2,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-TOOL-003",
+          "expected_count": 3,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-TOOL-004",
+          "expected_count": 3,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-TOOL-005",
+          "expected_count": 3,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-TOOL-006",
+          "expected_count": 3,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-AMB-001",
+          "expected_count": 1,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-AMB-002",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-AMB-003",
+          "expected_count": 1,
+          "matched_count": 1
+        },
+        {
+          "case_id": "EVAL-AMB-004",
+          "expected_count": 2,
+          "matched_count": 2
+        },
+        {
+          "case_id": "EVAL-SAFE-002",
+          "expected_count": 2,
+          "matched_count": 0
+        },
+        {
+          "case_id": "EVAL-SAFE-003",
+          "expected_count": 1,
+          "matched_count": 1
+        }
+      ],
+      "dimensions": 384,
+      "evaluated_cases": 24,
+      "evidence_recall": 0.5625,
+      "expected_sections": 48,
+      "index_build_seconds": 10.069,
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "query_latency_ms": {
+        "p50": 47.779,
+        "p95": 86.981
+      },
+      "retrieved_expected_sections": 27,
+      "top_k": 5
+    }
+  },
+  "methodology": "The same 24 gold prompts, persisted policy chunks, top-k=5, and section-level micro-recall calculation are used for feature-hash and neural dense retrieval. The deployed hybrid-k8 recall is reported as the production selection baseline.",
+  "phase": 10,
+  "production_selection": {
+    "decision": "Retain the deterministic dependency-free hybrid-k8 configuration because it meets the 0.95 evidence-recall gate; the neural result is an evaluated option, not an unevaluated production claim.",
+    "evidence_recall": 1.0,
+    "mode": "hybrid",
+    "model": "peopleops-local-hash-v2",
+    "top_k": 8
+  },
+  "suite": "Gold policy-evidence embedding comparison",
+  "synthetic_as_of_date": "2026-09-01",
+  "target_met": true
+}

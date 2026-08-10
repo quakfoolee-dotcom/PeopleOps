@@ -20,6 +20,10 @@ python scripts/validate_phase3_assets.py
 python scripts/build_rag_index.py --check
 python scripts/evaluate_mcp_tools.py
 python scripts/evaluate_workflows.py
+python scripts/evaluate_intents.py --write
+python scripts/evaluate_gold.py --write
+python scripts/evaluate_embeddings.py --check
+python scripts/evaluate_hosted_provider.py --check
 python -m pytest --cov=app --cov=peopleops_mcp --cov-report=term-missing
 uvicorn app.main:app --reload
 ```
@@ -160,7 +164,7 @@ IDs, relative dates, unavailable tools, retry, insufficient evidence, and policy
 
 ## Phase 8 product-interface verification
 
-Run the six component and interaction tests plus the strict TypeScript production build:
+Run the seven component and interaction tests plus the strict TypeScript production build:
 
 ```powershell
 Set-Location ui
@@ -203,6 +207,19 @@ The command writes `evaluation/results/phase10_gold_evaluation.json` and `.csv` 
 when fewer than 25 cases execute or any internal Score-5 target fails. CI uses two reliability
 repeats and ten latency samples for a faster deterministic gate; committed evidence uses ten
 repeats and twenty warm samples.
+
+Run the supplementary Score-5 evidence gates:
+
+```powershell
+python scripts/evaluate_intents.py --write
+python scripts/evaluate_embeddings.py --check
+python scripts/evaluate_hosted_provider.py --check
+```
+
+To regenerate the neural comparison rather than only validate its committed artifact, install
+`python -m pip install -e ".[neural-eval]"` and run
+`python scripts/evaluate_embeddings.py --write`. Hosted-provider regeneration is a read-only,
+explicit network operation; ordinary development and CI use `--check` and require no secret.
 
 ## LLM provider verification
 
