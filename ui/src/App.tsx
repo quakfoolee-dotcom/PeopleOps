@@ -126,6 +126,24 @@ const useCaseOptions: Array<{ value: UseCase; label: string; starter: string }> 
   { value: "workplace_concern", label: "Workplace concern", starter: "Help me prepare a confidential workplace concern." },
 ];
 
+const helpPrompts: Array<{ label: string; question: string; useCase: UseCase }> = [
+  {
+    label: "Check international remote work",
+    question: "Can I work remotely from Germany for six weeks?",
+    useCase: "remote_work",
+  },
+  {
+    label: "Review a PTO request",
+    question: "Can you check my PTO request and available balance?",
+    useCase: "pto",
+  },
+  {
+    label: "Ask about benefits enrollment",
+    question: "What benefits enrollment window applies to a newly eligible employee?",
+    useCase: "benefits_policy",
+  },
+];
+
 const employees: Employee[] = [
   {
     id: "E-1007",
@@ -408,19 +426,16 @@ function GuidanceSection({ answer, decisionSummary }: { answer: string; decision
   );
 }
 
-type NavIconName = "chat" | "tasks" | "requests" | "profile" | "calendar" | "benefits" | "help" | "settings";
+type NavIconName = "chat" | "tasks" | "profile" | "help" | "switch";
 
 function NavIcon({ name }: { name: NavIconName }) {
   const common = { fill: "none", stroke: "currentColor", strokeLinecap: "round" as const, strokeLinejoin: "round" as const, strokeWidth: 1.8 };
   const paths: Record<NavIconName, ReactNode> = {
     chat: <><path {...common} d="M4 5.5A2.5 2.5 0 0 1 6.5 3h7A2.5 2.5 0 0 1 16 5.5v4A2.5 2.5 0 0 1 13.5 12H9l-4 3v-3.7A2.5 2.5 0 0 1 4 9.5z" /></>,
     tasks: <><rect {...common} x="4" y="4" width="12" height="13" rx="2" /><path {...common} d="m7 9 1.5 1.5L12 7" /></>,
-    requests: <><path {...common} d="M6 3h6l3 3v11H6z" /><path {...common} d="M12 3v4h4M8.5 11h4M8.5 14h3" /></>,
     profile: <><circle {...common} cx="10" cy="6.5" r="3" /><path {...common} d="M4.5 17a5.5 5.5 0 0 1 11 0" /></>,
-    calendar: <><rect {...common} x="3.5" y="5" width="13" height="12" rx="2" /><path {...common} d="M6.5 3v4M13.5 3v4M3.5 9h13" /></>,
-    benefits: <><path {...common} d="M10 17S3.5 13.3 3.5 8a3.5 3.5 0 0 1 6.5-1.8A3.5 3.5 0 0 1 16.5 8C16.5 13.3 10 17 10 17z" /></>,
     help: <><circle {...common} cx="10" cy="10" r="7" /><path {...common} d="M8.2 8a2 2 0 1 1 2.4 2c-.6.2-.9.6-.9 1.3M10 14h.01" /></>,
-    settings: <><circle {...common} cx="10" cy="10" r="2.5" /><path {...common} d="M10 2.8v2M10 15.2v2M17.2 10h-2M4.8 10h-2M15.1 4.9l-1.4 1.4M6.3 13.7l-1.4 1.4M15.1 15.1l-1.4-1.4M6.3 6.3 4.9 4.9" /></>,
+    switch: <><circle {...common} cx="7" cy="7" r="2.5" /><path {...common} d="M2.8 14a4.2 4.2 0 0 1 8.4 0M13 6h4m-1.5-1.5L17 6l-1.5 1.5M17 13h-4m1.5-1.5L13 13l1.5 1.5" /></>,
   };
   return <svg className="nav-icon" viewBox="0 0 20 20" aria-hidden="true">{paths[name]}</svg>;
 }
@@ -482,10 +497,18 @@ export default function App() {
   const [confirming, setConfirming] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [copyState, setCopyState] = useState("Save conversation");
-  const [demoTasksOpen, setDemoTasksOpen] = useState(true);
+  const [demoTasksOpen, setDemoTasksOpen] = useState(
+    () => typeof window === "undefined" || window.innerWidth > 760,
+  );
+  const [activeNavigation, setActiveNavigation] = useState<"chat" | "employee-context">("chat");
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [employeePickerOpen, setEmployeePickerOpen] = useState(false);
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
   const employeeSelectRef = useRef<HTMLSelectElement>(null);
+  const employeePickerSelectRef = useRef<HTMLSelectElement>(null);
+  const helpCloseButtonRef = useRef<HTMLButtonElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
+  const questionInputRef = useRef<HTMLTextAreaElement>(null);
 
   const selectedEmployee = useMemo(
     () => employees.find((employee) => employee.id === employeeId) ?? employees[0],
@@ -522,6 +545,14 @@ export default function App() {
   useEffect(() => {
     if (confirmationOpen) confirmButtonRef.current?.focus();
   }, [confirmationOpen]);
+
+  useEffect(() => {
+    if (helpOpen) helpCloseButtonRef.current?.focus();
+  }, [helpOpen]);
+
+  useEffect(() => {
+    if (employeePickerOpen) employeePickerSelectRef.current?.focus();
+  }, [employeePickerOpen]);
 
   async function runChat(
     question: string,
@@ -709,6 +740,25 @@ export default function App() {
     if (attachmentInputRef.current) attachmentInputRef.current.value = "";
   }
 
+  function openHelp() {
+    setEmployeePickerOpen(false);
+    setHelpOpen(true);
+  }
+
+  function openEmployeePicker() {
+    setHelpOpen(false);
+    setEmployeePickerOpen(true);
+  }
+
+  function chooseHelpPrompt(prompt: (typeof helpPrompts)[number]) {
+    setUseCase(prompt.useCase);
+    setMessage(prompt.question);
+    setActiveNavigation("chat");
+    setHelpOpen(false);
+    document.getElementById("composer-help")?.scrollIntoView?.({ block: "center", behavior: "smooth" });
+    questionInputRef.current?.focus();
+  }
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -742,19 +792,34 @@ export default function App() {
       <div className="workspace">
         <aside className="left-rail" aria-label="Workspace navigation and demo tasks">
           <nav className="workspace-nav" aria-label="Workspace navigation">
-            <a className="active" href="#chat-workspace"><NavIcon name="chat" />Chat</a>
+            <a
+              className={activeNavigation === "chat" ? "active" : undefined}
+              href="#chat-workspace"
+              aria-current={activeNavigation === "chat" ? "page" : undefined}
+              onClick={() => setActiveNavigation("chat")}
+            >
+              <NavIcon name="chat" />Chat
+            </a>
             <button type="button" onClick={() => setDemoTasksOpen((open) => !open)} aria-expanded={demoTasksOpen} aria-controls="demo-tasks">
               <NavIcon name="tasks" /><span>Demo Tasks</span><span className="nav-chevron" aria-hidden="true">⌄</span>
             </button>
-            <a href={chat ? "#request-details" : "#chat-workspace"}><NavIcon name="requests" />My Requests</a>
-            <a href="#employee-context"><NavIcon name="profile" />My Profile</a>
-            <a href="#pto-balance"><NavIcon name="calendar" />PTO Balance</a>
-            <a href="#benefits"><NavIcon name="benefits" />Benefits</a>
-            <a href="#composer-help"><NavIcon name="help" />Help</a>
-            <button type="button" onClick={() => employeeSelectRef.current?.focus()}><NavIcon name="settings" /><span>Settings</span></button>
+            <a
+              className={activeNavigation === "employee-context" ? "active" : undefined}
+              href="#employee-context"
+              aria-current={activeNavigation === "employee-context" ? "page" : undefined}
+              onClick={() => setActiveNavigation("employee-context")}
+            >
+              <NavIcon name="profile" />Employee Context
+            </a>
+            <button type="button" onClick={openHelp} aria-expanded={helpOpen} aria-controls="help-panel">
+              <NavIcon name="help" /><span>Help</span>
+            </button>
+            <button type="button" onClick={openEmployeePicker} aria-expanded={employeePickerOpen} aria-controls="employee-picker">
+              <NavIcon name="switch" /><span>Switch Employee</span>
+            </button>
           </nav>
 
-          {demoTasksOpen && <section id="demo-tasks" className="rail-section" aria-labelledby="demo-tasks-title">
+          {demoTasksOpen && <section id="demo-tasks" className="rail-section demo-tasks-section" aria-labelledby="demo-tasks-title">
             <div className="rail-heading">
               <h2 id="demo-tasks-title">Demo tasks</h2>
               <span>{demoTasks.length}</span>
@@ -970,6 +1035,7 @@ export default function App() {
             <label className="sr-only" htmlFor="question">Ask a follow-up or start another workflow</label>
             <div className="composer-row">
               <textarea
+                ref={questionInputRef}
                 id="question"
                 rows={2}
                 value={message}
@@ -1019,8 +1085,8 @@ export default function App() {
           </form>
           <p className="assistant-disclaimer">PeopleOps Assistant can make mistakes. Review citations and verify guidance before acting.</p>
 
-          <section id="employee-context" className="context-panel" aria-labelledby="context-title">
-            <div className="context-heading"><div><p className="section-kicker">Selected employee</p><h2 id="context-title">Context</h2></div><span>{selectedEmployee.id}</span></div>
+          <section id="employee-context" className="context-panel" aria-labelledby="context-title" tabIndex={-1}>
+            <div className="context-heading"><div><p className="section-kicker">Selected employee</p><h2 id="context-title">Employee Context</h2></div><span>{selectedEmployee.id}</span></div>
             <div className="context-grid">
               <article><span aria-hidden="true">○</span><div><small>Employee</small><strong>{selectedEmployee.name}</strong><p>{selectedEmployee.role}<br />{selectedEmployee.department}</p></div></article>
               <article id="pto-balance"><span aria-hidden="true">□</span><div><small>PTO balance</small><strong>{selectedEmployee.ptoDays} days</strong><p>Available on demo policy date</p></div></article>
@@ -1092,6 +1158,86 @@ export default function App() {
           </details>
         </aside>
       </div>
+
+      {helpOpen && (
+        <div className="confirmation-backdrop utility-backdrop">
+          <section
+            id="help-panel"
+            className="utility-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="help-title"
+            onKeyDown={(event) => {
+              if (event.key === "Escape") setHelpOpen(false);
+            }}
+          >
+            <button ref={helpCloseButtonRef} className="close-dialog" type="button" aria-label="Close help" onClick={() => setHelpOpen(false)}>×</button>
+            <p className="section-kicker">Product guidance</p>
+            <h2 id="help-title">How to use PeopleOps Assistant</h2>
+            <ol className="help-steps">
+              <li><strong>Choose the right context.</strong><span>Select a synthetic employee and, when helpful, a use case.</span></li>
+              <li><strong>Ask or attach request facts.</strong><span>TXT, Markdown, and PDF attachments can supply missing facts but never override policy.</span></li>
+              <li><strong>Verify before acting.</strong><span>Review the structured result, policy citations, and tool trace.</span></li>
+            </ol>
+            <div className="help-example-heading">
+              <h3>Try a sample question</h3>
+              <p>Choosing one prepares the composer without sending anything.</p>
+            </div>
+            <div className="help-prompts">
+              {helpPrompts.map((prompt) => (
+                <button type="button" key={prompt.label} onClick={() => chooseHelpPrompt(prompt)}>
+                  <strong>{prompt.label}</strong><span>{prompt.question}</span>
+                </button>
+              ))}
+            </div>
+            <p className="utility-note">This is a synthetic demonstration. Confirm cited policy and PeopleOps approval requirements before relying on guidance.</p>
+          </section>
+        </div>
+      )}
+
+      {employeePickerOpen && (
+        <div className="confirmation-backdrop utility-backdrop">
+          <section
+            id="employee-picker"
+            className="utility-card employee-picker-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="employee-picker-title"
+            onKeyDown={(event) => {
+              if (event.key === "Escape") setEmployeePickerOpen(false);
+            }}
+          >
+            <button className="close-dialog" type="button" aria-label="Close employee switcher" onClick={() => setEmployeePickerOpen(false)}>×</button>
+            <p className="section-kicker">Synthetic employee context</p>
+            <h2 id="employee-picker-title">Switch Employee</h2>
+            <p className="utility-copy">The selected employee controls the profile, PTO, benefits, and employee-bound workflow context.</p>
+            <label className="employee-picker-field" htmlFor="employee-picker-select">
+              <span>Employee</span>
+              <select
+                ref={employeePickerSelectRef}
+                id="employee-picker-select"
+                value={employeeId}
+                onChange={(event) => setEmployeeId(event.target.value)}
+              >
+                {employees.map((employee) => (
+                  <option value={employee.id} key={employee.id}>{employee.name} ({employee.id}) · {employee.role}</option>
+                ))}
+              </select>
+            </label>
+            <article className="employee-picker-preview" aria-live="polite">
+              <span className="avatar" aria-hidden="true">{selectedEmployee.name.charAt(0)}</span>
+              <div><strong>{selectedEmployee.name}</strong><p>{selectedEmployee.role} · {selectedEmployee.department}<br />{selectedEmployee.location}</p></div>
+            </article>
+            <div className="utility-actions">
+              <button type="button" onClick={() => setEmployeePickerOpen(false)}>Done</button>
+              <a href="#employee-context" onClick={() => {
+                setActiveNavigation("employee-context");
+                setEmployeePickerOpen(false);
+              }}>View Employee Context</a>
+            </div>
+          </section>
+        </div>
+      )}
 
       {chat?.pending_action && confirmationOpen && (
         <div className="confirmation-backdrop">

@@ -224,12 +224,13 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getByRole("heading", { name: "Chat with PeopleOps Assistant" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Demo tasks" })).toBeInTheDocument();
     expect(screen.getAllByText("International remote work").length).toBeGreaterThan(0);
-    expect(screen.getByRole("link", { name: "My Requests" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "My Profile" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "PTO Balance" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Benefits" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Help" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Settings" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Chat" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("button", { name: /Demo Tasks/i })).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("link", { name: "Employee Context" })).toHaveAttribute("href", "#employee-context");
+    expect(screen.getByRole("button", { name: "Help" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Switch Employee" })).toBeInTheDocument();
+    expect(screen.queryByText("My Requests")).not.toBeInTheDocument();
+    expect(screen.queryByText("Settings")).not.toBeInTheDocument();
     const taskRegion = screen.getByRole("region", { name: "Demo tasks" });
     expect(within(taskRegion).getByText("5")).toBeInTheDocument();
     expect(within(taskRegion).getByText("Policy and benefits guidance")).toBeInTheDocument();
@@ -251,6 +252,40 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getAllByText(/Citations/i).length).toBeGreaterThan(0);
     expect(screen.getByText("Tool trace", { exact: false })).toBeInTheDocument();
     expect(screen.getByText("LLM Provider", { exact: true })).toBeInTheDocument();
+  });
+
+  it("provides functional demo-task, help, employee-context, and employee-switch navigation", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, json: async () => healthPayload }),
+    );
+
+    render(<App />);
+
+    const demoTasksButton = screen.getByRole("button", { name: /Demo Tasks/i });
+    fireEvent.click(demoTasksButton);
+    expect(screen.queryByRole("region", { name: "Demo tasks" })).not.toBeInTheDocument();
+    expect(demoTasksButton).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(demoTasksButton);
+    expect(screen.getByRole("region", { name: "Demo tasks" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Help" }));
+    const helpDialog = screen.getByRole("dialog", { name: "How to use PeopleOps Assistant" });
+    expect(within(helpDialog).getByText("Verify before acting.")).toBeInTheDocument();
+    fireEvent.click(within(helpDialog).getByRole("button", { name: /Review a PTO request/i }));
+    expect(screen.queryByRole("dialog", { name: "How to use PeopleOps Assistant" })).not.toBeInTheDocument();
+    expect(screen.getByDisplayValue("Can you check my PTO request and available balance?")).toBeInTheDocument();
+    expect(screen.getByLabelText("Use case:")).toHaveValue("pto");
+
+    fireEvent.click(screen.getByRole("button", { name: "Switch Employee" }));
+    const employeeDialog = screen.getByRole("dialog", { name: "Switch Employee" });
+    fireEvent.change(within(employeeDialog).getByLabelText("Employee"), { target: { value: "E-1021" } });
+    expect(within(employeeDialog).getByText("Logan Murphy")).toBeInTheDocument();
+    fireEvent.click(within(employeeDialog).getByRole("link", { name: "View Employee Context" }));
+    expect(screen.queryByRole("dialog", { name: "Switch Employee" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Employee Context" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getAllByText("Logan Murphy").length).toBeGreaterThan(0);
+    expect(screen.getByText("12 days")).toBeInTheDocument();
   });
 
   it("loads a demo task and updates the selected employee context", async () => {

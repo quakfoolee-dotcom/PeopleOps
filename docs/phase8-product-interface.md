@@ -9,7 +9,7 @@ is a React/Vite application served by FastAPI in production and uses only the pu
 | Area | Purpose | Evidence source |
 |---|---|---|
 | Header | Product identity, synthetic-data warning, selected employee | Local presentation data aligned to the committed synthetic seed |
-| Employee navigation and demo-task rail | Chat, request/profile/PTO/benefits/help destinations plus collapsible one-click workflow scenarios | Local presentation data and versioned bounded-workflow prompts |
+| Functional navigation and demo-task rail | Chat, collapsible demo tasks, highlighted employee context, interactive help, and synthetic employee switching | Local presentation data and versioned bounded-workflow prompts |
 | System health | MCP connectivity, RAG index, mock database, LLM provider, application version, environment, last-check time, and release identity | Live `/health` response plus client refresh time |
 | Conversation | User request, structured decision, answer, next steps, compact policy sources, and available actions | Live `/chat` response |
 | Composer | Natural-language question, optional use-case routing hint, and bounded TXT/Markdown/PDF attachment | `/attachments/extract` followed by `/chat` |
@@ -54,7 +54,14 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 - **Load** places a task in the composer without making an API request.
 - **Run task** selects the correct employee when required and immediately runs the versioned prompt.
   The general policy/benefits task is explicitly employee-neutral.
-- The header employee selector changes the composer context and the employee context panel.
+- **Employee Context** scrolls to the combined profile, PTO, benefits, manager, location, and
+  employment panel and provides a visible selected-navigation and target highlight.
+- **Help** opens an accessible product-guidance dialog. Its sample questions prepare the composer
+  and use-case hint without sending a request.
+- **Switch Employee** opens a labelled selector with a live profile preview. The header selector
+  remains available and both controls update the composer context and employee context panel.
+- Navigation does not advertise request history, settings, or other destinations that the demo does
+  not implement.
 - **New chat** and **New question** clear the current response without mutating data.
 - **Save conversation** copies the answer plus request and trace identifiers when clipboard access is
   available.
@@ -77,8 +84,9 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 ## Responsive and accessibility behavior
 
 The desktop layout uses task, conversation, and evidence columns. At tablet widths the evidence
-inspectors move below the conversation. At mobile widths the task rail becomes compact navigation,
-context cards stack, inspector panels remain expandable, and no horizontal overflow is introduced.
+inspectors move below the conversation. At mobile widths the rail becomes compact navigation, the
+collapsible task list remains operable in a bounded scroll region, context cards stack, inspector
+panels remain expandable, and no horizontal overflow is introduced.
 
 The page uses semantic landmarks, labelled fields, visible keyboard focus, an ARIA live conversation
 region, an ARIA modal confirmation dialog, text labels in addition to color, and native details/
@@ -89,12 +97,13 @@ summary disclosure controls.
 `ui/src/App.test.tsx` verifies:
 
 1. workspace identity, health, demo tasks, evidence panels, and employee context;
-2. loading a preset without invoking a workflow;
-3. structured decision, approvals, clarification, next steps, compact sources, trace, and identifiers;
-4. use-case and attachment extraction/submission behavior;
-5. the real MCP-backed remote-work draft action;
-6. explicit confirmation followed by request-bound creation; and
-7. cancellation that leaves the write-like action blocked.
+2. functional task collapse, Help prompt selection, employee-context navigation, and employee switching;
+3. loading a preset without invoking a workflow;
+4. structured decision, approvals, clarification, next steps, compact sources, trace, and identifiers;
+5. use-case and attachment extraction/submission behavior;
+6. the real MCP-backed remote-work draft action;
+7. explicit confirmation followed by request-bound creation; and
+8. cancellation that leaves the write-like action blocked.
 
 Run:
 
