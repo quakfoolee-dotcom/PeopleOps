@@ -2,6 +2,8 @@ import argparse
 import json
 
 from app.api.contracts import (
+    AttachmentContext,
+    AttachmentUploadRequest,
     ChatRequest,
     ChatResponse,
     ConfirmMockTicketRequest,
@@ -28,6 +30,9 @@ from app.evaluation.contracts import (
 EVALUATION_SCHEMA_DIRECTORY = PROJECT_ROOT / "evaluation" / "schemas"
 MOCK_DATA_SCHEMA_DIRECTORY = PROJECT_ROOT / "mock_data" / "schemas"
 SCHEMA_MODELS = {
+    EVALUATION_SCHEMA_DIRECTORY / "attachment_context.schema.json": AttachmentContext,
+    EVALUATION_SCHEMA_DIRECTORY
+    / "attachment_upload_request.schema.json": AttachmentUploadRequest,
     EVALUATION_SCHEMA_DIRECTORY / "chat_request.schema.json": ChatRequest,
     EVALUATION_SCHEMA_DIRECTORY / "chat_response.schema.json": ChatResponse,
     EVALUATION_SCHEMA_DIRECTORY

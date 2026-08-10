@@ -6,6 +6,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.api.actions import router as actions_router
+from app.api.attachments import router as attachments_router
 from app.api.chat import router as chat_router
 from app.api.health import router as health_router
 from app.core.config import get_settings
@@ -37,6 +38,7 @@ def create_app() -> FastAPI:
     application.include_router(health_router)
     application.include_router(chat_router)
     application.include_router(actions_router)
+    application.include_router(attachments_router)
 
     assets_directory = UI_DIST / "assets"
     if assets_directory.is_dir():
@@ -53,6 +55,7 @@ def create_app() -> FastAPI:
             "status": "provider-integration-ready",
             "health": "/health",
             "chat": "/chat",
+            "attachments": "/attachments/extract",
             "mcp": "/mcp",
             "docs": "/docs",
         }

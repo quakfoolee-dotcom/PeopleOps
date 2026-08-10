@@ -2,19 +2,20 @@
 
 Phase 8 turns the bounded Phase 7 APIs into a reproducible grader-facing workspace. The interface
 is a React/Vite application served by FastAPI in production and uses only the public `/health`,
-`/chat`, and `/actions/mock-tickets/confirm` contracts.
+`/chat`, `/attachments/extract`, and `/actions/mock-tickets/confirm` contracts.
 
 ## Interface map
 
 | Area | Purpose | Evidence source |
 |---|---|---|
 | Header | Product identity, synthetic-data warning, selected employee | Local presentation data aligned to the committed synthetic seed |
-| Demo-task rail | One-click remote-work, PTO, expense, ticket, and general policy/benefits scenarios | Versioned bounded-workflow prompts |
+| Employee navigation and demo-task rail | Chat, request/profile/PTO/benefits/help destinations plus collapsible one-click workflow scenarios | Local presentation data and versioned bounded-workflow prompts |
 | System health | MCP connectivity, RAG index, mock database, LLM provider, application version, environment, last-check time, and release identity | Live `/health` response plus client refresh time |
-| Conversation | User request, structured decision, answer, next steps, counts, request ID, trace ID | Live `/chat` response |
+| Conversation | User request, structured decision, answer, next steps, compact policy sources, and available actions | Live `/chat` response |
+| Composer | Natural-language question, optional use-case routing hint, and bounded TXT/Markdown/PDF attachment | `/attachments/extract` followed by `/chat` |
 | Employee context | Role, department, manager, location, employment, PTO snapshot | Presentation subset of committed synthetic records |
 | Citation inspector | Policy/section IDs, snippets, versions, effective dates, format, pages, chunk IDs, scores | Validated citation objects returned by `/chat` |
-| Tool-trace inspector | Ordered MCP calls, sanitized arguments, summaries, status, errors, duration | Sanitized operational trace returned by `/chat` |
+| Tool-trace inspector | Ordered MCP calls, sanitized arguments, summaries, status, errors, duration, counts, request ID, and trace ID | Sanitized operational trace returned by `/chat` |
 | Confirmation dialog | Exact mock-ticket preview, synthetic warning, cancel/confirm decision | Pending action plus confirmation endpoint |
 
 The interface never queries the corpus, database, or MCP server directly. It does not display or
@@ -54,9 +55,14 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 - **Run task** selects the correct employee when required and immediately runs the versioned prompt.
   The general policy/benefits task is explicitly employee-neutral.
 - The header employee selector changes the composer context and the employee context panel.
-- **New chat** and **Ask another question** clear the current response without mutating data.
-- **Copy guidance** copies the answer plus request and trace identifiers when clipboard access is
+- **New chat** and **New question** clear the current response without mutating data.
+- **Save conversation** copies the answer plus request and trace identifiers when clipboard access is
   available.
+- The optional use-case selector provides a routing hint; the bounded classifier and safety gates
+  remain authoritative.
+- **Attach file** accepts TXT, Markdown, or PDF up to 2 MB. The server extracts at most 6,000
+  characters without persistence. Attachment text can fill missing request facts only when it
+  resolves the selected workflow; it never replaces the authoritative policy corpus.
 - **Draft PeopleOps email** is shown only for eligible remote-work guidance and runs the existing
   MCP draft tool; the result remains explicitly unsent and non-persistent.
 - **Re-run** controls repeat the exact employee-bound request. Unsupported or decorative workflow
@@ -84,10 +90,11 @@ summary disclosure controls.
 
 1. workspace identity, health, demo tasks, evidence panels, and employee context;
 2. loading a preset without invoking a workflow;
-3. structured decision, approvals, clarification, next steps, citations, trace, and identifiers;
-4. the real MCP-backed remote-work draft action;
-5. explicit confirmation followed by request-bound creation; and
-6. cancellation that leaves the write-like action blocked.
+3. structured decision, approvals, clarification, next steps, compact sources, trace, and identifiers;
+4. use-case and attachment extraction/submission behavior;
+5. the real MCP-backed remote-work draft action;
+6. explicit confirmation followed by request-bound creation; and
+7. cancellation that leaves the write-like action blocked.
 
 Run:
 

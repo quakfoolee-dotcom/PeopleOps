@@ -10,9 +10,11 @@ Phases 1 through 9 of the [authoritative execution plan](docs/execution-plan.md)
 10 implementation and automated evaluation are complete; the owner-controlled recorded demo and
 final submission link checks remain. The repository currently provides:
 
-- a FastAPI application with `/health`, `/chat`, `/mcp`, and generated API documentation;
-- an evidence-first React/Vite product workspace with five demo tasks, employee context, live
-  health, citations, complete MCP trace, request/trace IDs, and explicit action confirmation;
+- a FastAPI application with `/health`, `/chat`, bounded `/attachments/extract`, `/mcp`, and
+  generated API documentation;
+- an evidence-first React/Vite product workspace with employee navigation, five demo tasks, a
+  use-case selector, bounded TXT/Markdown/PDF attachments, employee context, live health,
+  citations, complete MCP trace, request/trace IDs, and explicit action confirmation;
 - a validated 12-policy corpus in Markdown and PDF formats;
 - typed configuration, policy-corpus validation, and MCP tool contracts;
 - backend, frontend, corpus, and tool-contract tests;

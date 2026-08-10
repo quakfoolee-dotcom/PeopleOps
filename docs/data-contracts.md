@@ -15,7 +15,12 @@ runs must record the suite date and must not silently substitute the wall-clock 
 
 `app/api/contracts.py` defines strict Pydantic models with unknown fields rejected:
 
-- `ChatRequest`: request ID, message, optional synthetic employee ID, as-of date, and optional confirmation token.
+- `AttachmentUploadRequest`: bounded filename, allowed media type, and base64 content for
+  non-persistent extraction.
+- `AttachmentContext`: extracted filename, media type, bounded text, original byte size, and
+  truncation flag.
+- `ChatRequest`: request ID, message, optional synthetic employee ID, optional use-case hint,
+  optional extracted attachment context, as-of date, and optional confirmation token.
 - `Citation`: stable policy, section, and chunk identifiers; source title; bounded supporting
   snippet; policy version and effective date; source format/path; optional PDF page; and retrieval
   score.

@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "extracted_text": {
+      "maxLength": 6000,
+      "minLength": 1,
+      "title": "Extracted Text",
+      "type": "string"
+    },
+    "filename": {
+      "maxLength": 120,
+      "minLength": 1,
+      "pattern": "^[^/\\\\\\x00-\\x1f]+$",
+      "title": "Filename",
+      "type": "string"
+    },
+    "media_type": {
+      "enum": [
+        "text/plain",
+        "text/markdown",
+        "application/pdf"
+      ],
+      "title": "Media Type",
+      "type": "string"
+    },
+    "original_size_bytes": {
+      "maximum": 2000000,
+      "minimum": 1,
+      "title": "Original Size Bytes",
+      "type": "integer"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "filename",
+    "media_type",
+    "extracted_text",
+    "original_size_bytes"
+  ],
+  "title": "AttachmentContext",
+  "type": "object"
+}

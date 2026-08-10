@@ -5,6 +5,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.api.contracts import (
+    AttachmentContext,
     ChatRequest,
     ChatResponse,
     Citation,
@@ -12,6 +13,7 @@ from app.api.contracts import (
     PendingActionPreview,
     ToolCallStatus,
     ToolTraceEntry,
+    UseCaseHint,
     WorkflowOutcome,
     WorkflowStatus,
 )
@@ -26,6 +28,32 @@ def test_chat_request_uses_fixed_as_of_date_and_forbids_extra_fields() -> None:
 
     with pytest.raises(ValidationError):
         ChatRequest.model_validate({"message": "Hello", "unexpected": True})
+
+
+def test_chat_request_accepts_a_bounded_attachment_and_use_case_hint() -> None:
+    request = ChatRequest(
+        message="What do I need to do?",
+        employee_id="E-1007",
+        use_case=UseCaseHint.REMOTE_WORK,
+        attachment=AttachmentContext(
+            filename="travel-details.txt",
+            media_type="text/plain",
+            extracted_text="Destination: Germany. Duration: six weeks.",
+            original_size_bytes=44,
+        ),
+    )
+
+    assert request.use_case is UseCaseHint.REMOTE_WORK
+    assert request.attachment is not None
+    assert request.attachment.filename == "travel-details.txt"
+
+    with pytest.raises(ValidationError):
+        AttachmentContext(
+            filename="../unsafe.txt",
+            media_type="text/plain",
+            extracted_text="unsafe",
+            original_size_bytes=6,
+        )
 
 
 def test_citation_contract_enforces_stable_identifiers() -> None:
