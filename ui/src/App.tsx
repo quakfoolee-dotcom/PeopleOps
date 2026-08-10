@@ -125,7 +125,7 @@ type DemoTask = {
   id: string;
   number: string;
   title: string;
-  employeeId: string | null;
+  employeeBound: boolean;
   facts: string[];
   message: string;
   useCase: UseCase;
@@ -210,7 +210,7 @@ const demoTasks: DemoTask[] = [
     id: "remote-work",
     number: "01",
     title: "International remote work",
-    employeeId: "E-1007",
+    employeeBound: true,
     facts: ["Germany", "Six weeks"],
     message: "Can I work remotely from Germany for six weeks?",
     useCase: "remote_work",
@@ -219,7 +219,7 @@ const demoTasks: DemoTask[] = [
     id: "pto-guidance",
     number: "02",
     title: "PTO request guidance",
-    employeeId: "E-1021",
+    employeeBound: true,
     facts: ["Sep 21–23, 2026", "Balance and policy check"],
     message:
       "Can I take PTO from September 21 through September 23, 2026? Check my balance and policy requirements.",
@@ -229,25 +229,25 @@ const demoTasks: DemoTask[] = [
     id: "expense-compliance",
     number: "03",
     title: "Expense compliance",
-    employeeId: "E-1014",
+    employeeBound: true,
     facts: ["CAD 900", "Home-office chair"],
-    message: "Can employee E-1014 be reimbursed for a CAD 900 home-office chair?",
+    message: "Can I be reimbursed for a CAD 900 home-office chair?",
     useCase: "expense",
   },
   {
     id: "mock-ticket",
     number: "04",
     title: "Confirmation-gated ticket",
-    employeeId: "E-1011",
+    employeeBound: true,
     facts: ["Synthetic case", "Explicit confirmation"],
-    message: "Employee E-1011 reported repeated harassment. Prepare an HR ticket for the concern.",
+    message: "I want to report repeated harassment. Prepare an HR ticket for the concern.",
     useCase: "workplace_concern",
   },
   {
     id: "policy-benefits",
     number: "05",
     title: "Policy and benefits guidance",
-    employeeId: null,
+    employeeBound: false,
     facts: ["BEN-5", "31-day enrollment window"],
     message: "How long does a newly eligible employee have to complete benefits enrollment?",
     useCase: "benefits_policy",
@@ -542,14 +542,14 @@ export default function App() {
   const [healthError, setHealthError] = useState("");
   const [healthLoading, setHealthLoading] = useState(true);
   const [healthCheckedAt, setHealthCheckedAt] = useState<Date | null>(null);
-  const [employeeId, setEmployeeId] = useState(initialTask.employeeId ?? employees[0].id);
+  const [employeeId, setEmployeeId] = useState(employees[0].id);
   const [message, setMessage] = useState(initialTask.message);
   const [useCase, setUseCase] = useState<UseCase>(initialTask.useCase);
   const [attachment, setAttachment] = useState<AttachmentContext | null>(null);
   const [attachmentError, setAttachmentError] = useState("");
   const [attachmentLoading, setAttachmentLoading] = useState(false);
   const [lastQuestion, setLastQuestion] = useState(initialTask.message);
-  const [lastEmployeeId, setLastEmployeeId] = useState<string | null>(initialTask.employeeId);
+  const [lastEmployeeId, setLastEmployeeId] = useState<string | null>(employees[0].id);
   const [lastUseCase, setLastUseCase] = useState<UseCase>(initialTask.useCase);
   const [lastAttachment, setLastAttachment] = useState<AttachmentContext | null>(null);
   const [chat, setChat] = useState<ChatPayload | null>(null);
@@ -673,7 +673,6 @@ export default function App() {
   }
 
   function loadTask(task: DemoTask) {
-    if (task.employeeId) setEmployeeId(task.employeeId);
     setMessage(task.message);
     setUseCase(task.useCase);
     setAttachment(null);
@@ -684,12 +683,14 @@ export default function App() {
   }
 
   async function runTask(task: DemoTask) {
-    if (task.employeeId) setEmployeeId(task.employeeId);
     setMessage(task.message);
     setUseCase(task.useCase);
     setAttachment(null);
     setAttachmentError("");
-    await runChat(task.message, task.employeeId, { useCase: task.useCase, attachment: null });
+    await runChat(task.message, task.employeeBound ? employeeId : null, {
+      useCase: task.useCase,
+      attachment: null,
+    });
   }
 
   function startNewChat() {
@@ -920,7 +921,7 @@ export default function App() {
                 <article className="task-card" key={task.id}>
                   <div className="task-title"><span>{task.number}</span><strong>{task.title}</strong></div>
                   <dl>
-                    <div><dt>Employee</dt><dd>{task.employeeId ?? "Not used"}</dd></div>
+                    <div><dt>Employee</dt><dd>{task.employeeBound ? `${selectedEmployee.id} · selected` : "Not used"}</dd></div>
                     {task.facts.map((fact, index) => (
                       <div key={fact}><dt>{index === 0 ? "Detail" : "Scope"}</dt><dd>{fact}</dd></div>
                     ))}

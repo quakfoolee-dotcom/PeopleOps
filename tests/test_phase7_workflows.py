@@ -12,7 +12,7 @@ PTO_PROMPT = (
     "Can I take PTO from September 21 through September 23, 2026? "
     "Check my balance and draft a message to my manager."
 )
-EXPENSE_PROMPT = "Can employee E-1014 be reimbursed for a CAD 900 home-office chair?"
+EXPENSE_PROMPT = "Can I be reimbursed for a CAD 900 home-office chair?"
 
 
 def _agent() -> PeopleOpsOrchestrator:

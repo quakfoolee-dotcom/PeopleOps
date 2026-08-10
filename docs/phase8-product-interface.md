@@ -29,7 +29,7 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
    shortened **Release** rows. The `/health` link exposes the complete application and policy-corpus
    detail. The provider reports healthy when configured, not configured when deliberately disabled,
    or unavailable when its sanitized health probe fails.
-3. In **International remote work**, select **Run task**.
+3. Select employee **E-1007**, then in **International remote work** select **Run task**.
 4. Confirm the card separately shows conditional status, 42 calendar/30 business days,
    `International exceptional`, required approvals, exact-date clarification, and ordered next
    steps. Inspect four exact citations, eight MCP operations, request ID, trace ID, employee
@@ -37,14 +37,14 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 5. Select **Generate draft email**. Confirm the bounded workflow calls `draft_hr_email` and renders
    a dedicated card with recipient, subject, readable body paragraphs, and an explicit **Not sent**
    state. Copying or regenerating the draft must not send or persist anything.
-6. Run **PTO request guidance**. Review the balance and policy result, then select **Generate draft
-   email**. Confirm the manager-addressed draft appears in the same structured card without changing
-   the PTO balance.
-7. Run **Expense compliance**. Confirm the cap, employee-paid remainder, approval path, citations,
-   and tool trace are visible.
-8. Run **Confirmation-gated ticket**. Inspect the action preview and verify that the trace contains
-   no create call. Select **Cancel** to prove the action remains pending, then reopen it with
-   **Review pending action**.
+6. Switch to employee **E-1021** and run **PTO request guidance**. Review the balance and policy
+   result, then select **Generate draft email**. Confirm the manager-addressed draft appears in the
+   same structured card without changing the PTO balance.
+7. Switch to employee **E-1014** and run **Expense compliance**. Confirm the cap, employee-paid
+   remainder, approval path, citations, and tool trace are visible.
+8. Switch to employee **E-1011** and run **Confirmation-gated ticket**. Inspect the action preview
+   and verify that the trace contains no create call. Select **Cancel** to prove the action remains
+   pending, then reopen it with **Review pending action**.
 9. Select **Confirm mock ticket**. Confirm the final response identifies the synthetic ticket and
    the trace now contains one `create_mock_hr_ticket` call. The signed token is never rendered.
 10. Run **Policy and benefits guidance**. Confirm the answer cites `POL-BEN-001 BEN-5`; the trace
@@ -53,15 +53,18 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 
 ## Control behavior
 
-- **Load** places a task in the composer without making an API request.
-- **Run task** selects the correct employee when required and immediately runs the versioned prompt.
-  The general policy/benefits task is explicitly employee-neutral.
+- **Load** places a task in the composer without making an API request or changing the selected
+  employee.
+- **Run task** uses the currently selected employee for remote-work, PTO, expense, and mock-ticket
+  workflows. Demo prompts contain scenario facts rather than embedded employee IDs. The general
+  policy/benefits task is explicitly employee-neutral and sends no employee ID.
 - **Employee Context** scrolls to the combined profile, PTO, benefits, manager, location, and
   employment panel and provides a visible selected-navigation and target highlight.
 - **Help** opens an accessible product-guidance dialog. Its sample questions prepare the composer
   and use-case hint without sending a request.
 - **Switch Employee** opens a labelled selector with a live profile preview. The header selector
-  remains available and both controls update the composer context and employee context panel.
+  remains available; both controls update the composer context, employee context panel, and every
+  employee-bound demo-task card. A task never silently resets that selection.
 - Navigation does not advertise request history, settings, or other destinations that the demo does
   not implement.
 - **New chat** and **New question** clear the current response without mutating data.
@@ -103,13 +106,14 @@ summary disclosure controls.
 
 1. workspace identity, health, demo tasks, evidence panels, and employee context;
 2. functional task collapse, Help prompt selection, employee-context navigation, and employee switching;
-3. loading a preset without invoking a workflow;
+3. loading a preset without invoking a workflow or changing the selected employee;
 4. structured decision, approvals, clarification, next steps, compact sources, trace, and identifiers;
 5. use-case and attachment extraction/submission behavior;
-6. the real MCP-backed remote-work and PTO structured draft actions, including recipient, subject,
+6. selected-employee propagation across all four employee-bound demo tasks;
+7. the real MCP-backed remote-work and PTO structured draft actions, including recipient, subject,
    body, safety state, copy, and regeneration controls;
-7. explicit confirmation followed by request-bound creation; and
-8. cancellation that leaves the write-like action blocked.
+8. explicit confirmation followed by request-bound creation; and
+9. cancellation that leaves the write-like action blocked.
 
 Run:
 

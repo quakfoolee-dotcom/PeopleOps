@@ -180,9 +180,7 @@ def test_mock_ticket_requires_api_confirmation_then_creates_idempotently() -> No
     request_id = str(uuid4())
     request_payload = {
         "request_id": request_id,
-        "message": (
-            "Employee E-1011 reported repeated harassment. Prepare an HR ticket for the concern."
-        ),
+        "message": "I want to report repeated harassment. Prepare an HR ticket for the concern.",
         "employee_id": "E-1011",
     }
     ticket_seed = Path("mock_data/seed/tickets.json")

@@ -169,9 +169,11 @@ Open `http://127.0.0.1:5173`. Vite proxies `/health`, `/chat`, and `/actions` to
 development.
 
 The workspace includes remote-work, PTO, expense, mock-ticket, and employee-neutral policy/benefits
-guidance tasks. Select **Run task** to see the bounded result, exact policy citations, request and
-trace IDs, employee context where required, and complete MCP discovery/call trace. The policy task
-omits the employee ID and proves that general guidance does not access employee or benefits records.
+guidance tasks. Select an employee, then select **Run task** to use that employee across every
+employee-bound demo without a preset silently replacing the selection. The result shows exact policy
+citations, request and trace IDs, employee context where required, and the complete MCP
+discovery/call trace. The policy task omits the employee ID and proves that general guidance does not
+access employee or benefits records.
 The ticket task exposes an exact action preview and remains blocked until the user selects **Confirm
 mock ticket**. See the Phase 8 guide for the complete grader walkthrough.
 

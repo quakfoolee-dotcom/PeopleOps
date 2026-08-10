@@ -18,9 +18,9 @@ tool-trace panels visible whenever explaining evidence.
 | 0:00–0:40 | Title and synthetic-data banner | State the problem, fictional company, and no-real-data boundary. |
 | 0:40–1:20 | Architecture diagram | Explain UI → API/orchestrator → official MCP client/server → RAG/data → grounded LLM synthesis. |
 | 1:20–3:20 | Run International remote work for E-1007 | Show conditional result, four citations, eight traced MCP operations, arguments/results, request ID, trace ID, and provider metadata. |
-| 3:20–4:55 | Run PTO request guidance for E-1021, then generate its draft | Show profile and balance lookup, exact PTO sections, deterministic compliance, the structured manager-email card, and unchanged balance. |
+| 3:20–4:55 | Switch to E-1021, run PTO guidance, then generate its draft | Show that the selector controls the task, then show profile and balance lookup, exact PTO sections, deterministic compliance, the structured manager-email card, and unchanged balance. |
 | 4:55–5:35 | Ask “Can I take next week off?” | Show no-tool clarification and explain why dates and identity are not inferred. |
-| 5:35–6:35 | Run mock HR ticket for E-1011 | Show sanitized preview, absence of create call, explicit confirmation, returned mock ID, and in-memory-only notice. |
+| 5:35–6:35 | Switch to E-1011, then run the mock HR ticket | Show that the task preserves the selection, then show the sanitized preview, absence of create call, explicit confirmation, returned mock ID, and in-memory-only notice. |
 | 6:35–7:20 | `/health`, CI, deployment | Show component health, exact release SHA, required checks, release gate, and free-tier cold-start note. |
 | 7:20–8:10 | Phase 10 metrics and ablation | State 25/25 gold cases and 15/15 intent cases, 100% grounded/workflow/citation/tool/safety gates, and why hybrid `k=8` won. |
 | 8:10–8:30 | Limitations and close | Mention synthetic data, bounded scope, process-local actions, free-provider fallback, the risk register, and human verification before action. |

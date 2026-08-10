@@ -257,6 +257,12 @@ const createdPayload = {
   ],
 };
 
+function selectHeaderEmployee(employeeId: string) {
+  const selector = document.querySelector<HTMLSelectElement>("header .employee-menu select");
+  expect(selector).not.toBeNull();
+  fireEvent.change(selector!, { target: { value: employeeId } });
+}
+
 describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
   afterEach(() => {
     cleanup();
@@ -339,21 +345,55 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.getByText("12 days")).toBeInTheDocument();
   });
 
-  it("loads a demo task and updates the selected employee context", async () => {
+  it("loads a demo task without overriding the selected employee context", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({ ok: true, json: async () => healthPayload }),
     );
     render(<App />);
 
+    selectHeaderEmployee("E-1014");
+
     const ptoCard = screen.getByText("PTO request guidance").closest("article");
     expect(ptoCard).not.toBeNull();
+    expect(within(ptoCard!).getByText("E-1014 · selected")).toBeInTheDocument();
     fireEvent.click(within(ptoCard!).getByRole("button", { name: "Load" }));
 
     expect(screen.getByDisplayValue(/September 21 through September 23/i)).toBeInTheDocument();
-    expect(screen.getAllByText("E-1021").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Logan Murphy").length).toBeGreaterThan(0);
-    expect(screen.getByText("12 days")).toBeInTheDocument();
+    expect(screen.getAllByText("E-1014").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Parker Adams").length).toBeGreaterThan(0);
+    expect(screen.getByText("14 days")).toBeInTheDocument();
+  });
+
+  it("uses the selected employee for every employee-bound demo task", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => healthPayload })
+      .mockResolvedValue({ ok: true, json: async () => chatPayload });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+
+    const scenarios = [
+      { title: "International remote work", employeeId: "E-1011", useCase: "remote_work" },
+      { title: "PTO request guidance", employeeId: "E-1014", useCase: "pto" },
+      { title: "Expense compliance", employeeId: "E-1021", useCase: "expense" },
+      { title: "Confirmation-gated ticket", employeeId: "E-1007", useCase: "workplace_concern" },
+    ];
+    const taskRegion = screen.getByRole("region", { name: "Demo tasks" });
+
+    for (const [index, scenario] of scenarios.entries()) {
+      selectHeaderEmployee(scenario.employeeId);
+      const taskCard = within(taskRegion).getByText(scenario.title).closest("article");
+      expect(taskCard).not.toBeNull();
+      expect(within(taskCard!).getByText(`${scenario.employeeId} · selected`)).toBeInTheDocument();
+      fireEvent.click(within(taskCard!).getByRole("button", { name: "Run task" }));
+      await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(index + 2));
+
+      const requestBody = JSON.parse(String(fetchMock.mock.calls[index + 1][1]?.body));
+      expect(requestBody.employee_id).toBe(scenario.employeeId);
+      expect(requestBody.use_case).toBe(scenario.useCase);
+      expect(requestBody.message).not.toMatch(/E-\d{4}/);
+    }
   });
 
   it("runs the employee-neutral policy and benefits demo without employee-data tools", async () => {
@@ -519,6 +559,8 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     vi.stubGlobal("fetch", fetchMock);
     render(<App />);
 
+    selectHeaderEmployee("E-1021");
+
     const ptoTask = screen.getByText("PTO request guidance").closest("article");
     expect(ptoTask).not.toBeNull();
     fireEvent.click(within(ptoTask!).getByRole("button", { name: "Run task" }));
@@ -554,6 +596,8 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     vi.stubGlobal("fetch", fetchMock);
     render(<App />);
 
+    selectHeaderEmployee("E-1011");
+
     const ticketCard = screen.getByText("Confirmation-gated ticket").closest("article");
     expect(ticketCard).not.toBeNull();
     fireEvent.click(within(ticketCard!).getByRole("button", { name: "Run task" }));
@@ -588,6 +632,8 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
       .mockResolvedValueOnce({ ok: true, json: async () => previewPayload });
     vi.stubGlobal("fetch", fetchMock);
     render(<App />);
+
+    selectHeaderEmployee("E-1011");
 
     const ticketCard = screen.getByText("Confirmation-gated ticket").closest("article");
     fireEvent.click(within(ticketCard!).getByRole("button", { name: "Run task" }));

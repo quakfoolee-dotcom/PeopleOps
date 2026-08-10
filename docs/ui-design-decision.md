@@ -25,6 +25,9 @@ The implementation combines:
 - Both request ID and trace ID are visible.
 - Mock ticket creation uses an explicit confirmation token and idempotency key.
 - Citation, trace, and context panels collapse into accessible drawers or tabs on smaller screens.
+- The selected employee is the single employee context for remote-work, PTO, expense, and ticket
+  demo tasks. Presets supply scenario facts and never silently replace the user's selection; the
+  general policy task remains employee-neutral.
 
 ## Phase 5 contract influence
 
@@ -35,9 +38,9 @@ directly.
 
 ## Phase 8 verification
 
-The interface provides four reproducible tasks, a structured compliance result, truthful `/health`
-state, request and trace IDs, employee context, exact citation metadata, the full sanitized MCP
-trace, responsive disclosure panels, and a keyboard-accessible confirmation dialog. Six frontend
-interaction tests cover the shell, task loading, structured grounded output, the MCP-backed email
-draft, confirmed creation, and cancel-without-create behavior. See
+The interface provides five reproducible tasks, a structured compliance result, truthful `/health`
+state, request and trace IDs, selected-employee context, exact citation metadata, the full sanitized
+MCP trace, responsive disclosure panels, and a keyboard-accessible confirmation dialog. Frontend
+interaction tests cover the shell, selector propagation, task loading, structured grounded output,
+the MCP-backed email draft, confirmed creation, and cancel-without-create behavior. See
 `docs/phase8-product-interface.md` for the grader walkthrough.
