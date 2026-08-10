@@ -53,8 +53,13 @@ OpenAI Codex was used during Phases 1 through 10 to:
   provider boundary, deterministic CI adapter, grounded-output validator, provider health, visible
   generation metadata, safe fallback behavior, tests, and operating documentation.
 - implement and run the complete 25-case evaluation harness, calculate groundedness, citation,
-  retrieval, tool-selection, workflow, safety, reliability, and latency metrics, analyze the one
-  outcome mismatch, and prepare the submission checklist and timed demo rehearsal.
+  retrieval, tool-selection, workflow, safety, reliability, and latency metrics, correct the
+  missing-prerequisite gold expectation, and prepare the submission checklist and timed demo rehearsal;
+- make expected facts and answer constraints executable, then add claim-to-policy/tool support gates;
+- create and run the 15-case intent-robustness suite, an isolated feature-hash versus neural dense
+  comparison, and a three-case generic read-only production-provider evaluation;
+- audit the application against the Score-5 rubric and synchronize the required root design,
+  deployment, evaluation, reproduction, traceability, and disclosure documents with current evidence.
 
 ## Human responsibility and review
 
@@ -71,10 +76,13 @@ RAG behavior are checked through automated integration, retrieval, citation, ind
 HTTP tests. The Phase 5 local feature-hashing embedding is deliberately small and deterministic; it
 has less open-domain semantic capacity than a neural model and is paired with bounded PeopleOps
 query decomposition. The confirmation service and mock tickets are intentionally single-process
-demonstration state, not durable workflow infrastructure. Phase 7 classification is deterministic
-and limited to the documented workflow language rather than general natural-language coverage.
+demonstration state, not durable workflow infrastructure. Intent routing remains bounded to the
+documented PeopleOps workflows; the 15-case robustness suite improves evidence but does not prove
+open-domain natural-language coverage. The isolated neural baseline improves direct dense recall
+but remains below the selected hybrid path and adds model/deployment cost.
 Provider integration is deliberately constrained to post-workflow synthesis and the production
 credential remains owner-controlled. The full automated evaluation cannot replace human review,
 the narrated presentation, repository-access verification, or signed-out link checks.
 
-This document will be updated throughout the project.
+This disclosure reflects the current app-only completion audit as of 2026-08-09. The project owner
+will separately record and review the presentation before submission.

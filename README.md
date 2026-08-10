@@ -55,6 +55,14 @@ final submission link checks remain. The repository currently provides:
   that preserves sanitized evidence for every accepted or safely-fallbacked attempt;
 - an executable 25-case gold evaluator with groundedness, citation, retrieval, tool-selection,
   workflow, clarification/escalation, action-safety, reliability, and latency evidence;
+- executable assertions for every expected fact and answer constraint, including policy-snippet
+  lexical/numeric support and structured-tool provenance, with all current gold gates at 100%;
+- a 15-case intent-robustness gate covering paraphrases, common typos, aliases, mixed requests,
+  confirmation-bypass attempts, and unsupported scope at 100%;
+- a reproducible direct-dense feature-hash versus Sentence Transformers comparison that retains
+  hybrid `k=8` on measured 100% evidence recall and lower deployment cost;
+- three generic, read-only hosted provider observations with 100% workflow integrity and explicit
+  accepted-provider versus safe-fallback metrics;
 - a general corpus-grounded policy workflow covering benefits, onboarding, security, holidays,
   leave, conduct, privacy refusal, and policy-only compliance without inventing employee facts;
 - a complete Phase 10 report, error analysis, submission checklist, and timed demo rehearsal;
@@ -184,12 +192,16 @@ Run the complete committed evaluation evidence with:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\evaluate_gold.py --write
+.\.venv\Scripts\python.exe scripts\evaluate_intents.py --write
+.\.venv\Scripts\python.exe scripts\evaluate_embeddings.py --check
+.\.venv\Scripts\python.exe scripts\evaluate_hosted_provider.py --check
 ```
 
-The current run executes all 25 cases and records 96% groundedness, 100% citation accuracy and
-coverage, 100% tool selection, 96% workflow completion, 100% clarification/escalation accuracy,
-100% action safety, and 100% primary-demo completion. See the Phase 10 guide for definitions,
-latency, reliability, ablation, and error analysis.
+The current run executes all 25 cases and records 100% answer-fact accuracy, answer-constraint
+adherence, claim support, groundedness, citation accuracy and coverage, tool selection, workflow
+completion, clarification/escalation accuracy, action safety, and primary-demo completion. The
+separate 15-case intent-robustness suite also passes in full. See the Phase 10 guide for definitions,
+latency, reliability, embedding comparison, hosted-provider observations, and error analysis.
 
 ## Docker
 

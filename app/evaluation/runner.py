@@ -9,7 +9,15 @@ from typing import Any
 
 from app.agent import PeopleOpsOrchestrator
 from app.api.contracts import ChatRequest, WorkflowOutcome, WorkflowStatus
-from app.evaluation.contracts import GoldEvaluationCase, GoldEvaluationSuite
+from app.evaluation.answer_quality import (
+    evaluate_answer_quality,
+    load_answer_check_suite,
+)
+from app.evaluation.contracts import (
+    CaseAnswerChecks,
+    GoldEvaluationCase,
+    GoldEvaluationSuite,
+)
 from app.mcp_client import MCPGateway
 from app.providers.adapters import DeterministicProvider
 from app.services import MockTicketConfirmationCoordinator
@@ -22,6 +30,9 @@ ABLATION_PATH = PROJECT_ROOT / "evaluation" / "results" / "phase5_rag_ablation.j
 INTERNAL_TRACE_TOOLS = frozenset({"mcp_discover_tools", "prepare_mock_ticket_preview"})
 TARGETS = {
     "groundedness": 0.95,
+    "answer_fact_accuracy": 0.95,
+    "answer_constraint_adherence": 0.95,
+    "claim_citation_support": 0.95,
     "citation_accuracy": 0.95,
     "retrieval_evidence_recall": 0.95,
     "tool_selection_accuracy": 0.95,
@@ -82,6 +93,7 @@ def _selected_ablation() -> dict[str, Any]:
 
 async def _run_case(
     case: GoldEvaluationCase,
+    answer_checks: CaseAnswerChecks,
     agent: PeopleOpsOrchestrator,
     coordinator: MockTicketConfirmationCoordinator,
 ) -> dict[str, Any]:
@@ -114,11 +126,18 @@ async def _run_case(
     citations_exact = returned_sections <= expected_sections
     outcome_match = response.outcome is case.expected_outcome
     workflow_complete = outcome_match and response.status is not WorkflowStatus.ERROR
+    answer_quality = evaluate_answer_quality(
+        case,
+        answer_checks,
+        response,
+        actual_tool_set,
+    )
     grounded = bool(
         workflow_complete
         and expected_citations_covered
         and citations_exact
         and required_tools_covered
+        and answer_quality["passed"]
     )
 
     confirmation: dict[str, Any] | None = None
@@ -190,6 +209,16 @@ async def _run_case(
             "unexpected citations: "
             + ", ".join(f"{policy}:{section}" for policy, section in sorted(unexpected))
         )
+    for index, result in enumerate(answer_quality["fact_results"], start=1):
+        if not result["content_pass"]:
+            failures.append(f"expected fact {index} not established: {result['detail']}")
+        if not result["support_pass"]:
+            failures.append(
+                f"expected fact {index} lacks declared evidence support: {result['support']}"
+            )
+    for index, result in enumerate(answer_quality["constraint_results"], start=1):
+        if not result["passed"]:
+            failures.append(f"answer constraint {index} failed: {result['detail']}")
 
     return {
         "case_id": case.case_id,
@@ -215,6 +244,10 @@ async def _run_case(
         "citation_coverage_pass": expected_citations_covered,
         "citation_accuracy_pass": citations_exact,
         "groundedness_pass": grounded,
+        "answer_fact_accuracy_pass": answer_quality["answer_fact_accuracy_pass"],
+        "answer_constraint_pass": answer_quality["answer_constraint_pass"],
+        "claim_citation_support_pass": answer_quality["claim_citation_support_pass"],
+        "answer_quality": answer_quality,
         "workflow_completion_pass": workflow_complete,
         "action_safety_pass": action_safe,
         "confirmation": confirmation,
@@ -272,6 +305,9 @@ async def evaluate_gold_suite(
     suite = GoldEvaluationSuite.model_validate_json(
         GOLD_SUITE_PATH.read_text(encoding="utf-8")
     )
+    checks_by_case = {
+        item.case_id: item for item in load_answer_check_suite().cases
+    }
     reset_mock_ticket_actions()
     coordinator = MockTicketConfirmationCoordinator()
     agent = PeopleOpsOrchestrator(
@@ -288,7 +324,7 @@ async def evaluate_gold_suite(
     cold_latency_ms = max(0, round((perf_counter() - cold_started) * 1000))
 
     case_results = [
-        await _run_case(case, agent, coordinator)
+        await _run_case(case, checks_by_case[case.case_id], agent, coordinator)
         for case in suite.cases
     ]
     reliability = await _primary_reliability(
@@ -324,6 +360,15 @@ async def evaluate_gold_suite(
         "executed_cases": total,
         "groundedness": _ratio(
             sum(item["groundedness_pass"] for item in case_results), total
+        ),
+        "answer_fact_accuracy": _ratio(
+            sum(item["answer_fact_accuracy_pass"] for item in case_results), total
+        ),
+        "answer_constraint_adherence": _ratio(
+            sum(item["answer_constraint_pass"] for item in case_results), total
+        ),
+        "claim_citation_support": _ratio(
+            sum(item["claim_citation_support_pass"] for item in case_results), total
         ),
         "citation_accuracy": _ratio(
             sum(item["citation_accuracy_pass"] for item in citation_results),
@@ -386,8 +431,14 @@ async def evaluate_gold_suite(
         "provider": "deterministic-grounded-v1",
         "methodology": {
             "groundedness": (
-                "A response passes when its expected outcome completes, every required structured "
-                "tool is present, and all displayed citations exactly cover only the gold evidence."
+                "A response passes when its expected outcome completes, required tools and exact "
+                "gold citations are present, every expected fact is asserted, every answer "
+                "constraint passes, and each factual claim has declared source or tool support."
+            ),
+            "answer_quality": (
+                "Each expected fact and answer constraint has a versioned executable assertion. "
+                "Fact support requires the declared policy sections or structured tools; policy "
+                "claims additionally require lexical and numeric agreement with returned snippets."
             ),
             "citation_accuracy": (
                 "Case-level exactness: every displayed policy/section pair belongs to the gold "

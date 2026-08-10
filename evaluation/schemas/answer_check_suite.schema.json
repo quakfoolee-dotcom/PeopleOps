@@ -1,0 +1,129 @@
+{
+  "$defs": {
+    "AnswerCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "contains_all",
+            "contains_any",
+            "contains_none",
+            "starts_with_any",
+            "citation_sections",
+            "tools_present",
+            "tools_absent",
+            "pending_action",
+            "outcome"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "supporting_sections": {
+          "items": {
+            "$ref": "#/$defs/PolicySectionTarget"
+          },
+          "title": "Supporting Sections",
+          "type": "array"
+        },
+        "supporting_tools": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Supporting Tools",
+          "type": "array"
+        },
+        "values": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "mode",
+        "values"
+      ],
+      "title": "AnswerCheck",
+      "type": "object"
+    },
+    "CaseAnswerChecks": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "pattern": "^EVAL-[A-Z]+-\\d{3}$",
+          "title": "Case Id",
+          "type": "string"
+        },
+        "constraint_checks": {
+          "items": {
+            "$ref": "#/$defs/AnswerCheck"
+          },
+          "minItems": 1,
+          "title": "Constraint Checks",
+          "type": "array"
+        },
+        "fact_checks": {
+          "items": {
+            "$ref": "#/$defs/AnswerCheck"
+          },
+          "minItems": 1,
+          "title": "Fact Checks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "case_id",
+        "fact_checks",
+        "constraint_checks"
+      ],
+      "title": "CaseAnswerChecks",
+      "type": "object"
+    },
+    "PolicySectionTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "policy_id": {
+          "pattern": "^POL-[A-Z]{3}-\\d{3}$",
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "section_id": {
+          "pattern": "^[A-Z]{3}-\\d+(?:\\.\\d+)?$",
+          "title": "Section Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_id",
+        "section_id"
+      ],
+      "title": "PolicySectionTarget",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/CaseAnswerChecks"
+      },
+      "maxItems": 25,
+      "minItems": 25,
+      "title": "Cases",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "cases"
+  ],
+  "title": "AnswerCheckSuite",
+  "type": "object"
+}

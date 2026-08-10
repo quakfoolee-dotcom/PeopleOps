@@ -4,7 +4,7 @@ from typing import Literal
 
 from pydantic import Field, field_validator, model_validator
 
-from app.api.contracts import ContractModel, WorkflowOutcome
+from app.api.contracts import ContractModel, WorkflowKind, WorkflowOutcome
 
 
 class EvaluationCategory(StrEnum):
@@ -18,6 +18,82 @@ class EvaluationCategory(StrEnum):
 class PolicySectionTarget(ContractModel):
     policy_id: str = Field(pattern=r"^POL-[A-Z]{3}-\d{3}$")
     section_id: str = Field(pattern=r"^[A-Z]{3}-\d+(?:\.\d+)?$")
+
+
+class AnswerCheck(ContractModel):
+    mode: Literal[
+        "contains_all",
+        "contains_any",
+        "contains_none",
+        "starts_with_any",
+        "citation_sections",
+        "tools_present",
+        "tools_absent",
+        "pending_action",
+        "outcome",
+    ]
+    values: list[str] = Field(min_length=1)
+    supporting_sections: list[PolicySectionTarget] = Field(default_factory=list)
+    supporting_tools: list[str] = Field(default_factory=list)
+
+    @field_validator("values", "supporting_tools")
+    @classmethod
+    def require_unique_check_values(cls, value: list[str]) -> list[str]:
+        if any(not item.strip() for item in value):
+            raise ValueError("answer-check values cannot contain blanks")
+        if len(value) != len(set(value)):
+            raise ValueError("answer-check values cannot contain duplicates")
+        return value
+
+
+class CaseAnswerChecks(ContractModel):
+    case_id: str = Field(pattern=r"^EVAL-[A-Z]+-\d{3}$")
+    fact_checks: list[AnswerCheck] = Field(min_length=1)
+    constraint_checks: list[AnswerCheck] = Field(min_length=1)
+
+
+class AnswerCheckSuite(ContractModel):
+    schema_version: Literal["1.0"]
+    cases: list[CaseAnswerChecks] = Field(min_length=25, max_length=25)
+
+    @model_validator(mode="after")
+    def require_unique_case_ids(self) -> "AnswerCheckSuite":
+        case_ids = [case.case_id for case in self.cases]
+        if len(case_ids) != len(set(case_ids)):
+            raise ValueError("answer-check case IDs must be unique")
+        return self
+
+
+class IntentRobustnessCase(ContractModel):
+    case_id: str = Field(pattern=r"^INTENT-\d{3}$")
+    title: str = Field(min_length=1, max_length=200)
+    prompt: str = Field(min_length=1, max_length=1000)
+    supplied_employee_id: str | None = Field(default=None, pattern=r"^E-\d{4}$")
+    expected_kind: WorkflowKind
+    expected_fields: dict[str, str | int | bool | None] = Field(default_factory=dict)
+    clarification_contains: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list)
+
+    @field_validator("clarification_contains", "tags")
+    @classmethod
+    def require_unique_intent_values(cls, value: list[str]) -> list[str]:
+        if any(not item.strip() for item in value):
+            raise ValueError("intent values cannot contain blanks")
+        if len(value) != len(set(value)):
+            raise ValueError("intent values cannot contain duplicates")
+        return value
+
+
+class IntentRobustnessSuite(ContractModel):
+    schema_version: Literal["1.0"]
+    cases: list[IntentRobustnessCase] = Field(min_length=15, max_length=15)
+
+    @model_validator(mode="after")
+    def require_unique_intent_case_ids(self) -> "IntentRobustnessSuite":
+        case_ids = [case.case_id for case in self.cases]
+        if len(case_ids) != len(set(case_ids)):
+            raise ValueError("intent-robustness case IDs must be unique")
+        return self
 
 
 class ToolExpectations(ContractModel):

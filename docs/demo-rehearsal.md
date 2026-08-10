@@ -22,8 +22,8 @@ tool-trace panels visible whenever explaining evidence.
 | 4:55–5:35 | Ask “Can I take next week off?” | Show no-tool clarification and explain why dates and identity are not inferred. |
 | 5:35–6:35 | Run mock HR ticket for E-1011 | Show sanitized preview, absence of create call, explicit confirmation, returned mock ID, and in-memory-only notice. |
 | 6:35–7:20 | `/health`, CI, deployment | Show component health, exact release SHA, required checks, release gate, and free-tier cold-start note. |
-| 7:20–8:10 | Phase 10 metrics and ablation | State 25 executed cases, 96% grounded/workflow completion, 100% citations/tools/safety, and why hybrid `k=8` won. |
-| 8:10–8:30 | Limitations and close | Mention synthetic date, bounded scope, the one missing-ID error-analysis case, the risk register, and human verification before action. |
+| 7:20–8:10 | Phase 10 metrics and ablation | State 25/25 gold cases and 15/15 intent cases, 100% grounded/workflow/citation/tool/safety gates, and why hybrid `k=8` won. |
+| 8:10–8:30 | Limitations and close | Mention synthetic data, bounded scope, process-local actions, free-provider fallback, the risk register, and human verification before action. |
 
 ## Remote-work sequence
 

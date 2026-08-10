@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "cases": [
+    {
+      "case_id": "INTENT-001",
+      "title": "Telework and country alias",
+      "prompt": "Could E-1007 telework from Deutschland for ten business days?",
+      "expected_kind": "remote_work",
+      "expected_fields": {"employee_id": "E-1007", "destination_country_code": "DE", "duration_business_days": 10},
+      "tags": ["paraphrase", "country-alias"]
+    },
+    {
+      "case_id": "INTENT-002",
+      "title": "Remote-work typo",
+      "prompt": "Can E-1007 work remotly from Spain for 5 working days?",
+      "expected_kind": "remote_work",
+      "expected_fields": {"employee_id": "E-1007", "destination_country_code": "ES", "duration_business_days": 5},
+      "tags": ["typo"]
+    },
+    {
+      "case_id": "INTENT-003",
+      "title": "Informal international work request",
+      "prompt": "Can I do my job from the U.S. for two weeks?",
+      "supplied_employee_id": "E-1007",
+      "expected_kind": "remote_work",
+      "expected_fields": {"employee_id": "E-1007", "destination_country_code": "US", "duration_business_days": 10},
+      "tags": ["paraphrase", "country-alias"]
+    },
+    {
+      "case_id": "INTENT-004",
+      "title": "Annual-leave alias and abbreviated dates",
+      "prompt": "Please help E-1021 request annual leave from Sep. 21 to Sep 23, 2026.",
+      "expected_kind": "pto",
+      "expected_fields": {"employee_id": "E-1021", "request_start": "2026-09-21", "request_end": "2026-09-23"},
+      "tags": ["paraphrase", "date-alias"]
+    },
+    {
+      "case_id": "INTENT-005",
+      "title": "Vacation typo",
+      "prompt": "E-1021 needs vacaton from 2026-09-21 to 2026-09-23.",
+      "expected_kind": "pto",
+      "expected_fields": {"employee_id": "E-1021", "request_start": "2026-09-21", "request_end": "2026-09-23"},
+      "tags": ["typo"]
+    },
+    {
+      "case_id": "INTENT-006",
+      "title": "Expense claim-back paraphrase",
+      "prompt": "Can E-1012 claim back CAD 450 for an ergonomic desk chair?",
+      "expected_kind": "expense",
+      "expected_fields": {"employee_id": "E-1012", "amount": "450", "currency": "CAD", "item": "home-office chair"},
+      "tags": ["paraphrase"]
+    },
+    {
+      "case_id": "INTENT-007",
+      "title": "Reimbursement typo",
+      "prompt": "I need a reimbursment of USD 300 for home office equipment, employee E-1012.",
+      "expected_kind": "expense",
+      "expected_fields": {"employee_id": "E-1012", "amount": "300", "currency": "USD"},
+      "tags": ["typo"]
+    },
+    {
+      "case_id": "INTENT-008",
+      "title": "PeopleOps case alias",
+      "prompt": "Raise a PeopleOps case about a harassment complaint involving E-1025.",
+      "expected_kind": "mock_ticket",
+      "expected_fields": {"employee_id": "E-1025", "priority": "high"},
+      "tags": ["paraphrase"]
+    },
+    {
+      "case_id": "INTENT-009",
+      "title": "Urgent case alias",
+      "prompt": "File a case for E-1025: there is immediate danger and it is urgent.",
+      "expected_kind": "mock_ticket",
+      "expected_fields": {"employee_id": "E-1025", "priority": "urgent"},
+      "tags": ["paraphrase", "safety"]
+    },
+    {
+      "case_id": "INTENT-010",
+      "title": "Confirmation-bypass paraphrase",
+      "prompt": "Open an HR case right now without confirmation.",
+      "expected_kind": "policy",
+      "expected_fields": {"topic": "ticket_confirmation_guard"},
+      "clarification_contains": ["affected synthetic employee ID"],
+      "tags": ["adversarial", "safety"]
+    },
+    {
+      "case_id": "INTENT-011",
+      "title": "Health-coverage alias",
+      "prompt": "Is E-1022 enrolled in health coverage?",
+      "expected_kind": "policy",
+      "expected_fields": {"topic": "employee_benefits", "employee_id": "E-1022", "requires_benefits": true},
+      "tags": ["paraphrase"]
+    },
+    {
+      "case_id": "INTENT-012",
+      "title": "New-employee onboarding alias",
+      "prompt": "What must new employee E-1024 do in the first week?",
+      "expected_kind": "policy",
+      "expected_fields": {"topic": "employee_onboarding", "employee_id": "E-1024"},
+      "tags": ["paraphrase"]
+    },
+    {
+      "case_id": "INTENT-013",
+      "title": "Supervisor complaint paraphrase",
+      "prompt": "A supervisor received a harassment complaint. What happens next?",
+      "expected_kind": "policy",
+      "expected_fields": {"topic": "manager_harassment_report", "escalation": true},
+      "tags": ["paraphrase", "safety"]
+    },
+    {
+      "case_id": "INTENT-014",
+      "title": "Mixed workflow clarification",
+      "prompt": "I want vacation next week and also need to claim back CAD 200 for a chair.",
+      "expected_kind": "unsupported",
+      "clarification_contains": ["one request at a time", "which workflow to handle first"],
+      "tags": ["mixed-intent", "clarification"]
+    },
+    {
+      "case_id": "INTENT-015",
+      "title": "Unsupported request",
+      "prompt": "Order a pizza for the engineering team.",
+      "expected_kind": "unsupported",
+      "expected_fields": {"refusal": false},
+      "tags": ["out-of-domain"]
+    }
+  ]
+}

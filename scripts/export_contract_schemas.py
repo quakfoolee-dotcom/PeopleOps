@@ -19,7 +19,11 @@ from app.data.contracts import (
     PTOTransactionDataset,
     TicketDataset,
 )
-from app.evaluation.contracts import GoldEvaluationSuite
+from app.evaluation.contracts import (
+    AnswerCheckSuite,
+    GoldEvaluationSuite,
+    IntentRobustnessSuite,
+)
 
 EVALUATION_SCHEMA_DIRECTORY = PROJECT_ROOT / "evaluation" / "schemas"
 MOCK_DATA_SCHEMA_DIRECTORY = PROJECT_ROOT / "mock_data" / "schemas"
@@ -31,6 +35,9 @@ SCHEMA_MODELS = {
     EVALUATION_SCHEMA_DIRECTORY
     / "confirm_mock_ticket_response.schema.json": ConfirmMockTicketResponse,
     EVALUATION_SCHEMA_DIRECTORY / "gold_evaluation_suite.schema.json": GoldEvaluationSuite,
+    EVALUATION_SCHEMA_DIRECTORY / "answer_check_suite.schema.json": AnswerCheckSuite,
+    EVALUATION_SCHEMA_DIRECTORY
+    / "intent_robustness_suite.schema.json": IntentRobustnessSuite,
     EVALUATION_SCHEMA_DIRECTORY / "tool_trace_entry.schema.json": ToolTraceEntry,
     MOCK_DATA_SCHEMA_DIRECTORY / "manifest.schema.json": MockDataManifest,
     MOCK_DATA_SCHEMA_DIRECTORY / "locations.schema.json": LocationDataset,
