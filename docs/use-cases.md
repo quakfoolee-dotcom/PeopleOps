@@ -55,9 +55,12 @@ Gold-case mapping: `EVAL-MULTI-001` and `EVAL-TOOL-001`.
 2. Look up the synthetic employee and PTO balance through MCP.
 3. Retrieve PTO eligibility, notice, and approval sections.
 4. Calculate requested working days and evaluate compliance.
-5. Return a clearly labelled, non-persistent manager-message draft.
+5. Return a clearly labelled manager-message artifact with recipient, subject, readable body,
+   `sent=false`, and `persisted=false`.
 
-**Acceptance:** Balance data comes only from the structured-data tool; the answer distinguishes eligibility from approval; no PTO record is changed.
+**Acceptance:** Balance data comes only from the structured-data tool; the answer distinguishes
+eligibility from approval; the draft is rendered separately from guidance and exposes no send
+action; no PTO record is changed.
 
 Gold-case mapping: `EVAL-TOOL-002`; relative-date clarification is covered by `EVAL-AMB-001`.
 

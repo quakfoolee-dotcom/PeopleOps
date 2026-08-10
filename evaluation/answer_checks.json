@@ -157,7 +157,7 @@
       ],
       "constraint_checks": [
         {"mode": "contains_all", "values": ["Balance sufficient", "does not guarantee approval"]},
-        {"mode": "contains_all", "values": ["Draft - not sent", "not sent or persisted"]}
+        {"mode": "email_draft", "values": ["present", "not_sent", "not_persisted"]}
       ]
     },
     {

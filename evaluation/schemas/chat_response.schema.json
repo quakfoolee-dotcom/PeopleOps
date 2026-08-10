@@ -157,6 +157,85 @@
       "title": "DecisionSummary",
       "type": "object"
     },
+    "EmailDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "draft_id": {
+          "pattern": "^DRAFT-[A-F0-9]{12}$",
+          "title": "Draft Id",
+          "type": "string"
+        },
+        "draft_type": {
+          "enum": [
+            "pto_manager_request",
+            "peopleops_follow_up",
+            "case_acknowledgement"
+          ],
+          "title": "Draft Type",
+          "type": "string"
+        },
+        "employee_id": {
+          "pattern": "^E-\\d{4}$",
+          "title": "Employee Id",
+          "type": "string"
+        },
+        "label": {
+          "const": "Draft - not sent",
+          "default": "Draft - not sent",
+          "title": "Label",
+          "type": "string"
+        },
+        "persisted": {
+          "const": false,
+          "default": false,
+          "title": "Persisted",
+          "type": "boolean"
+        },
+        "recipient": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "sent": {
+          "const": false,
+          "default": false,
+          "title": "Sent",
+          "type": "boolean"
+        },
+        "subject": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "draft_id",
+        "draft_type",
+        "employee_id",
+        "recipient",
+        "subject",
+        "body"
+      ],
+      "title": "EmailDraft",
+      "type": "object"
+    },
     "GenerationMetadata": {
       "additionalProperties": false,
       "properties": {
@@ -420,6 +499,17 @@
       "anyOf": [
         {
           "$ref": "#/$defs/DecisionSummary"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "email_draft": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EmailDraft"
         },
         {
           "type": "null"

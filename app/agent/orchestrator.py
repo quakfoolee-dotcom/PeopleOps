@@ -21,6 +21,7 @@ from app.api.contracts import (
     ChatResponse,
     Citation,
     DecisionSummary,
+    EmailDraft,
     GenerationMetadata,
     PendingActionPreview,
     ToolCallStatus,
@@ -148,6 +149,10 @@ def _money(value: Decimal | None) -> str:
 
 def _label(value: str) -> str:
     return value.replace("_", " ").capitalize()
+
+
+def _email_draft(value: HREmailDraftResult) -> EmailDraft:
+    return EmailDraft.model_validate(value.model_dump())
 
 
 USE_CASE_ROUTING_CONTEXT = {
@@ -799,6 +804,7 @@ class PeopleOpsOrchestrator:
             outcome = WorkflowOutcome.CONDITIONAL
             status_label = "Conditionally eligible"
 
+        email_draft: EmailDraft | None = None
         if intent.wants_draft:
             machine.transition(WorkflowStage.DRAFT)
             draft_payload = await self._call(
@@ -816,10 +822,7 @@ class PeopleOpsOrchestrator:
                 },
             )
             draft = HREmailDraftResult.model_validate(draft_payload)
-            answer += (
-                f"\n\n{draft.label}\nSubject: {draft.subject}\n\n{draft.body}\n\n"
-                "The draft was not sent or persisted."
-            )
+            email_draft = _email_draft(draft)
             outcome = WorkflowOutcome.DRAFT_ONLY
 
         next_steps = [
@@ -843,6 +846,7 @@ class PeopleOpsOrchestrator:
                 clarification_needed=["Exact travel and working dates"],
                 next_steps=next_steps,
             ),
+            email_draft=email_draft,
         )
 
     async def _run_pto(
@@ -928,6 +932,7 @@ class PeopleOpsOrchestrator:
             "coverage and scheduling. No PTO record was changed."
         )
         outcome = WorkflowOutcome.CONDITIONAL
+        email_draft: EmailDraft | None = None
         if intent.wants_draft:
             machine.transition(WorkflowStage.DRAFT)
             draft_payload = await self._call(
@@ -943,10 +948,7 @@ class PeopleOpsOrchestrator:
                 },
             )
             draft = HREmailDraftResult.model_validate(draft_payload)
-            answer += (
-                f"\n\n{draft.label}\nSubject: {draft.subject}\n\n{draft.body}\n\n"
-                "The draft was not sent or persisted."
-            )
+            email_draft = _email_draft(draft)
             outcome = WorkflowOutcome.DRAFT_ONLY
         return self._finish(
             request,
@@ -972,6 +974,7 @@ class PeopleOpsOrchestrator:
                     f"Allow the normal {notice}-business-day notice period.",
                 ],
             ),
+            email_draft=email_draft,
         )
 
     async def _run_expense(
@@ -1251,6 +1254,7 @@ class PeopleOpsOrchestrator:
         citations: list[Citation] | None = None,
         tool_trace: list[ToolTraceEntry] | None = None,
         decision_summary: DecisionSummary | None = None,
+        email_draft: EmailDraft | None = None,
         pending_action: PendingActionPreview | None = None,
     ) -> ChatResponse:
         if machine.stage is not WorkflowStage.RESPOND:
@@ -1264,6 +1268,7 @@ class PeopleOpsOrchestrator:
             citations=citations,
             tool_trace=tool_trace,
             decision_summary=decision_summary,
+            email_draft=email_draft,
             pending_action=pending_action,
         )
 
@@ -1278,6 +1283,7 @@ class PeopleOpsOrchestrator:
         citations: list[Citation] | None = None,
         tool_trace: list[ToolTraceEntry] | None = None,
         decision_summary: DecisionSummary | None = None,
+        email_draft: EmailDraft | None = None,
         pending_action: PendingActionPreview | None = None,
     ) -> ChatResponse:
         return ChatResponse(
@@ -1291,5 +1297,6 @@ class PeopleOpsOrchestrator:
             citations=citations or [],
             tool_trace=tool_trace or [],
             decision_summary=decision_summary,
+            email_draft=email_draft,
             pending_action=pending_action,
         )

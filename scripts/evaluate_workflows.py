@@ -127,7 +127,11 @@ async def evaluate() -> dict[str, Any]:
         "pto": {
             "repeat_count": len(pto_runs),
             "repeatable": pto_repeatable,
-            "draft_not_sent": "Draft - not sent" in pto_runs[0].answer,
+            "draft_not_sent": bool(
+                pto_runs[0].email_draft
+                and not pto_runs[0].email_draft.sent
+                and not pto_runs[0].email_draft.persisted
+            ),
             **_summary(pto_runs[0]),
         },
         "expense": _summary(expense),

@@ -81,7 +81,8 @@ Run the complete gate before publishing:
 ```
 
 The focused suite proves all eight discovered schemas and calls, exact-section behavior, PTO and
-benefits privacy, three compliance modes, draft-only output, timeout traces, token redaction,
+benefits privacy, three compliance modes, structured recipient/subject/body draft-only output,
+timeout traces, token redaction,
 confirmation refusal, tamper and expiry rejection, idempotency, and unchanged seed files.
 
 The committed machine-readable run is

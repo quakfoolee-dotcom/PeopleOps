@@ -36,8 +36,9 @@ final submission link checks remain. The repository currently provides:
   retry per MCP operation;
 - clarification, structured-data, evidence-sufficiency, policy-conflict, exact-citation,
   escalation, draft, and confirmation gates;
-- exact policy-section, employee-profile, PTO, benefits, deterministic compliance, draft-email,
-  and confirmation-gated mock-ticket capabilities alongside hybrid policy search;
+- exact policy-section, employee-profile, PTO, benefits, deterministic compliance, structured
+  unsent email-draft, and confirmation-gated mock-ticket capabilities alongside hybrid policy
+  search;
 - one shared timeout-controlled MCP executor with sanitized result traces for every tool;
 - signed and expiring explicit-confirmation proof, exact action binding, idempotency, and an
   in-memory-only synthetic ticket store;
@@ -107,7 +108,7 @@ FastAPI (/health, /chat, /mcp)
         |          |-- policy search + exact section
         |          |-- employee + PTO + benefits
         |          |-- deterministic compliance
-        |          |-- draft-only HR email
+        |          |-- structured draft-only HR email
         |          `-- confirmed in-memory mock ticket
         |
         +--> Hybrid RAG index (ready)

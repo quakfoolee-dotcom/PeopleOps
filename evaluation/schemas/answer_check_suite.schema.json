@@ -13,6 +13,7 @@
             "tools_present",
             "tools_absent",
             "pending_action",
+            "email_draft",
             "outcome"
           ],
           "title": "Mode",

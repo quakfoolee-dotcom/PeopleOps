@@ -490,13 +490,14 @@ def draft_hr_email_data(
         (item for item in bundle.employees if item.employee_id == employee.manager_id),
         None,
     )
-    recipient = manager.synthetic_name if manager else "People Operations"
+    manager_recipient = manager.synthetic_name if manager else "People Operations"
 
     if draft_type == "pto_manager_request":
         if request_start is None or request_end is None:
             raise ValueError("PTO drafts require exact request_start and request_end dates")
         if request_end < request_start:
             raise ValueError("request_end must be on or after request_start")
+        recipient = manager_recipient
         subject = f"PTO request: {request_start.isoformat()} to {request_end.isoformat()}"
         body = (
             f"Hi {recipient},\n\n"
@@ -507,6 +508,7 @@ def draft_hr_email_data(
             f"{employee.synthetic_name}"
         )
     elif draft_type == "peopleops_follow_up":
+        recipient = "People Operations"
         subject = "People Operations follow-up"
         body = (
             "Hello People Operations,\n\n"
@@ -515,6 +517,7 @@ def draft_hr_email_data(
             f"Thank you,\n{employee.synthetic_name}"
         )
     elif draft_type == "case_acknowledgement":
+        recipient = employee.synthetic_name
         subject = "Acknowledgement of your People Operations report"
         body = (
             f"Hello {employee.synthetic_name},\n\n"
@@ -532,6 +535,7 @@ def draft_hr_email_data(
         draft_id=f"DRAFT-{fingerprint}",
         draft_type=draft_type,
         employee_id=employee_id,
+        recipient=recipient,
         subject=subject,
         body=body,
         warnings=[

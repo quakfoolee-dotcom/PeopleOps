@@ -160,6 +160,7 @@ def test_email_tool_returns_a_non_persistent_draft() -> None:
     )
 
     assert result.label == "Draft - not sent"
+    assert result.recipient == "Kendall Price"
     assert result.sent is False
     assert result.persisted is False
     assert "2026-09-21" in result.body

@@ -30,13 +30,19 @@ runs must record the suite date and must not silently substitute the wall-clock 
   answer.
 - `PendingActionPreview`: a confirmation-gated preview with confirmation ID and expiry for synthetic
   ticket creation.
+- `EmailDraft`: a UI-ready, explicitly unsent and non-persistent artifact with recipient, subject,
+  body, stable draft ID, draft type, and safety warnings.
 - `ChatResponse`: selected remote-work, PTO, expense, mock-ticket, policy-guidance, or unsupported
   workflow; terminal workflow state; final status and outcome; answer;
-  optional decision summary, citations, tool trace, and optional pending action.
+  optional decision summary, citations, tool trace, email draft, and pending action.
 - `ConfirmMockTicketRequest` and `ConfirmMockTicketResponse`: explicit-true confirmation and the
   signed proof returned to the unchanged follow-up request.
 
-The response contract enforces that a pending action exists exactly when the workflow is awaiting confirmation. Trace and preview arguments reject nested keys commonly used for credentials. Operational traces contain evidence and tool activity, never hidden chain-of-thought.
+The response contract enforces that a pending action exists exactly when the workflow is awaiting
+confirmation and that an email draft exists exactly when the outcome is `draft_only`. Draft
+artifacts must remain `sent=false` and `persisted=false`. Trace and preview arguments reject nested
+keys commonly used for credentials. Operational traces contain evidence and tool activity, never
+hidden chain-of-thought.
 
 Committed JSON Schemas are under `evaluation/schemas`. Regenerate them after an intentional model change:
 

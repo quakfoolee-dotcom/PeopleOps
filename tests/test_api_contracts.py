@@ -10,6 +10,7 @@ from app.api.contracts import (
     ChatResponse,
     Citation,
     ConfirmMockTicketRequest,
+    EmailDraft,
     PendingActionPreview,
     ToolCallStatus,
     ToolTraceEntry,
@@ -151,6 +152,49 @@ def test_pending_action_and_response_require_confirmation_together() -> None:
             outcome=WorkflowOutcome.ANSWERED,
             answer="Wrong outcome.",
             pending_action=pending_action,
+        )
+
+
+def test_draft_only_response_requires_a_structured_unsent_email_draft() -> None:
+    draft = EmailDraft(
+        draft_id="DRAFT-ABCDEF012345",
+        draft_type="pto_manager_request",
+        employee_id="E-1021",
+        recipient="Taylor Morgan",
+        subject="PTO request: 2026-09-21 to 2026-09-23",
+        body="Hi Taylor,\n\nI would like to request PTO.\n\nThank you,\nLogan",
+        warnings=["Draft only - no email was sent."],
+    )
+    response = ChatResponse(
+        request_id=uuid4(),
+        as_of_date=date(2026, 9, 1),
+        status=WorkflowStatus.COMPLETED,
+        outcome=WorkflowOutcome.DRAFT_ONLY,
+        answer="The PTO balance is sufficient, subject to manager approval.",
+        email_draft=draft,
+    )
+
+    assert response.email_draft is not None
+    assert response.email_draft.sent is False
+    assert response.email_draft.persisted is False
+
+    with pytest.raises(ValidationError, match="email_draft"):
+        ChatResponse(
+            request_id=uuid4(),
+            as_of_date=date(2026, 9, 1),
+            status=WorkflowStatus.COMPLETED,
+            outcome=WorkflowOutcome.DRAFT_ONLY,
+            answer="The structured draft is missing.",
+        )
+
+    with pytest.raises(ValidationError, match="email_draft"):
+        ChatResponse(
+            request_id=uuid4(),
+            as_of_date=date(2026, 9, 1),
+            status=WorkflowStatus.COMPLETED,
+            outcome=WorkflowOutcome.CONDITIONAL,
+            answer="A draft cannot accompany an ordinary guidance response.",
+            email_draft=draft,
         )
 
 

@@ -69,6 +69,19 @@ type GenerationMetadata = {
   detail: string;
 };
 
+type EmailDraft = {
+  draft_id: string;
+  draft_type: "pto_manager_request" | "peopleops_follow_up" | "case_acknowledgement";
+  employee_id: string;
+  recipient: string;
+  label: "Draft - not sent";
+  subject: string;
+  body: string;
+  sent: false;
+  persisted: false;
+  warnings: string[];
+};
+
 type ChatPayload = {
   request_id: string;
   trace_id: string;
@@ -82,6 +95,7 @@ type ChatPayload = {
   tool_trace: TraceEntry[];
   decision_summary: DecisionSummary | null;
   generation: GenerationMetadata;
+  email_draft: EmailDraft | null;
   pending_action: PendingAction | null;
 };
 
@@ -206,9 +220,9 @@ const demoTasks: DemoTask[] = [
     number: "02",
     title: "PTO request guidance",
     employeeId: "E-1021",
-    facts: ["Sep 21–23, 2026", "Draft manager note"],
+    facts: ["Sep 21–23, 2026", "Balance and policy check"],
     message:
-      "Can I take PTO from September 21 through September 23, 2026? Check my balance and draft a message to my manager.",
+      "Can I take PTO from September 21 through September 23, 2026? Check my balance and policy requirements.",
     useCase: "pto",
   },
   {
@@ -440,12 +454,59 @@ function NavIcon({ name }: { name: NavIconName }) {
   return <svg className="nav-icon" viewBox="0 0 20 20" aria-hidden="true">{paths[name]}</svg>;
 }
 
-function ActionButton({ icon, title, subtitle, onClick, primary = false }: { icon: string; title: string; subtitle: string; onClick: () => void; primary?: boolean }) {
+function ActionButton({ icon, title, subtitle, onClick, primary = false, disabled = false }: { icon: string; title: string; subtitle: string; onClick: () => void; primary?: boolean; disabled?: boolean }) {
   return (
-    <button aria-label={title} className={primary ? "primary-button" : undefined} type="button" onClick={onClick}>
+    <button aria-label={title} className={primary ? "primary-button" : undefined} type="button" onClick={onClick} disabled={disabled}>
       <span className="action-icon" aria-hidden="true">{icon}</span>
       <span><strong>{title}</strong><small>{subtitle}</small></span>
     </button>
+  );
+}
+
+function EmailDraftCard({
+  draft,
+  copyLabel,
+  generating,
+  onCopy,
+  onRegenerate,
+}: {
+  draft: EmailDraft;
+  copyLabel: string;
+  generating: boolean;
+  onCopy: () => void;
+  onRegenerate: () => void;
+}) {
+  return (
+    <section className="email-draft-card" aria-labelledby="email-draft-title">
+      <div className="email-draft-header">
+        <span className="email-draft-icon" aria-hidden="true">✉</span>
+        <div><p>Email draft</p><h3 id="email-draft-title">{draft.label}</h3></div>
+        <span className="draft-status">Not sent</span>
+      </div>
+      <dl className="email-draft-fields">
+        <div><dt>To</dt><dd>{draft.recipient}</dd></div>
+        <div><dt>Subject</dt><dd>{draft.subject}</dd></div>
+      </dl>
+      <div className="email-draft-body" aria-label="Draft email body">
+        {draft.body.split(/\n{2,}/).map((paragraph, index) => (
+          <p key={`${index}-${paragraph}`}>
+            {paragraph.split("\n").map((line, lineIndex) => (
+              <span key={`${lineIndex}-${line}`}>{line}{lineIndex < paragraph.split("\n").length - 1 && <br />}</span>
+            ))}
+          </p>
+        ))}
+      </div>
+      <div className="email-draft-safety">
+        <span aria-hidden="true">i</span>
+        <p><strong>Draft only.</strong> No email was sent or saved. Review the recipient, dates, policy citations, and sensitive details before use.</p>
+      </div>
+      <div className="email-draft-actions">
+        <button type="button" onClick={onCopy}>{copyLabel}</button>
+        <button className="primary-button" type="button" onClick={onRegenerate} disabled={generating}>
+          {generating ? "Generating…" : "Regenerate draft"}
+        </button>
+      </div>
+    </section>
   );
 }
 
@@ -497,6 +558,8 @@ export default function App() {
   const [confirming, setConfirming] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [copyState, setCopyState] = useState("Save conversation");
+  const [draftCopyState, setDraftCopyState] = useState("Copy draft");
+  const [draftGenerating, setDraftGenerating] = useState(false);
   const [demoTasksOpen, setDemoTasksOpen] = useState(
     () => typeof window === "undefined" || window.innerWidth > 760,
   );
@@ -561,19 +624,23 @@ export default function App() {
       requestId?: string;
       confirmationToken?: string;
       preserveResult?: boolean;
+      background?: boolean;
+      updateConversationContext?: boolean;
       useCase?: UseCase;
       attachment?: AttachmentContext | null;
     },
   ) {
     const requestUseCase = options?.useCase ?? useCase;
     const requestAttachment = options?.attachment === undefined ? attachment : options.attachment;
-    setSubmitting(true);
+    if (!options?.background) setSubmitting(true);
     setChatError("");
     if (!options?.preserveResult) setChat(null);
-    setLastQuestion(question);
-    setLastEmployeeId(targetEmployeeId);
-    setLastUseCase(requestUseCase);
-    setLastAttachment(requestAttachment);
+    if (options?.updateConversationContext !== false) {
+      setLastQuestion(question);
+      setLastEmployeeId(targetEmployeeId);
+      setLastUseCase(requestUseCase);
+      setLastAttachment(requestAttachment);
+    }
     try {
       const body: Record<string, unknown> = { message: question, use_case: requestUseCase };
       if (targetEmployeeId) body.employee_id = targetEmployeeId;
@@ -594,7 +661,7 @@ export default function App() {
       setChatError(error instanceof Error ? error.message : "The request could not be completed.");
       return null;
     } finally {
-      setSubmitting(false);
+      if (!options?.background) setSubmitting(false);
     }
   }
 
@@ -636,6 +703,7 @@ export default function App() {
     setLastEmployeeId(employeeId);
     setConfirmationOpen(false);
     setCopyState("Save conversation");
+    setDraftCopyState("Copy draft");
   }
 
   async function copyGuidance() {
@@ -654,13 +722,36 @@ export default function App() {
     await runChat(lastQuestion, lastEmployeeId, { useCase: lastUseCase, attachment: lastAttachment });
   }
 
-  async function draftPeopleOpsEmail() {
-    if (!chat || chat.workflow !== "remote_work" || !lastQuestion) return;
-    await runChat(
-      `${lastQuestion} Draft a PeopleOps follow-up email for this request.`,
-      lastEmployeeId,
-      { useCase: lastUseCase, attachment: lastAttachment },
-    );
+  async function copyEmailDraft() {
+    if (!chat?.email_draft) return;
+    const draft = chat.email_draft;
+    const copyText = `To: ${draft.recipient}\nSubject: ${draft.subject}\n\n${draft.body}`;
+    try {
+      await navigator.clipboard.writeText(copyText);
+      setDraftCopyState("Copied");
+    } catch {
+      setDraftCopyState("Copy unavailable");
+    }
+  }
+
+  async function generateDraftEmail() {
+    if (!chat || !["remote_work", "pto"].includes(chat.workflow) || !lastQuestion) return;
+    const instruction = chat.workflow === "pto"
+      ? "Draft a manager email for this PTO request."
+      : "Draft a PeopleOps follow-up email for this request.";
+    setDraftGenerating(true);
+    setDraftCopyState("Copy draft");
+    try {
+      await runChat(`${lastQuestion} ${instruction}`, lastEmployeeId, {
+        useCase: lastUseCase,
+        attachment: lastAttachment,
+        preserveResult: true,
+        background: true,
+        updateConversationContext: false,
+      });
+    } finally {
+      setDraftGenerating(false);
+    }
   }
 
   async function confirmPendingAction() {
@@ -897,7 +988,7 @@ export default function App() {
             <button className="secondary-button" type="button" onClick={startNewChat}>＋ New chat</button>
           </div>
 
-          <section className="chat-stream" aria-live="polite" aria-busy={submitting || confirming}>
+          <section className="chat-stream" aria-live="polite" aria-busy={submitting || confirming || draftGenerating}>
             {!chat && !chatError && !submitting && (
               <div className="welcome-message">
                 <span className="assistant-orb" aria-hidden="true">✦</span>
@@ -981,6 +1072,16 @@ export default function App() {
 
                     <GuidanceSection answer={chat.answer} decisionSummary={chat.decision_summary} />
 
+                    {chat.email_draft && (
+                      <EmailDraftCard
+                        draft={chat.email_draft}
+                        copyLabel={draftCopyState}
+                        generating={draftGenerating}
+                        onCopy={() => void copyEmailDraft()}
+                        onRegenerate={() => void generateDraftEmail()}
+                      />
+                    )}
+
                     {chat.decision_summary?.next_steps.length ? (
                       <section className="next-steps" aria-labelledby="next-steps-title">
                         <h3 id="next-steps-title">Next steps</h3>
@@ -1008,8 +1109,14 @@ export default function App() {
                     </div>
 
                     <div className="response-actions" aria-label="Available next actions">
-                      {chat.workflow === "remote_work" && chat.outcome === "conditional" && (
-                        <ActionButton icon="✉" title="Draft PeopleOps email" subtitle="available next action" onClick={() => void draftPeopleOpsEmail()} />
+                      {["remote_work", "pto"].includes(chat.workflow) && chat.outcome === "conditional" && !chat.email_draft && (
+                        <ActionButton
+                          icon="✉"
+                          title={draftGenerating ? "Generating draft…" : "Generate draft email"}
+                          subtitle={chat.workflow === "pto" ? "prepare a manager request" : "prepare a PeopleOps follow-up"}
+                          onClick={() => void generateDraftEmail()}
+                          disabled={draftGenerating}
+                        />
                       )}
                       {["policy", "remote_work", "pto", "expense"].includes(chat.workflow) && (
                         <ActionButton

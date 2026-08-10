@@ -181,6 +181,23 @@ class GenerationMetadata(ContractModel):
     )
 
 
+class EmailDraft(ContractModel):
+    draft_id: str = Field(pattern=r"^DRAFT-[A-F0-9]{12}$")
+    draft_type: Literal[
+        "pto_manager_request",
+        "peopleops_follow_up",
+        "case_acknowledgement",
+    ]
+    employee_id: str = Field(pattern=r"^E-\d{4}$")
+    recipient: str = Field(min_length=1, max_length=200)
+    label: Literal["Draft - not sent"] = "Draft - not sent"
+    subject: str = Field(min_length=1, max_length=200)
+    body: str = Field(min_length=1, max_length=4000)
+    sent: Literal[False] = False
+    persisted: Literal[False] = False
+    warnings: list[str] = Field(default_factory=list, min_length=1, max_length=6)
+
+
 class AttachmentContext(ContractModel):
     filename: str = Field(
         min_length=1,
@@ -226,6 +243,7 @@ class ChatResponse(ContractModel):
     tool_trace: list[ToolTraceEntry] = Field(default_factory=list)
     decision_summary: DecisionSummary | None = None
     generation: GenerationMetadata = Field(default_factory=GenerationMetadata)
+    email_draft: EmailDraft | None = None
     pending_action: PendingActionPreview | None = None
 
     @model_validator(mode="after")
@@ -237,6 +255,13 @@ class ChatResponse(ContractModel):
             )
         if waiting and self.outcome is not WorkflowOutcome.CONFIRMATION_REQUIRED:
             raise ValueError("awaiting confirmation requires confirmation_required outcome")
+        has_email_draft = self.email_draft is not None
+        if has_email_draft != (self.outcome is WorkflowOutcome.DRAFT_ONLY):
+            raise ValueError(
+                "email_draft must be present exactly when outcome is draft_only"
+            )
+        if has_email_draft and self.status is not WorkflowStatus.COMPLETED:
+            raise ValueError("email drafts require a completed workflow")
         return self
 
 

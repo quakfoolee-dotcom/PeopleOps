@@ -84,6 +84,7 @@ const chatPayload = {
     duration_ms: 240,
     detail: "Provider output passed the grounding gate.",
   },
+  email_draft: null,
   pending_action: null,
 };
 
@@ -139,11 +140,61 @@ const previewPayload = {
 const draftPayload = {
   ...chatPayload,
   outcome: "draft_only",
-  answer: "Draft - not sent\nSubject: People Operations follow-up\n\nPlease review this request.",
+  answer: "This remote-work request remains conditional and requires the listed reviews.",
   tool_trace: [
     traceEntry,
     { ...traceEntry, sequence: 2, tool_name: "draft_hr_email", result_summary: "Created Draft - not sent." },
   ],
+  email_draft: {
+    draft_id: "DRAFT-ABCDEF012345",
+    draft_type: "peopleops_follow_up",
+    employee_id: "E-1007",
+    recipient: "People Operations",
+    label: "Draft - not sent",
+    subject: "People Operations follow-up",
+    body: "Hello People Operations,\n\nPlease review this request and advise on the required approvals.\n\nThank you,\nAlex Morgan",
+    sent: false,
+    persisted: false,
+    warnings: ["Draft only - no email was sent."],
+  },
+};
+
+const ptoGuidancePayload = {
+  ...chatPayload,
+  request_id: "49928d70-989a-4c5e-b603-9d99fa5be544",
+  trace_id: "19928d70-989a-4c5e-b603-9d99fa5be500",
+  workflow: "pto",
+  outcome: "conditional",
+  answer: "Logan Murphy has sufficient PTO balance, but manager approval is still required.",
+  decision_summary: {
+    status_label: "Balance sufficient",
+    duration_label: "3 workdays / 24.00 hours",
+    category_label: "Standard PTO request",
+    required_approvals: ["Manager"],
+    clarification_needed: [],
+    next_steps: ["Submit the request in the approved HR system.", "Coordinate coverage with the manager."],
+  },
+};
+
+const ptoDraftPayload = {
+  ...ptoGuidancePayload,
+  outcome: "draft_only",
+  tool_trace: [
+    traceEntry,
+    { ...traceEntry, sequence: 2, tool_name: "draft_hr_email", result_summary: "Created Draft - not sent." },
+  ],
+  email_draft: {
+    draft_id: "DRAFT-123456ABCDEF",
+    draft_type: "pto_manager_request",
+    employee_id: "E-1021",
+    recipient: "Kendall Price",
+    label: "Draft - not sent",
+    subject: "PTO request: 2026-09-21 to 2026-09-23",
+    body: "Hi Kendall Price,\n\nI would like to request PTO from 2026-09-21 through 2026-09-23.\n\nThank you,\nLogan Murphy",
+    sent: false,
+    persisted: false,
+    warnings: ["Draft only - no email was sent."],
+  },
 };
 
 const policyPayload = {
@@ -431,7 +482,7 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     expect(screen.queryByText(/Verified sources:/i)).not.toBeInTheDocument();
   });
 
-  it("runs the real remote-work email-draft action through chat", async () => {
+  it("generates and renders a structured remote-work email draft", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce({ ok: true, json: async () => healthPayload })
@@ -441,15 +492,49 @@ describe("PeopleOps Assistant Phase 8 evidence-first interface", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Send question" }));
-    const draftButton = await screen.findByRole("button", { name: "Draft PeopleOps email" });
+    const draftButton = await screen.findByRole("button", { name: "Generate draft email" });
     fireEvent.click(draftButton);
 
     expect(await screen.findByText("Draft prepared · not sent")).toBeInTheDocument();
-    expect(screen.getByText(/People Operations follow-up/i)).toBeInTheDocument();
+    const emailCard = screen.getByRole("region", { name: "Draft - not sent" });
+    expect(within(emailCard).getByText("People Operations")).toBeInTheDocument();
+    expect(within(emailCard).getByText("People Operations follow-up")).toBeInTheDocument();
+    expect(within(emailCard).getByLabelText("Draft email body")).toHaveTextContent("Please review this request");
+    expect(within(emailCard).getByText(/No email was sent or saved/i)).toBeInTheDocument();
+    expect(within(emailCard).getByRole("button", { name: "Copy draft" })).toBeInTheDocument();
+    expect(within(emailCard).getByRole("button", { name: "Regenerate draft" })).toBeInTheDocument();
+    expect(screen.queryByText(/Subject: People Operations follow-up/i)).not.toBeInTheDocument();
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
     const draftBody = JSON.parse(String(fetchMock.mock.calls[2][1]?.body));
     expect(draftBody.employee_id).toBe("E-1007");
     expect(draftBody.message).toMatch(/Draft a PeopleOps follow-up email/i);
+  });
+
+  it("offers a generate action for PTO and renders the manager draft as an email card", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => healthPayload })
+      .mockResolvedValueOnce({ ok: true, json: async () => ptoGuidancePayload })
+      .mockResolvedValueOnce({ ok: true, json: async () => ptoDraftPayload });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+
+    const ptoTask = screen.getByText("PTO request guidance").closest("article");
+    expect(ptoTask).not.toBeNull();
+    fireEvent.click(within(ptoTask!).getByRole("button", { name: "Run task" }));
+
+    const generateButton = await screen.findByRole("button", { name: "Generate draft email" });
+    expect(generateButton).toHaveTextContent("prepare a manager request");
+    fireEvent.click(generateButton);
+
+    const emailCard = await screen.findByRole("region", { name: "Draft - not sent" });
+    expect(within(emailCard).getByText("Kendall Price")).toBeInTheDocument();
+    expect(within(emailCard).getByText("PTO request: 2026-09-21 to 2026-09-23")).toBeInTheDocument();
+    expect(within(emailCard).getByLabelText("Draft email body")).toHaveTextContent("Logan Murphy");
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    const draftBody = JSON.parse(String(fetchMock.mock.calls[2][1]?.body));
+    expect(draftBody.employee_id).toBe("E-1021");
+    expect(draftBody.message).toMatch(/Draft a manager email for this PTO request/i);
   });
 
   it("requires confirmation before creating a mock ticket and reuses the request id", async () => {

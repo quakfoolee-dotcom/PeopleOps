@@ -10,7 +10,7 @@ stores directly.
 | Workflow | Required inputs | MCP sequence | Successful outcome |
 |---|---|---|---|
 | International remote work | Employee ID, destination, and duration or exact dates | Profile, hybrid search, four exact sections, compliance | Conditional or not eligible, with exact citations and required approvals |
-| PTO guidance | Employee ID and exact start/end dates | Profile, balance, hybrid search, two exact sections, compliance, optional draft | Conditional guidance or `draft_only`; no balance mutation or sent email |
+| PTO guidance | Employee ID and exact start/end dates | Profile, balance, hybrid search, two exact sections, compliance, optional draft | Conditional guidance or `draft_only`; no balance mutation, sent email, or persisted draft |
 | Home-office expense | Employee ID, amount, and CAD/USD currency | Profile, hybrid search, three exact sections, compliance | Conditional or not eligible, with cap, remainder, and approval path |
 | Mock HR ticket | Employee ID, concern, unchanged request ID, and explicit confirmation proof | Profile, hybrid search, three exact sections, preview, confirmed create | One process-local synthetic ticket, idempotent on repeat |
 
@@ -43,8 +43,9 @@ ID, relative PTO date, missing destination/duration, or incomplete expense amoun
 - **Citation gate:** each material workflow requires its declared exact policy/section pairs.
 - **Approval boundary:** compliance results are guidance; they never approve remote work, PTO, or an
   expense.
-- **Draft boundary:** the PTO message is labelled `Draft - not sent`, with `sent=false` and
-  `persisted=false` enforced by the MCP schema.
+- **Draft boundary:** remote-work and PTO drafts are returned as a structured `email_draft` artifact
+  with recipient, subject, body, `sent=false`, and `persisted=false`. Both the MCP result and API
+  response enforce the unsent, non-persistent state.
 - **Confirmation boundary:** a ticket create call cannot occur before explicit confirmation. Tokens
   are signed, expiring, bound to the exact preview, and removed from traces.
 

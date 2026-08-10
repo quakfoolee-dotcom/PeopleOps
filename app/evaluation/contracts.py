@@ -30,6 +30,7 @@ class AnswerCheck(ContractModel):
         "tools_present",
         "tools_absent",
         "pending_action",
+        "email_draft",
         "outcome",
     ]
     values: list[str] = Field(min_length=1)

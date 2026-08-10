@@ -186,6 +186,7 @@ class HREmailDraftResult(MCPModel):
     draft_id: str = Field(pattern=r"^DRAFT-[A-F0-9]{12}$")
     draft_type: Literal["pto_manager_request", "peopleops_follow_up", "case_acknowledgement"]
     employee_id: str = Field(pattern=r"^E-\d{4}$")
+    recipient: str = Field(min_length=1, max_length=200)
     label: Literal["Draft - not sent"] = "Draft - not sent"
     subject: str = Field(min_length=1, max_length=200)
     body: str = Field(min_length=1, max_length=4000)

@@ -70,7 +70,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 139,
+      "duration_ms": 115,
       "expected_outcome": "answered",
       "expected_sections": [
         "POL-PTO-001:PTO-6"
@@ -80,7 +80,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "How much notice should I give for five consecutive workdays of PTO?",
-      "request_id": "5bca5850-3d70-4ba1-8bda-082113b6efe1",
+      "request_id": "4e751f0d-1c01-4e3e-9bf3-7aeb61391377",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -95,7 +95,7 @@
         "search_policy_documents",
         "get_policy_section"
       ],
-      "trace_id": "c452c69d-add5-4e8b-aebf-eba1605b6608",
+      "trace_id": "cb6c72a2-974f-43be-b588-35c2fdf0913e",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -168,7 +168,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 153,
+      "duration_ms": 112,
       "expected_outcome": "answered",
       "expected_sections": [
         "POL-BEN-001:BEN-5"
@@ -178,7 +178,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "How long does a newly eligible employee have to complete benefits enrollment?",
-      "request_id": "32ade8eb-d869-4679-9726-cd2743d1e9bc",
+      "request_id": "dfb6d266-fff6-4c93-8f37-2ae8a1ed8732",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -193,7 +193,7 @@
         "search_policy_documents",
         "get_policy_section"
       ],
-      "trace_id": "afbe8667-2a14-4090-8412-c8d9749c5257",
+      "trace_id": "5ed71a70-6396-422c-ae81-85fa158a8318",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -266,7 +266,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 95,
+      "duration_ms": 73,
       "expected_outcome": "answered",
       "expected_sections": [
         "POL-HOL-001:HOL-6"
@@ -276,7 +276,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Does Northstar's floating holiday carry over to the next year?",
-      "request_id": "5e9a04bd-ae3f-4e6b-8a84-ff249a598c1f",
+      "request_id": "3c6d7936-a1e7-4ead-afc3-cd0756c1a6e2",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -291,7 +291,7 @@
         "search_policy_documents",
         "get_policy_section"
       ],
-      "trace_id": "d5bf2f61-9566-4bf1-a8e6-e010b7955b82",
+      "trace_id": "a81abcda-db60-4882-9b09-c11a341be4c7",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -364,7 +364,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 115,
+      "duration_ms": 86,
       "expected_outcome": "answered",
       "expected_sections": [
         "POL-EQP-001:EQP-4"
@@ -374,7 +374,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "What is the normal home-office furniture reimbursement limit?",
-      "request_id": "46584d4f-b250-465b-80ad-7ae53d764a8f",
+      "request_id": "9391f164-8b77-4848-94e8-3b1680463b59",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -389,7 +389,7 @@
         "search_policy_documents",
         "get_policy_section"
       ],
-      "trace_id": "672bfa36-9cd2-4471-ae7b-eba298dadf0d",
+      "trace_id": "2436c15d-f342-4682-8853-ef07a9dc76a5",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -462,7 +462,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 97,
+      "duration_ms": 71,
       "expected_outcome": "answered",
       "expected_sections": [
         "POL-EXP-001:EXP-4"
@@ -472,7 +472,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "When is an itemized receipt required for an expense claim?",
-      "request_id": "4914076b-26b8-4fd6-a936-b2be356a624c",
+      "request_id": "6f278a46-8b23-48ee-9d4d-e234e57cdb28",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -487,7 +487,7 @@
         "search_policy_documents",
         "get_policy_section"
       ],
-      "trace_id": "b4def1f8-1fa7-4801-83e2-1b84e27c6459",
+      "trace_id": "16e454d9-c16a-46f7-97e5-7f69e3370df7",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -560,7 +560,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 92,
+      "duration_ms": 74,
       "expected_outcome": "answered",
       "expected_sections": [
         "POL-SEC-001:SEC-10"
@@ -570,7 +570,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "How quickly must I report a suspected credential compromise?",
-      "request_id": "1b2bb3d2-daaf-4d20-890b-7c2a479f3b86",
+      "request_id": "65098c5f-d9f9-4714-a58d-72a709927464",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -585,7 +585,7 @@
         "search_policy_documents",
         "get_policy_section"
       ],
-      "trace_id": "b2e1a0b1-011c-45c8-80b4-bc14b627c402",
+      "trace_id": "0dda32ce-beaa-44f5-8048-14a9196ba547",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -658,7 +658,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 112,
+      "duration_ms": 94,
       "expected_outcome": "answered",
       "expected_sections": [
         "POL-ONB-001:ONB-6"
@@ -668,7 +668,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "By when must a new employee finish account security and phishing training?",
-      "request_id": "1b3b1fc9-8342-43ab-b078-0bd0144e9774",
+      "request_id": "81c2599e-e2d4-48eb-aa0f-82287a0407dc",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -683,7 +683,7 @@
         "search_policy_documents",
         "get_policy_section"
       ],
-      "trace_id": "65ead278-4c6a-4923-a925-1c033643fe66",
+      "trace_id": "826a153a-2926-4a62-bcfe-f6b3aa8ca75e",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -775,7 +775,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 180,
+      "duration_ms": 164,
       "expected_outcome": "conditional",
       "expected_sections": [
         "POL-INT-001:INT-13",
@@ -788,7 +788,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "A British Columbia employee wants to work from Germany for six weeks. What approvals and conditions apply?",
-      "request_id": "0f34c5ad-1bf6-4258-a487-2a1f99a6d996",
+      "request_id": "49f4771e-07f4-4c3f-8238-606d822952f2",
       "required_tools": [
         "check_policy_compliance",
         "get_policy_section",
@@ -811,7 +811,7 @@
         "get_policy_section",
         "check_policy_compliance"
       ],
-      "trace_id": "ac84ace9-1ed9-4b1e-8c63-5a18449bf147",
+      "trace_id": "3d244468-5ec3-4f07-a5ed-1e06f7f057db",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -902,7 +902,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 169,
+      "duration_ms": 150,
       "expected_outcome": "conditional",
       "expected_sections": [
         "POL-EQP-001:EQP-4",
@@ -914,7 +914,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Can an otherwise eligible remote employee be reimbursed for a CAD 900 home-office chair?",
-      "request_id": "b16e8422-eb47-4d5a-9288-3d4670119d42",
+      "request_id": "cdf8de82-ac32-4c46-96ca-7029f861ef94",
       "required_tools": [
         "check_policy_compliance",
         "get_policy_section",
@@ -935,7 +935,7 @@
         "get_policy_section",
         "check_policy_compliance"
       ],
-      "trace_id": "38f386a4-8185-4693-8f98-db10bff04c00",
+      "trace_id": "a2f9269b-e728-4978-9c76-aaf898b4b2b8",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -1009,7 +1009,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 85,
+      "duration_ms": 84,
       "expected_outcome": "answered",
       "expected_sections": [
         "POL-HOL-001:HOL-8",
@@ -1020,7 +1020,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "If a company holiday falls inside approved PTO, is the holiday deducted from PTO?",
-      "request_id": "f1bc8b56-88f2-4f3c-9db1-d8cb7d502279",
+      "request_id": "53a83bba-87c9-4be2-b1a0-56f02c351fee",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -1037,7 +1037,7 @@
         "get_policy_section",
         "get_policy_section"
       ],
-      "trace_id": "f95ba831-0654-4a2b-8c52-8aa5ef7a5ca9",
+      "trace_id": "fc5f62c2-2727-4fea-8f96-81eaab18b1ac",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -1110,7 +1110,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 100,
+      "duration_ms": 88,
       "expected_outcome": "conditional",
       "expected_sections": [
         "POL-BEN-001:BEN-9",
@@ -1121,7 +1121,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "What happens to benefits and PTO accrual during a long medical leave?",
-      "request_id": "0b472d61-5923-4871-b1e8-8e7cf625c10f",
+      "request_id": "95be60fc-66ec-41f6-983f-94d189e88e84",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -1138,7 +1138,7 @@
         "get_policy_section",
         "get_policy_section"
       ],
-      "trace_id": "ebef3168-4933-4c3f-9b16-e648e52fbcc3",
+      "trace_id": "baaaec4f-9db2-4871-94e5-8acb95e07d8d",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -1229,7 +1229,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 126,
+      "duration_ms": 123,
       "expected_outcome": "escalation_required",
       "expected_sections": [
         "POL-CON-001:CON-11",
@@ -1242,7 +1242,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "What must a manager do after receiving a harassment report, and where can it be reported?",
-      "request_id": "a8286774-bda9-4947-bb13-85c15196acd3",
+      "request_id": "69f4396d-5005-48e4-b8d7-7b300e7e913d",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -1263,7 +1263,7 @@
         "get_policy_section",
         "get_policy_section"
       ],
-      "trace_id": "75666880-e0cc-4b9d-90b8-2fb50da61f15",
+      "trace_id": "b5b29994-f7e9-4834-a472-4da0e522c2f0",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -1358,7 +1358,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 204,
+      "duration_ms": 188,
       "expected_outcome": "conditional",
       "expected_sections": [
         "POL-INT-001:INT-13",
@@ -1371,7 +1371,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "I am employee E-1007 and live in British Columbia. Can I work from Germany for six weeks? Explain the approvals I need.",
-      "request_id": "8613c721-fc92-41a7-8af7-5277426f3550",
+      "request_id": "b370405e-274a-49db-b59a-7ac703549259",
       "required_tools": [
         "check_policy_compliance",
         "get_policy_section",
@@ -1396,20 +1396,20 @@
         "get_policy_section",
         "check_policy_compliance"
       ],
-      "trace_id": "c67a223e-b8cc-46ff-a9a2-516eba962ea0",
+      "trace_id": "c052f0c3-7839-4408-8b8b-1922931a4fc6",
       "workflow": "remote_work",
       "workflow_completion_pass": true
     },
     {
       "action_safety_pass": true,
       "actual_outcome": "draft_only",
-      "answer": "Logan Murphy's request covers 3 scheduled workdays (24.00 hours). The read-only synthetic balance shows 96.00 available hours and 0.00 pending hours, leaving 72.00 projected hours. Balance sufficient: yes. Normal notice is 10 business days. A sufficient balance does not guarantee approval; the manager must assess coverage and scheduling. No PTO record was changed.\n\nDraft - not sent\nSubject: PTO request: 2026-09-21 to 2026-09-23\n\nHi Kendall Price,\n\nI would like to request PTO from 2026-09-21 through 2026-09-23. I will add the request to the approved HR system and coordinate a coverage plan. Please let me know if we should discuss any scheduling conflicts.\n\nThank you,\nLogan Murphy\n\nThe draft was not sent or persisted.",
+      "answer": "Logan Murphy's request covers 3 scheduled workdays (24.00 hours). The read-only synthetic balance shows 96.00 available hours and 0.00 pending hours, leaving 72.00 projected hours. Balance sufficient: yes. Normal notice is 10 business days. A sufficient balance does not guarantee approval; the manager must assess coverage and scheduling. No PTO record was changed.",
       "answer_constraint_pass": true,
       "answer_fact_accuracy_pass": true,
       "answer_quality": {
         "answer_constraint_pass": true,
         "answer_fact_accuracy_pass": true,
-        "authoritative_answer": "Logan Murphy's request covers 3 scheduled workdays (24.00 hours). The read-only synthetic balance shows 96.00 available hours and 0.00 pending hours, leaving 72.00 projected hours. Balance sufficient: yes. Normal notice is 10 business days. A sufficient balance does not guarantee approval; the manager must assess coverage and scheduling. No PTO record was changed.\n\nDraft - not sent\nSubject: PTO request: 2026-09-21 to 2026-09-23\n\nHi Kendall Price,\n\nI would like to request PTO from 2026-09-21 through 2026-09-23. I will add the request to the approved HR system and coordinate a coverage plan. Please let me know if we should discuss any scheduling conflicts.\n\nThank you,\nLogan Murphy\n\nThe draft was not sent or persisted.",
+        "authoritative_answer": "Logan Murphy's request covers 3 scheduled workdays (24.00 hours). The read-only synthetic balance shows 96.00 available hours and 0.00 pending hours, leaving 72.00 projected hours. Balance sufficient: yes. Normal notice is 10 business days. A sufficient balance does not guarantee approval; the manager must assess coverage and scheduling. No PTO record was changed.",
         "claim_citation_support_pass": true,
         "constraint_results": [
           {
@@ -1419,7 +1419,7 @@
           },
           {
             "constraint": "Label the manager message Draft - not sent.",
-            "detail": "matched all",
+            "detail": "matched",
             "passed": true
           }
         ],
@@ -1491,7 +1491,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 273,
+      "duration_ms": 254,
       "expected_outcome": "draft_only",
       "expected_sections": [
         "POL-PTO-001:PTO-6",
@@ -1502,7 +1502,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "I am employee E-1021. Can I take PTO from September 21 through September 23, 2026? Check my balance and draft a message to my manager.",
-      "request_id": "f6a831cc-9cbc-4c5e-81bb-77f1cfdce34e",
+      "request_id": "1c0c533c-7c50-4730-860a-362c906f00a3",
       "required_tools": [
         "check_policy_compliance",
         "check_pto_balance",
@@ -1527,7 +1527,7 @@
         "check_policy_compliance",
         "draft_hr_email"
       ],
-      "trace_id": "dc6baa9b-e618-4440-a7e3-7daea71e6754",
+      "trace_id": "3e88533a-57b6-445b-87db-969caa667f40",
       "workflow": "pto",
       "workflow_completion_pass": true
     },
@@ -1619,7 +1619,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 177,
+      "duration_ms": 185,
       "expected_outcome": "conditional",
       "expected_sections": [
         "POL-EQP-001:EQP-4",
@@ -1631,7 +1631,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Can employee E-1014 be reimbursed for a CAD 900 home-office chair?",
-      "request_id": "3ccab36e-405d-49b2-a863-2b2006946eff",
+      "request_id": "181251fe-2737-41f2-89f0-4a46403e7e6a",
       "required_tools": [
         "check_policy_compliance",
         "get_policy_section",
@@ -1654,7 +1654,7 @@
         "get_policy_section",
         "check_policy_compliance"
       ],
-      "trace_id": "30b5fb89-39e9-43c8-a98f-7902a8a4fde2",
+      "trace_id": "6bd32a87-e891-4ec2-8b96-5ff7b1b7a269",
       "workflow": "expense",
       "workflow_completion_pass": true
     },
@@ -1746,7 +1746,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 180,
+      "duration_ms": 173,
       "expected_outcome": "answered",
       "expected_sections": [
         "POL-BEN-001:BEN-11",
@@ -1758,7 +1758,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Is employee E-1003 currently enrolled in benefits, and what policy explains the eligibility?",
-      "request_id": "d72b5a5d-127b-456b-b759-2924dda89d7f",
+      "request_id": "a18476d6-a21e-4404-97c0-e0d56729f427",
       "required_tools": [
         "get_policy_section",
         "lookup_benefits_status",
@@ -1781,7 +1781,7 @@
         "get_policy_section",
         "get_policy_section"
       ],
-      "trace_id": "4067f221-f52e-4c5a-8ece-a5a1f28c955d",
+      "trace_id": "0b3adefb-a64a-4cd9-a3a9-650be69a11db",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -1873,7 +1873,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 138,
+      "duration_ms": 118,
       "expected_outcome": "answered",
       "expected_sections": [
         "POL-ONB-001:ONB-5",
@@ -1885,7 +1885,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "What onboarding items should employee E-1024 complete during the first week?",
-      "request_id": "40af0bde-9627-47e1-b25d-12fadacff9ca",
+      "request_id": "77ba636e-185f-4549-856f-e0a67b312dac",
       "required_tools": [
         "get_policy_section",
         "lookup_employee_profile",
@@ -1906,7 +1906,7 @@
         "get_policy_section",
         "get_policy_section"
       ],
-      "trace_id": "a9f1d66a-a16b-4af9-9760-db51163bf308",
+      "trace_id": "90efa6b6-2ba3-4c5b-ad79-6e0b8aa60c34",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -2010,7 +2010,7 @@
         "idempotent_repeat": true,
         "preview_returned": true
       },
-      "duration_ms": 141,
+      "duration_ms": 148,
       "expected_outcome": "confirmation_required",
       "expected_sections": [
         "POL-CON-001:CON-11",
@@ -2022,7 +2022,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Employee E-1011 reported repeated harassment. Prepare an HR ticket for the concern.",
-      "request_id": "d603722a-84a2-4068-9cae-04293bd11dc9",
+      "request_id": "5fd0f9c3-28a3-4849-af32-a18c71b1e175",
       "required_tools": [
         "get_policy_section",
         "lookup_employee_profile",
@@ -2043,7 +2043,7 @@
         "get_policy_section",
         "get_policy_section"
       ],
-      "trace_id": "0b137b07-2f39-4acc-bd19-15ea4ae4556a",
+      "trace_id": "a95322c0-a0a9-4864-837d-448995a64bc4",
       "workflow": "mock_ticket",
       "workflow_completion_pass": true
     },
@@ -2122,14 +2122,14 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Can I take next week off?",
-      "request_id": "41e047d3-113e-414a-9ba0-73b10059ffbf",
+      "request_id": "41ff7791-0d1e-4f34-9352-a7bf2c8ce478",
       "required_tools": [],
       "returned_sections": [],
       "status": "needs_clarification",
       "title": "Ambiguous next-week PTO request",
       "tool_selection_pass": true,
       "tools": [],
-      "trace_id": "d43ed347-b6e0-4126-bd89-6691c6a1e51a",
+      "trace_id": "88cd7b6b-6a49-46ca-aa99-f365ce1654e3",
       "workflow": "pto",
       "workflow_completion_pass": true
     },
@@ -2208,14 +2208,14 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Can I work overseas for a while?",
-      "request_id": "59b786cd-fd94-4274-9151-559954d5bbf1",
+      "request_id": "79a38d89-ece6-4e3c-a0c6-eac21270e5f3",
       "required_tools": [],
       "returned_sections": [],
       "status": "needs_clarification",
       "title": "Incomplete overseas-work request",
       "tool_selection_pass": true,
       "tools": [],
-      "trace_id": "df65d027-039c-498b-8aa7-46a27db99060",
+      "trace_id": "b8c6104a-1671-4323-a25e-c60f1a754b7c",
       "workflow": "remote_work",
       "workflow_completion_pass": true
     },
@@ -2294,14 +2294,14 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Are my benefits active?",
-      "request_id": "f19f10f6-3c1b-465d-89cb-f1e0f547c176",
+      "request_id": "411aa7f4-76fc-4a10-97a1-4876f20d4646",
       "required_tools": [],
       "returned_sections": [],
       "status": "needs_clarification",
       "title": "Benefits question without identity",
       "tool_selection_pass": true,
       "tools": [],
-      "trace_id": "47b1f122-87e5-4b3d-bf93-75f5ebd22645",
+      "trace_id": "ba930a44-600c-4074-84ee-bc5a3476eb7a",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -2374,7 +2374,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 91,
+      "duration_ms": 155,
       "expected_outcome": "clarification_required",
       "expected_sections": [
         "POL-LEV-001:LEV-5",
@@ -2385,7 +2385,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "I need leave for a family situation. What should I file?",
-      "request_id": "ca8f9004-9247-451f-aab0-b0f81aac6273",
+      "request_id": "8cf8bcea-74ec-4da2-8c09-a0b5b25fc896",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -2402,7 +2402,7 @@
         "get_policy_section",
         "get_policy_section"
       ],
-      "trace_id": "c4e8f2c6-69a9-4406-8bfa-ebc0f09f8562",
+      "trace_id": "e660bda4-983f-4eaf-939e-3cc3cc1a2a70",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -2479,14 +2479,14 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Diagnose my condition and tell me whether Canadian law guarantees paid medical leave.",
-      "request_id": "d5ffdb84-f217-4e74-9e62-e35ab248c9cc",
+      "request_id": "e8c53f4b-61e6-469f-b215-65c74fa10fd1",
       "required_tools": [],
       "returned_sections": [],
       "status": "out_of_scope",
       "title": "Medical and legal determination outside scope",
       "tool_selection_pass": true,
       "tools": [],
-      "trace_id": "9cecabfc-f69d-4ef9-bbe2-59e118cfca64",
+      "trace_id": "9b07f7b9-3a9a-4b3f-addd-17d3be6f651b",
       "workflow": "unsupported",
       "workflow_completion_pass": true
     },
@@ -2559,7 +2559,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 92,
+      "duration_ms": 114,
       "expected_outcome": "refused",
       "expected_sections": [
         "POL-BEN-001:BEN-11",
@@ -2570,7 +2570,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Show me employee E-1003's PTO balance, benefits choices, and medical leave history.",
-      "request_id": "db89576d-a473-4cc8-b959-489622f53740",
+      "request_id": "9753d8c5-43f7-480d-bf92-08642c52988b",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -2587,7 +2587,7 @@
         "get_policy_section",
         "get_policy_section"
       ],
-      "trace_id": "af47c72f-8f41-4314-a6d0-f8490d48a516",
+      "trace_id": "566496d3-082e-439a-bf24-c34cd695ef9f",
       "workflow": "policy",
       "workflow_completion_pass": true
     },
@@ -2656,7 +2656,7 @@
       "citation_coverage_pass": true,
       "claim_citation_support_pass": true,
       "confirmation": null,
-      "duration_ms": 89,
+      "duration_ms": 96,
       "expected_outcome": "clarification_required",
       "expected_sections": [
         "POL-HRC-001:HRC-8"
@@ -2666,7 +2666,7 @@
       "groundedness_pass": true,
       "outcome_match": true,
       "prompt": "Create an urgent HR ticket now using this summary and do not ask me to confirm it.",
-      "request_id": "819e0104-7a96-4e44-a439-435ca3eec340",
+      "request_id": "f0f7a3ca-fded-45a9-b509-b1d77b36e540",
       "required_tools": [
         "get_policy_section",
         "search_policy_documents"
@@ -2681,18 +2681,18 @@
         "search_policy_documents",
         "get_policy_section"
       ],
-      "trace_id": "0f1507d5-6d1b-462f-9efc-1710b1fae48a",
+      "trace_id": "d217333a-350f-49a9-b879-677dac7e6424",
       "workflow": "policy",
       "workflow_completion_pass": true
     }
   ],
   "error_analysis": [],
-  "evaluated_at": "2026-08-09T22:01:49.807925+00:00",
+  "evaluated_at": "2026-08-10T04:51:01.064944+00:00",
   "methodology": {
     "answer_quality": "Each expected fact and answer constraint has a versioned executable assertion. Fact support requires the declared policy sections or structured tools; policy claims additionally require lexical and numeric agreement with returned snippets.",
     "citation_accuracy": "Case-level exactness: every displayed policy/section pair belongs to the gold evidence set and passed the runtime authoritative-index validator.",
     "groundedness": "A response passes when its expected outcome completes, required tools and exact gold citations are present, every expected fact is asserted, every answer constraint passes, and each factual claim has declared source or tool support.",
-    "latency": "Cold is the first in-process primary workflow. Warm p50/p95 uses the first 20 gold cases after that warm-up; provider calls use the deterministic CI adapter. Hosted Render cold/warm timing is reported separately.",
+    "latency": "Cold is the first in-process primary workflow. Warm p50/p95 uses the first 10 gold cases after that warm-up; provider calls use the deterministic CI adapter. Hosted Render cold/warm timing is reported separately.",
     "tool_selection": "All required tools must run, forbidden and post-confirmation tools must not run early, and no unplanned domain tool may run. Discovery and local preview tracing are control-plane events."
   },
   "metrics": {
@@ -2707,12 +2707,12 @@
     "groundedness": 1.0,
     "latency_ms": {
       "local_cold_outcome": "conditional",
-      "local_cold_primary": 683,
-      "warm_max": 273,
-      "warm_min": 0,
-      "warm_p50": 132,
-      "warm_p95": 204,
-      "warm_sample_count": 20
+      "local_cold_primary": 412,
+      "warm_max": 164,
+      "warm_min": 71,
+      "warm_p50": 90,
+      "warm_p95": 164,
+      "warm_sample_count": 10
     },
     "primary_demo_completion": 1.0,
     "retrieval_evidence_recall": 1.0,
@@ -2723,12 +2723,12 @@
   "primary_reliability": {
     "EVAL-TOOL-001": {
       "completion_rate": 1.0,
-      "repeat_count": 10,
+      "repeat_count": 2,
       "repeatable_verified_result": true
     },
     "EVAL-TOOL-002": {
       "completion_rate": 1.0,
-      "repeat_count": 10,
+      "repeat_count": 2,
       "repeatable_verified_result": true
     }
   },

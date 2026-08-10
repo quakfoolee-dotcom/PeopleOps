@@ -69,8 +69,12 @@ def test_remote_work_can_prepare_a_real_unsent_peopleops_email_draft() -> None:
     assert response.outcome == "draft_only"
     assert response.tool_trace[-1].tool_name == "draft_hr_email"
     assert len(response.tool_trace) == 9
-    assert "Draft - not sent" in response.answer
-    assert "not sent or persisted" in response.answer
+    assert response.email_draft is not None
+    assert response.email_draft.label == "Draft - not sent"
+    assert response.email_draft.recipient == "People Operations"
+    assert response.email_draft.sent is False
+    assert response.email_draft.persisted is False
+    assert "Draft - not sent" not in response.answer
 
 
 def test_pto_state_machine_checks_balance_and_returns_unsent_draft_without_mutation() -> None:
@@ -98,8 +102,12 @@ def test_pto_state_machine_checks_balance_and_returns_unsent_draft_without_mutat
     assert "3 scheduled workdays (24.00 hours)" in response.answer
     assert "96.00 available hours" in response.answer
     assert "10 business days" in response.answer
-    assert "Draft - not sent" in response.answer
-    assert "not sent or persisted" in response.answer
+    assert response.email_draft is not None
+    assert response.email_draft.label == "Draft - not sent"
+    assert response.email_draft.recipient == "Kendall Price"
+    assert response.email_draft.sent is False
+    assert response.email_draft.persisted is False
+    assert "Draft - not sent" not in response.answer
     assert response.decision_summary is not None
     assert response.decision_summary.duration_label == "3 workdays / 24.00 hours"
     assert response.decision_summary.next_steps

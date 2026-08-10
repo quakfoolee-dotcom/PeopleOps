@@ -139,6 +139,15 @@ def validate_answer_check_suite(
                     )
             if check.mode == "pending_action" and set(check.values) - {"present", "absent"}:
                 errors.append(f"{case_id} pending-action checks accept only present or absent")
+            if check.mode == "email_draft" and set(check.values) - {
+                "present",
+                "not_sent",
+                "not_persisted",
+            }:
+                errors.append(
+                    f"{case_id} email-draft checks accept only present, not_sent, or "
+                    "not_persisted"
+                )
     return errors
 
 
@@ -188,6 +197,15 @@ def _evaluate_check(
         expected_present = check.values == ["present"]
         matched = (response.pending_action is not None) is expected_present
         return matched, "matched" if matched else "pending-action state differed"
+    if check.mode == "email_draft":
+        draft = response.email_draft
+        states = {
+            "present": draft is not None,
+            "not_sent": draft is not None and not draft.sent,
+            "not_persisted": draft is not None and not draft.persisted,
+        }
+        missing = [value for value in check.values if not states[value]]
+        return not missing, f"missing draft states: {missing}" if missing else "matched"
     if check.mode == "outcome":
         matched = response.outcome.value in check.values
         return matched, "matched" if matched else f"outcome was {response.outcome.value}"

@@ -34,10 +34,12 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
    `International exceptional`, required approvals, exact-date clarification, and ordered next
    steps. Inspect four exact citations, eight MCP operations, request ID, trace ID, employee
    context, labelled generation mode/provider, and the demo policy as-of date.
-5. Select **Draft PeopleOps email**. Confirm the bounded workflow calls `draft_hr_email` and returns
-   a visible `Draft - not sent` result without sending or persisting anything.
-6. Run **PTO request guidance**. Confirm the result is labelled draft-only and the message is not
-   represented as sent.
+5. Select **Generate draft email**. Confirm the bounded workflow calls `draft_hr_email` and renders
+   a dedicated card with recipient, subject, readable body paragraphs, and an explicit **Not sent**
+   state. Copying or regenerating the draft must not send or persist anything.
+6. Run **PTO request guidance**. Review the balance and policy result, then select **Generate draft
+   email**. Confirm the manager-addressed draft appears in the same structured card without changing
+   the PTO balance.
 7. Run **Expense compliance**. Confirm the cap, employee-paid remainder, approval path, citations,
    and tool trace are visible.
 8. Run **Confirmation-gated ticket**. Inspect the action preview and verify that the trace contains
@@ -70,8 +72,11 @@ approximate hidden reasoning. All operational evidence comes from typed API fiel
 - **Attach file** accepts TXT, Markdown, or PDF up to 2 MB. The server extracts at most 6,000
   characters without persistence. Attachment text can fill missing request facts only when it
   resolves the selected workflow; it never replaces the authoritative policy corpus.
-- **Draft PeopleOps email** is shown only for eligible remote-work guidance and runs the existing
-  MCP draft tool; the result remains explicitly unsent and non-persistent.
+- **Generate draft email** is shown for eligible remote-work and PTO guidance. It runs the existing
+  MCP draft tool in the background while preserving the verified guidance and request context.
+- Generated drafts use a dedicated card with recipient, subject, paragraph-preserving body, safety
+  notice, **Copy draft**, and **Regenerate draft** controls. The API and UI both keep them explicitly
+  unsent and non-persistent.
 - **Re-run** controls repeat the exact employee-bound request. Unsupported or decorative workflow
   actions are not displayed.
 - Citation and trace panels use native expandable controls, including on narrow screens.
@@ -101,7 +106,8 @@ summary disclosure controls.
 3. loading a preset without invoking a workflow;
 4. structured decision, approvals, clarification, next steps, compact sources, trace, and identifiers;
 5. use-case and attachment extraction/submission behavior;
-6. the real MCP-backed remote-work draft action;
+6. the real MCP-backed remote-work and PTO structured draft actions, including recipient, subject,
+   body, safety state, copy, and regeneration controls;
 7. explicit confirmation followed by request-bound creation; and
 8. cancellation that leaves the write-like action blocked.
 

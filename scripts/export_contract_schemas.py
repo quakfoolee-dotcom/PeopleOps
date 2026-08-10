@@ -8,6 +8,7 @@ from app.api.contracts import (
     ChatResponse,
     ConfirmMockTicketRequest,
     ConfirmMockTicketResponse,
+    EmailDraft,
     ToolTraceEntry,
 )
 from app.core.config import PROJECT_ROOT
@@ -35,6 +36,7 @@ SCHEMA_MODELS = {
     / "attachment_upload_request.schema.json": AttachmentUploadRequest,
     EVALUATION_SCHEMA_DIRECTORY / "chat_request.schema.json": ChatRequest,
     EVALUATION_SCHEMA_DIRECTORY / "chat_response.schema.json": ChatResponse,
+    EVALUATION_SCHEMA_DIRECTORY / "email_draft.schema.json": EmailDraft,
     EVALUATION_SCHEMA_DIRECTORY
     / "confirm_mock_ticket_request.schema.json": ConfirmMockTicketRequest,
     EVALUATION_SCHEMA_DIRECTORY

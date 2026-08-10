@@ -319,6 +319,27 @@ button.secondary-button, .response-actions button, .confirmation-actions button 
 .details-chevron { color: #778399; font-size: 16px; transition: transform 150ms ease; }
 .verified-guidance[open] .details-chevron { transform: rotate(180deg); }
 .verified-guidance ul { display: grid; gap: 7px; margin: 0; padding: 11px 14px 12px 35px; color: #445066; background: #f7f9fc; border-top: 1px solid #e2e7ef; font-size: 11px; line-height: 1.55; }
+.email-draft-card { margin: 0 15px 15px; overflow: hidden; background: #ffffff; border: 1px solid #b8cae6; border-radius: 7px; box-shadow: 0 7px 18px rgba(25, 49, 84, 0.06); }
+.email-draft-header { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 9px; padding: 11px 13px; background: #f3f7fd; border-bottom: 1px solid #d5e0ef; }
+.email-draft-icon { width: 28px; height: 28px; display: grid; place-items: center; color: var(--blue); background: #ffffff; border: 1px solid #c5d5ec; border-radius: 6px; font-size: 14px; }
+.email-draft-header p { margin: 0 0 2px; color: #6b778c; font-size: 9px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+.email-draft-header h3 { margin: 0; color: #2f3b52; font-size: 14px; }
+.draft-status { padding: 4px 7px; color: #76520d; background: #fff7df; border: 1px solid #ead59e; border-radius: 999px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
+.email-draft-fields { display: grid; grid-template-columns: minmax(130px, 0.7fr) minmax(0, 2fr); margin: 0; border-bottom: 1px solid var(--line); }
+.email-draft-fields div { min-width: 0; padding: 10px 12px; }
+.email-draft-fields div + div { border-left: 1px solid var(--line); }
+.email-draft-fields dt { color: #707b8f; font-size: 9px; font-weight: 750; text-transform: uppercase; }
+.email-draft-fields dd { margin: 4px 0 0; color: #2d394f; font-size: 12px; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+.email-draft-body { padding: 14px 16px; color: #344057; background: #ffffff; font-size: 12px; line-height: 1.65; }
+.email-draft-body p { margin: 0; }
+.email-draft-body p + p { margin-top: 11px; }
+.email-draft-safety { display: grid; grid-template-columns: 20px 1fr; gap: 8px; margin: 0 12px 12px; padding: 9px 10px; color: #4d5a70; background: #f7f9fc; border-left: 3px solid #7da3da; border-radius: 0 4px 4px 0; }
+.email-draft-safety > span { width: 18px; height: 18px; display: grid; place-items: center; color: #ffffff; background: var(--blue); border-radius: 50%; font-size: 10px; font-weight: 800; }
+.email-draft-safety p { margin: 0; font-size: 10px; line-height: 1.5; }
+.email-draft-actions { display: flex; justify-content: flex-end; gap: 7px; padding: 10px 12px; background: #fbfcfe; border-top: 1px solid var(--line); }
+.email-draft-actions button { padding: 7px 10px; background: #ffffff; border: 1px solid #cbd4e1; border-radius: 5px; cursor: pointer; font-size: 10px; font-weight: 750; }
+.email-draft-actions button.primary-button { color: #ffffff; background: var(--blue); border-color: var(--blue); }
+.email-draft-actions button:disabled { cursor: wait; opacity: 0.58; }
 .next-steps { padding: 0 15px 15px; }
 .next-steps ol { margin: 8px 0 0; padding-left: 22px; color: #313b50; font-size: 12px; line-height: 1.65; }
 .next-steps li + li { margin-top: 3px; }
@@ -511,6 +532,12 @@ button.secondary-button, .response-actions button, .confirmation-actions button 
   .message-card { padding: 11px; }
   .result-card-header { grid-template-columns: 28px 1fr; }
   .state-pill { grid-column: 2; justify-self: start; }
+  .email-draft-header { grid-template-columns: 30px 1fr; }
+  .draft-status { grid-column: 2; justify-self: start; }
+  .email-draft-fields { grid-template-columns: 1fr; }
+  .email-draft-fields div + div { border-top: 1px solid var(--line); border-left: 0; }
+  .email-draft-actions { align-items: stretch; flex-direction: column; }
+  .email-draft-actions button { width: 100%; }
   .context-grid { grid-template-columns: 1fr; }
   .action-preview { grid-template-columns: 1fr; }
   .action-preview div { border-right: 0; }
